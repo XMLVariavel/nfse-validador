@@ -120,9 +120,6 @@ if not _aguardar():
 
 _log_print(f"Servidor OK em {URL}")
 
-# ── Configurar ícone na taskbar
-_configurar_taskbar_icon()
-
 # ── Abrir Chrome/Edge em modo App ─────────────────────────────────────────────
 def _configurar_taskbar_icon():
     """Define AppUserModelID para o ícone correto aparecer na barra de tarefas."""
@@ -147,6 +144,8 @@ def _configurar_taskbar_icon():
                 _log_print(f"Ícone carregado: {_ico}")
     except Exception as e:
         _log_print(f"taskbar icon: {e}")
+
+_configurar_taskbar_icon()
 
 def _abrir_browser():
     candidates = [
