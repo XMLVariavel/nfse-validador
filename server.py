@@ -1182,6 +1182,59 @@ class Handler(BaseHTTPRequestHandler):
         elif path=="/api/notificacoes/marcar-lidas":
             _marcar_lidas()
             self._send(200,b'{"ok":true}')
+
+        elif path=="/api/check-update":
+            # Verifica versão no GitHub e retorna se há atualização
+            import urllib.request as _ur, json as _js
+            try:
+                _url = "https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json"
+                _req = _ur.Request(_url, headers={"User-Agent":"NFS-e-Updater/1.0"})
+                with _ur.urlopen(_req, timeout=8) as _r:
+                    _remote = _js.loads(_r.read())
+                _local_file = BASE / "versao.json"
+                _local = _js.loads(_local_file.read_text(encoding="utf-8")) if _local_file.exists() else {}
+                _rv = _remote.get("versao","0")
+                _lv = _local.get("versao","0")
+                _has_update = _rv != _lv
+                self._send(200, _js.dumps({
+                    "tem_atualizacao": _has_update,
+                    "versao_local": _lv,
+                    "versao_remota": _rv,
+                    "data_remota": _remote.get("data",""),
+                }).encode())
+            except Exception as _ex:
+                self._send(200, json.dumps({"tem_atualizacao": False, "erro": str(_ex)}).encode())
+
+        elif path=="/api/aplicar-update":
+            # Baixa e aplica arquivos atualizados do GitHub
+            import urllib.request as _ur, json as _js, shutil as _sh, threading as _th
+            _ARQUIVOS = [
+                ("static/index.html",  BASE.parent / "static" / "index.html"),
+                ("server.py",          BASE / "server.py"),
+                ("versao.json",        BASE.parent / "versao.json"),
+                ("monitorar_docs.py",  BASE / "monitorar_docs.py"),
+            ]
+            _resultados = []
+            def _baixar_e_aplicar():
+                for _rel, _dst in _ARQUIVOS:
+                    try:
+                        _url = f"https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/{_rel}"
+                        _req = _ur.Request(_url, headers={"User-Agent":"NFS-e-Updater/1.0"})
+                        with _ur.urlopen(_req, timeout=15) as _r:
+                            _conteudo = _r.read()
+                        _dst.parent.mkdir(parents=True, exist_ok=True)
+                        _dst.write_bytes(_conteudo)
+                        _resultados.append({"arquivo": _rel, "ok": True})
+                        print(f"[update] {_rel} atualizado")
+                    except Exception as _ex:
+                        _resultados.append({"arquivo": _rel, "ok": False, "erro": str(_ex)})
+                        print(f"[update] ERRO {_rel}: {_ex}")
+            _t = _th.Thread(target=_baixar_e_aplicar, daemon=True)
+            _t.start()
+            _t.join(timeout=60)
+            _ok = all(r["ok"] for r in _resultados)
+            self._send(200, _js.dumps({"ok": _ok, "arquivos": _resultados}).encode())
+
         else: self._send(404,b'{"erro":"nao encontrado"}')
     def do_POST(self):
         path=urlparse(self.path).path

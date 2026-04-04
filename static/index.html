@@ -1011,6 +1011,11 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 .hl{background:rgba(251,191,36,.25);border-radius:2px}
 .cm-wrap.has-errors .CodeMirror{border-left:2px solid var(--red-dim)}
 .cm-wrap.ok .CodeMirror{border-left:2px solid var(--accent2)}
+
+@keyframes slideInRight {
+  from { opacity:0; transform:translateX(20px); }
+  to   { opacity:1; transform:translateX(0); }
+}
 </style>
 </head>
 <body>
@@ -5257,6 +5262,118 @@ function _verificarNotificacoes() {
 // ════════════════════════════════════════════════════════
 // INICIALIZAÇÃO — carrega dados e inicia o sistema
 // ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// AUTO-UPDATER — verifica GitHub e aplica atualizações
+// ════════════════════════════════════════════════════════
+let _updateDisponivel = false;
+let _updateInfo       = null;
+
+async function _verificarAtualizacao() {
+  try {
+    const r = await fetch('/api/check-update');
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.tem_atualizacao) {
+      _updateDisponivel = true;
+      _updateInfo = d;
+      _mostrarBannerUpdate(d);
+    }
+  } catch { /* sem internet ou servidor ocupado */ }
+}
+
+function _mostrarBannerUpdate(info) {
+  // Remover banner anterior se existir
+  document.getElementById('update-banner')?.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.style.cssText = `
+    position:fixed;bottom:20px;right:20px;z-index:9999;
+    background:var(--bg2);border:1px solid var(--accent);border-radius:10px;
+    padding:14px 18px;max-width:340px;
+    box-shadow:0 8px 32px rgba(0,0,0,.4);
+    animation:slideInRight .3s ease;
+  `;
+  banner.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div style="font-size:22px;flex-shrink:0">🔄</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:3px">
+          Nova versão disponível!
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">
+          v${escH(info.versao_local)} → <strong style="color:var(--text)">v${escH(info.versao_remota)}</strong>
+          ${info.data_remota ? ` · ${escH(info.data_remota)}` : ''}
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="_aplicarAtualizacao(this)"
+            style="flex:1;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;
+              background:var(--accent);color:#000;font-size:11px;font-weight:600;
+              transition:opacity .15s"
+            onmouseover="this.style.opacity='.85'"
+            onmouseout="this.style.opacity='1'">
+            ↓ Atualizar agora
+          </button>
+          <button onclick="document.getElementById('update-banner').remove()"
+            style="padding:5px 10px;border-radius:6px;
+              border:1px solid var(--border);cursor:pointer;
+              background:transparent;color:var(--text2);font-size:11px;
+              transition:background .15s"
+            onmouseover="this.style.background='var(--bg3)'"
+            onmouseout="this.style.background='transparent'">
+            Depois
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(banner);
+}
+
+async function _aplicarAtualizacao(btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳ Atualizando…';
+
+  const banner = document.getElementById('update-banner');
+  const statusEl = banner?.querySelector('[data-status]') ||
+    (() => {
+      const el = document.createElement('div');
+      el.dataset.status = '1';
+      el.style.cssText = 'font-size:10px;color:var(--muted2);margin-top:8px;font-family:var(--mono)';
+      banner?.appendChild(el);
+      return el;
+    })();
+
+  statusEl.textContent = 'Baixando arquivos do GitHub…';
+
+  try {
+    const r = await fetch('/api/aplicar-update', {method:'POST'});
+    const d = await r.json();
+
+    if (d.ok) {
+      // Mostrar resultado
+      const sucessos = d.arquivos.filter(a => a.ok).length;
+      statusEl.textContent = `✔ ${sucessos} arquivo(s) atualizado(s)`;
+      btn.textContent = '✔ Atualizado!';
+      btn.style.background = 'var(--accent)';
+
+      // Recarregar a página após 2s para aplicar o novo index.html
+      setTimeout(() => {
+        toast('Atualização aplicada! Recarregando…', 2000);
+        setTimeout(() => location.reload(true), 2000);
+      }, 1000);
+    } else {
+      statusEl.textContent = '✗ Erro ao atualizar — tente novamente';
+      btn.disabled = false;
+      btn.textContent = '↓ Tentar novamente';
+    }
+  } catch (ex) {
+    statusEl.textContent = '✗ Erro de conexão';
+    btn.disabled = false;
+    btn.textContent = '↓ Tentar novamente';
+  }
+}
+
 function _inicializar() {
   // Dados de leiaute e rejeições já embutidos no HTML (LEIAUTE_DATA, REJEICOES_DATA)
   applyStoredTheme();
@@ -5272,6 +5389,8 @@ function _inicializar() {
   // Verificar atualizações com delay (não bloquear inicialização)
   setTimeout(_checarAtualizacao, 10000);
   setInterval(_checarAtualizacao, _UPDATE_CHECK_INTERVAL);
+  // Auto-updater GitHub — verifica após 8s do carregamento
+  setTimeout(_verificarAtualizacao, 8000);
   // Verificar hot-reload de schemas a cada 15s
   setTimeout(() => { _checarHotReload(); setInterval(_checarHotReload, 15000); }, 5000);
 }
