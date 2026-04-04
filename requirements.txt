@@ -1,0 +1,3 @@
+# Validador NFS-e Nacional — dependências
+# Única dependência externa necessária (Python 3.x nativo para o resto)
+lxml>=5.0.0

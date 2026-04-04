@@ -1,0 +1,2690 @@
+{
+  "E1200": {
+    "msg": "Certificado de Transmissão Inválido",
+    "campo": "Certificado de Transmissor Inválido:\n- Certificado de Transmissor inexistente na mensagem\n- Versão d",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1203": {
+    "msg": "Certificado de Transmissão expirado",
+    "campo": "Validade do Certificado (data início e data fim)",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1205": {
+    "msg": "Certificado de Transmissão - Erro Cadeira de Certificação",
+    "campo": "Verifica a Cadeia de Certificação:\n- Certificado da AC emissora não cadastrado na RFB\n- Certificado ",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1206": {
+    "msg": "Certificado de Transmissão - Erro de acesso a LCR",
+    "campo": "LCR do Certificado de Transmissor\n- Falta o endereço da LCR (CRL DistributionPoint)\n- LCR indisponív",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1207": {
+    "msg": "Certificado de Transmissão revogado",
+    "campo": "Certificado do Transmissor revogado",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1208": {
+    "msg": "Certificado de Transmissão difere da ICP - Brasil",
+    "campo": "Certificado Raiz difere da \"ICP-Brasil\"",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1209": {
+    "msg": "Certificado de Transmissão sem CNPJ ou CPF.",
+    "campo": "Falta a extensão de CNPJ ou CPF no Certificado (OtherName - OID=2.16.76.1.3.3)",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1225": {
+    "msg": "Falha na decodificação da base 64 da área de dados",
+    "campo": "Falha na descompactado da base 64.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1226": {
+    "msg": "Estrutura descompactada mal formada.",
+    "campo": "Estrutura descompactada mal formada.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1242": {
+    "msg": "Tipo DF-e não tratado pelo Sistema Nacional NFS-e.",
+    "campo": "Validar os tipos de DF-e tratados pelo Sistema Nacional NFS-e.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1228": {
+    "msg": "Uso de prefixo de namespace não permitido na área de dados descompactada.",
+    "campo": "Uso de prefixo de namespace não permitido na área de dados descompactada.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1229": {
+    "msg": "XML não está utilizando codificação UTF8.",
+    "campo": "XML não está utilizando codificação UTF8.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1235": {
+    "msg": "Falha no esquema XML do DF-e.",
+    "campo": "Falha no esquema XML do DF-e.",
+    "efeito": "Rej.",
+    "sheet": "RN_RECEPCAO_DPS"
+  },
+  "E1260": {
+    "msg": "O prazo de aceitação da versão do leiaute da NFS-e expirou.",
+    "campo": "NFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1263": {
+    "msg": "Conteúdo informado no identificador da NFS-e difere da concatenação dos campos correspondentes que formam o identificador.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1268": {
+    "msg": "Chave de acesso informada para a NFS-e já foi compartilhada com o ADN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1301": {
+    "msg": "Não é permitido informar o código do local de incidência quando o campo referente à tributação do ISSQN indicar imunidade, exportação ou não incidência.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1305": {
+    "msg": "É obrigatório informar  o código do local de incidência quando o campo referente à tributação do ISSQN indicar Operação Tributável.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1309": {
+    "msg": "O código do local de incidência do ISSQN não existe conforme a tabela de municípios IBGE ou tabela de concessões de rodovia ou tabela de localidade geral no ANEXO_A-MUNICIPIO_IBGE-PAISES_ISO2-SNNFSe.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1313": {
+    "msg": "A localidade de incidência para o ISSQN deve corresponder ao município do estabelecimento/domicílio do prestador do serviço, quando não for informado o código de tributação nacional (cTribNac) 200101, da lista nacional de serviços do Sistema Nacional NFS-e, e a localidade de prestação do serviço cor",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1317": {
+    "msg": "O local de incidência do ISSQN deve ser igual ao município da prestação do serviço (NFSe/infNFSe/DPS/infDPS/serv/locPrest/cLocPrestacao)\n do serviço informado na NFS-e compartilhada pelo município, quando informado qualquer código de tributação nacional cuja regra de incidência indique o local da pr",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1321": {
+    "msg": "O local de incidência do ISSQN deve ser igual ao município do endereço do tomador do serviço informado na NFS-e compartilhada pelo município (NFSe/infNFSe/DPS/infDPS/toma/end/endNac/cMun).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1325": {
+    "msg": "O local de incidência do ISSQN deve ser igual ao município do endereço do prestador (NFSe/infNFSe/DPS/infDPS/prest/end/endNac/cMun)\ndo serviço informado na NFS-e compartilhada pelo município, quando informado qualquer código de tributação nacional cuja regra de incidência indique o município do esta",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1327": {
+    "msg": "É obrigatório informar a descrição do local de incidência quando o código do local de incidência (cLocIncid) for informado.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1329": {
+    "msg": "Não é permitido informar a descrição do local de incidência quando o código do local de incidência (cLocIncid) não for informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1274": {
+    "msg": "O ambiente gerador da NFS-e não está de acordo com a definição 1 (Sistema Próprio do Município) ou 2 (Sefin Nacional).",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1276": {
+    "msg": "A informação do processo de emissão de NFS-e é exclusiva para notas emitidas pela Sefin Nacional NFS-e. O município não deve informar este campo nas NFS-e compartilhadas com o ADN NFS-e.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1278": {
+    "msg": "A data e hora do processamento (geração) da NFS-e deve ser anterior ou igual à data da recepção pelo Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1280": {
+    "msg": "CNPJ informado para o emitente da NFS-e é inválido (verificar DV).",
+    "campo": "NFSe/infNFSe/emit/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1282": {
+    "msg": "O CNPJ do emitente não corresponde ao CNPJ do informado conforme o tipo de emitente informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1284": {
+    "msg": "CPF informado para o emitente da NFS-e é inválido (verificar DV).",
+    "campo": "NFSe/infNFSe/emit/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1285": {
+    "msg": "O CPF do emitente não corresponde ao CPF do informado conforme o tipo de emitente informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1286": {
+    "msg": "O código do município do emitente da NFS-e difere do código do municipio emissor informado na NFS-e.",
+    "campo": "NFSe/infNFSe/emit/enderNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1302": {
+    "msg": "Exceto para o campo vLiq, não é permitido informar os demais campos do grupo valores para prestador de serviço optante do simples nacional do tipo MEI.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1303": {
+    "msg": "Exceto para o campo vLiq, não é permitido informar os demais campos do grupo valores quando o campo referente à tributação do ISSQN indicar imunidade, exportação ou não incidência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1307": {
+    "msg": "Exceto para o campo vLiq, não é permitido informar os demais campos do grupo valores quando o prestador de serviço possui algum regime especial de tributação.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1311": {
+    "msg": "Exceto para o campo vLiq, não é permitido informar os demais campos do grupo valores quando a exigibilidade da tributação do ISSQN estiver suspensa por decisão judicial ou administrativa.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1287": {
+    "msg": "O valor calculado de dedução/redução não corresponde aos valores de (valor do serviço x percentual de dedução/redução), quando pDR é informado na DPS ou ao somatório dos valores do campo vDeducaoReducao, quando um ou mais documentos são informados para dedução/redução da base de cálculo do ISSQN.",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1288": {
+    "msg": "O valor calculado do percentual de reduçãõ da base de cálculo por Benefício Municipal não corresponde aos valores de (valor do serviço x percentual de benefício municipal), quando pRedBCBM é informado na DPS.",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1295": {
+    "msg": "O valor da base cálculo deve ser igual ao valor do serviço menos desconto incondicionado e, valores monetários de dedução/redução e benefício municipal e valores relativos ao fornecimento próprio de bens materiais ou relacionados a operações de terceiros, objeto de reembolso, repasse ou ressarciment",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1297": {
+    "msg": "O valor BC calculado não pode estar reduzida de forma que resulte para valor do ISSQN a uma alíquota efetiva menor que 2%, exceto para os códigos relativos aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202, 100101, 100102, 100103, 100104, 100105, 100201, 100202, 10",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1300": {
+    "msg": "Não é permitido informar alíquota aplicada superior a 5%.",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1289": {
+    "msg": "O produto do valor da base de cálculo pela alíquota aplicada, ambos informados na NFS-e compartilhada, não está de acordo com o resultado cálculado pelo sistema (vBC x pAliAplic).",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1506": {
+    "msg": "Valor total de tributos retidos da NFS-e incorreto.",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1508": {
+    "msg": "Valor líquido da NFS-e incorreto.",
+    "campo": "NFSe/infNFSe/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1515": {
+    "msg": "É obrigatório informar o grupo de informações de IBS/CBS da NFS-e quando o grupo de informações de IBS/CBS da DPS for informado.",
+    "campo": "NFSe/infNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1517": {
+    "msg": "Não é permitido informar o grupo de informações de IBS/CBS da NFS-e quando o grupo de informações de IBS/CBS da DPS não for informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1521": {
+    "msg": "Código da localidade de incidência diverge do que deveria ser informado de acordo com a tabela de indicador da operação.",
+    "campo": "NFSe/infNFSe/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1522": {
+    "msg": "O percentual redutor para compras governamentais (IBS/CBS) não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1523": {
+    "msg": "O percentual redutor para compras governamentais (IBS/CBS) deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1530": {
+    "msg": "Valor da Base de cálculo para IBS/CBS incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1531": {
+    "msg": "O valor objeto de reembolso, repasse ou ressarcimento já tributados que não integram da base de cálculo do ISSQN, do IBS e da CBS (vCalcReeRepRes) não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1533": {
+    "msg": "O valor objeto de reembolso, repasse ou ressarcimento já tributados que não integram da base de cálculo do ISSQN, do IBS e da CBS (vCalcReeRepRes) deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1534": {
+    "msg": "O valor objeto de reembolso, repasse ou ressarcimento já tributados que não integram da base de cálculo do ISSQN, do IBS e da CBS (vCalcReeRepRes) deve ser menor que o valor do serviço prestado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1535": {
+    "msg": "O valor objeto de reembolso, repasse ou ressarcimento já tributados que não integram da base de cálculo do ISSQN, do IBS e da CBS (vCalcReeRepRes) incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1539": {
+    "msg": "Alíquota da UF para IBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/uf/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1540": {
+    "msg": "O percentual redutor de alíquota para o IBS estadual não deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/uf/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1541": {
+    "msg": "O percentual redutor de alíquota para o IBS estadual deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1543": {
+    "msg": "O percentual redutor de alíquota para o IBS estadual informado difere do indicado para o o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1557": {
+    "msg": "Percentual redutor de alíquota para o IBS estadual incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1577": {
+    "msg": "Alíquota efetiva da UF para IBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/uf/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1578": {
+    "msg": "Alíquota do Município para IBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/mun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1545": {
+    "msg": "O percentual redutor de alíquota para o IBS municipal não deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/mun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1546": {
+    "msg": "O percentual redutor de alíquota para o IBS municipal deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1547": {
+    "msg": "O percentual redutor de alíquota para o IBS municipal informado difere do indicado para o o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1548": {
+    "msg": "Percentual de redução de alíquota municipal incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1549": {
+    "msg": "Alíquota efetiva do Município para IBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/mun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1558": {
+    "msg": "Alíquota da União para CBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/fed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1550": {
+    "msg": "O percentual redutor de alíquota para a CBS não deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/fed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1551": {
+    "msg": "O percentual redutor de alíquota para a CBS deve ser informado para o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1552": {
+    "msg": "O percentual redutor de alíquota para a CBS informado difere do indicado para o o código da classificação tributária - cClassTribIBSCBS informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1553": {
+    "msg": "Percentual redutor de alíquota para a CBS incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1554": {
+    "msg": "Alíquota efetiva da União para CBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/valores/fed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1555": {
+    "msg": "Valor total da NFS-e está incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1556": {
+    "msg": "Valor total do IBS incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1560": {
+    "msg": "Grupo crédito presumido para IBS não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1561": {
+    "msg": "Grupo crédito presumido para IBS deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1565": {
+    "msg": "Valor do diferimento para o IBS estadual não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/gIBSUFTot/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1566": {
+    "msg": "Valor do diferimento para o IBS estadual deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1567": {
+    "msg": "Valor do diferimento para o IBS estadual incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1568": {
+    "msg": "Valor total do IBS estadual incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/gIBSUFTot/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1569": {
+    "msg": "Valor do diferimento para o IBS municipal não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/gIBSMunTot/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1570": {
+    "msg": "Valor do diferimento para o IBS municipal deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1571": {
+    "msg": "Valor do diferimento para o IBS municipal incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1572": {
+    "msg": "Valor total do IBS municipal incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gIBS/gIBSMunTot/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1575": {
+    "msg": "Grupo crédito presumido para CBS não deve ser informado.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1576": {
+    "msg": "Grupo crédito presumido para CBS deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1580": {
+    "msg": "Valor do diferimento para a CBS deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1581": {
+    "msg": "Valor do diferimento para a CBS incorreto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1582": {
+    "msg": "Valor total da CBS da União incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1583": {
+    "msg": "Grupo de tributação regular não deve ser informado para o cClassTribIBSCBS indicado.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1584": {
+    "msg": "Grupo de tributação regular deve ser informado para o cClassTribIBSCBS indicado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1585": {
+    "msg": "Alíquota efetiva de tributação regular do IBS estadual incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1586": {
+    "msg": "Valor da tributação regular do IBS estadual incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1587": {
+    "msg": "Alíquota efetiva de tributação regular do IBS municipal incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1588": {
+    "msg": "Valor da tributação regular do IBS municipal incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1589": {
+    "msg": "Alíquota efetiva de tributação regular da CBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1590": {
+    "msg": "Valor da tributação regular da CBS incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1600": {
+    "msg": "Grupo de compras governamentais não deve ser informando quando o tpEnteGov não foi informado na DPS.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1601": {
+    "msg": "Grupo de compras governamentais deve ser informando quando o tpEnteGov não foi informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1602": {
+    "msg": "Alíquota do IBS de competência do Estado incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1603": {
+    "msg": "Valor do Tributo do IBS da UF incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1604": {
+    "msg": "Alíquota do IBS de competência do\nMunicípio incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1605": {
+    "msg": "Valor do Tributo do IBS do Município incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1606": {
+    "msg": "Alíquota da CBS incorreta.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1607": {
+    "msg": "Valor do Tributo da CBS incorreto.",
+    "campo": "NFSe/infNFSe/IBSCBS/totCIBS/gTribCompraGov",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0001": {
+    "msg": "O prazo de aceitação da versão do leiaute da DPS expirou.",
+    "campo": "NFSe/infNFSe/DPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0004": {
+    "msg": "Conteúdo do identificador informado na DPS difere da concatenação dos campos correspondentes.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0006": {
+    "msg": "Ambiente informado diverge do ambiente de recebimento para o qual o emitente enviou a DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0008": {
+    "msg": "A data e hora de emissão da DPS deve ser anterior ou igual à data do seu processamento (dhProc) pelo Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1294": {
+    "msg": "Prazo para entrega da DF-e excedido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0010": {
+    "msg": "A série informada na DPS não pertence à faixa definida para o tipo de emissor utilizado para a sua emissão.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0014": {
+    "msg": "Conjunto de Série, Número, Código do Município Emissor e CNPJ/CPF informado nesta DPS já existe em uma NFS-e gerada a partir de uma DPS enviada anteriormente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0015": {
+    "msg": "A data de competência informada na DPS não pode ser posterior à data de emissão (dhEmi) da DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0016": {
+    "msg": "A data de competência deve ser igual ou posterior à data de ativação do convênio do município emissor informado na DPS, exceto quando o emitente for MEI na data de competëncia informada.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1270": {
+    "msg": "A data de competência deve ser igual ou posterior à data de ativação do convênio do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0018": {
+    "msg": "A data de competência informada na DPS deve ser igual ou posterior à data de inscrição do CNPJ do emitente no cadastro CNPJ.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0020": {
+    "msg": "A data de competência informada na DPS deve ser igual ou posterior à data de inscrição do CPF do emitente no cadastro CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0023": {
+    "msg": "A data de competência informada na DPS deve ser igual ou posterior à data do indicador municipal, registrada no CNC do município correspondente ao município emissor da DPS (cLocEmi).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0025": {
+    "msg": "A data de competência informada na DPS deve ser igual ou posterior à data autorizasção de uso do emissores, registrada no CNC do município correspondente ao município emissor da DPS (cLocEmi) para o contribuinte.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E9996": {
+    "msg": "Nesta versão da aplicação, não é permitida a emissão de NFS-e pelo tomador ou intermediário.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0029": {
+    "msg": "O motivo da emissão não pode ser preenchido se o emitente for o prestador de serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0031": {
+    "msg": "Não pode haver retenção do ISSQN pelo tomador quando o município de incidência não for o do tomador.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0032": {
+    "msg": "Não pode haver retenção do ISSQN pelo intermediário quando o município de incidência não for o do intermediário.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0034": {
+    "msg": "Somente é permitido o preenchimento do campo de chave de acesso de NFS-e rejeitada se o tipo de emitente for Tomador ou Intermediário e o motivo da emissao for por rejeição de NFS-e emitida pelo prestador.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0035": {
+    "msg": "A chave de acesso de NFS-e informada nesta DPS não possui a ela vinculada o evento de manifestação de rejeição emitido pelo mesmo emitente desta DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0037": {
+    "msg": "O código do município emissor informado na DPS é inexistente no cadastro de convênio municipal do sistema nacional.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0038": {
+    "msg": "A situação do convênio do município emissor informado na DPS deve ser \"ATIVO\" no cadastro de convênio municipal do sistema nacional.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0039": {
+    "msg": "O município emissor informado na DPS deve estar parametrizado para utilizar os emissores públicos nacionais, conforme parametrização do município no Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0041": {
+    "msg": "O município emissor não corresponde ao município do emitente MEI no CNPJ.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1304": {
+    "msg": "O código do município emissor da NFS-e não existe conforme tabela do IBGE ou difere do código do municipio que está compartilhando o documento com o ADN do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1272": {
+    "msg": "O código do município informado não existe ou não está ativo no convênio municipal na data de processamento de compartilhamento com o ADN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0042": {
+    "msg": "Chave de NFS-e a ser substituída é inválida.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/subst",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0044": {
+    "msg": "NFS-e não existe na base de dados do autorizador de NFS-e nacional. Informe uma chave de NFS-e existente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0046": {
+    "msg": "Uma NFS-e cancelada não pode ser substituída. Informe uma chave de NFS-e não cancelada anteriormente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0050": {
+    "msg": "Uma NFS-e não pode ser substituída fora do prazo estabelecido pelo município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0056": {
+    "msg": "NFS-e não pode ser substituída pois não possui identificação do tomador.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0058": {
+    "msg": "Não poderá ocorrer a substituição de NFS-e com alteração da identificação do não emitente, conforme parametrização do município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0060": {
+    "msg": "Os campos data de competência, subitem da lista nacional de serviços, código complementar municipal e local da prestação não podem ser alterados quando a opção do simples nacional for Não Optante (opSimpNac = 1).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0061": {
+    "msg": "Os campos identificação do Tomador (se identificado na DPS), data de competência (dCompet), e valor do serviço (vServ), não podem ser alterados quando a opção do simples nacional for MEI (opSimpNac = 2) ou ME/EPP (opSimpNac = 3).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0065": {
+    "msg": "Não é possível substituição da NFS-e que tenha sido gerada em ambientes geradores diferentes.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0068": {
+    "msg": "Não é possível a substituição desta NFS-e pois a mesma possui registro de Evento de Solicitação de Análise Fiscal para Cancelamento de NFS-e aguardando resposta. Para mais informações, consultar a Administração Tributária Municipal do município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0070": {
+    "msg": "Não é possível a substituição desta NFS-e pois já ocorreu uma manifestação de confirmação de serviço. Para mais informações, consultar a Administração Tributária Municipal do município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0072": {
+    "msg": "Não é possível a substituição desta NFS-e pois já ocorreu uma manifestação tácita da NFS-e. Para mais informações, consultar a Administração Tributária Municipal do município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0074": {
+    "msg": "Não é permitido realizar a substituição para NFS-e que possua Evento de Tributos Recolhidos vinculado, conforme parametrização do município de incidência do ISSQN. Para mais informações, consultar a Administração Tributária Municipal do município emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0076": {
+    "msg": "Não é permitido realizar a substituição para NFS-e que possua Evento de Bloqueio de Ofício para o Evento de Cancelamento de NFS-e por Substituição vigente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1308": {
+    "msg": "NFS-e a ser substituída não possui um evento de Cancelamento por substituição compartilhado com o ADN e por isso não pode ser substituída.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1310": {
+    "msg": "O identificador desta NFS-e substituta não está referenciado no evento de Cancelamento por substituição da NFS-e substituída.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0078": {
+    "msg": "Quando o campo cMotivo = 99, o campo xMotivo deve informado obrigatoriamente.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/subst",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0080": {
+    "msg": "CNPJ do prestador informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0082": {
+    "msg": "CNPJ do emitente prestador não encontrado no cadastro CNPJ na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0084": {
+    "msg": "CNPJ do emitente prestador não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme cadastros CNPJ e CNC NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0096": {
+    "msg": "CPF do prestador informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0098": {
+    "msg": "CPF do emitente prestador não encontrado no cadastro CPF na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0099": {
+    "msg": "CPF do emitente prestador não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme  cadastro nacional complementar NFS-e (cLocEmi + CPF + IM informados na DPS para o prestador devem existir no CNC NFS-e).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0112": {
+    "msg": "O prestador de serviço, quando emitente da DPS, não pode ser identificado pelo NIF.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0113": {
+    "msg": "O NIF ou cNaoNIF do prestador deve ser informado quando o grupo de informações de endereço no exterior do prestador de serviços foi informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0114": {
+    "msg": "O prestador de serviço, quando emitente da DPS, somente pode ser identificado pelo CNPJ ou CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0115": {
+    "msg": "Valor 0 para o motivo da não informação do NIF do prestador não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0116": {
+    "msg": "A IM deve ser informada para o emitente prestador do serviço na DPS, conforme informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0119": {
+    "msg": "IM do emitente prestador não está autorizado a emitir NFS-e, conforme informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0120": {
+    "msg": "IM do prestador não deve ser informado, pois não existem informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0124": {
+    "msg": "O IM informado está inativo no CNC NFS-e do município emissor para a data de competência informada na DPS. ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0121": {
+    "msg": "O nome ou razão social do prestador não deve ser informado quando o emitente da DPS for o próprio prestador.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0122": {
+    "msg": "O nome ou razão social do prestador deve ser informado quando o emitente da DPS não for o próprio prestador.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0123": {
+    "msg": "O preenchimento do nome empresarial é obrigatório quando o prestador for identificado com NIF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0129": {
+    "msg": "O endereço do prestador deve ser informado na DPS quando o prestador não for o emitente da DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0128": {
+    "msg": "O endereço do prestador do serviço não deve ser informado na DPS quando o próprio prestador for o emitente da DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0125": {
+    "msg": "O endereço nacional do prestador do serviço deve ser informado na DPS quando for identificado pelo CNPJ ou CPF e o emitente da DPS for o tomador ou intermediário.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0130": {
+    "msg": "O código do município para o endereço do prestador do serviço não existe conforme tabela de município do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0132": {
+    "msg": "O código do município informado na DPS para o endereço do prestador do serviço, identificado pelo CNPJ, não corresponde ao município registrado em seus cadastros na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0134": {
+    "msg": "O código do município informado na DPS para o endereço do prestador do serviço, identificado pelo CPF, não corresponde ao município registrado em seus cadastros na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0138": {
+    "msg": "O CEP informado para o endereço nacional do prestador do serviço não existente ou não pertence ao município informado na DPS. Informe um CEP existente e que pertença ao município informado para o endereço do prestador do serviço na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0142": {
+    "msg": "O grupo de informações de endereço no exterior deve ser informado obrigatoriamente quando o prestador for identificado pelo NIF e o emitente por CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0146": {
+    "msg": "O código de país informado para o endereço no exterior do prestador do serviço não existe ou é igual ao código do Brasil. Informe um código de país existente e diferente do codigo do Brasil (BR) para o endereço no exterior do prestador do serviço, conforme tabela de país ISO2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/end/endExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0148": {
+    "msg": "Email inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0160": {
+    "msg": "No mês de competência da NFS-e, a opção de situação perante o Simples Nacional, do prestador, informada na DPS não está de acordo com o cadastro Simples Nacional.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/regTrib/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0161": {
+    "msg": "NFS-e cujo emitente for MEI somente poderá ser compartilhada pelo município com o ADN se a data de competência, informada na NFS-e, for menor ou igual a 31/08/2023.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0162": {
+    "msg": "Não é permitido ao não optante do Simples Nacional e o MEI preencherem o campo de indicação do regime de apuração dos tributos apurados.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/regTrib/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0166": {
+    "msg": "É obrigatorio o preenchimento do campo de regime de apuração dos tributos do SN para o optante do Simples Nacional ME/EPP.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0172": {
+    "msg": "O Regime Especial de Tributação deve ser \"Nenhum\" (regEspTrib = 0) quando o serviço prestado for diferente de Tributável (tribISSQN = 1), ou seja, tribISSQN = 2, 3 ou 4.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/prest/regTrib/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0174": {
+    "msg": "Quando o prestador da NFS-e é MEI (opSimpNac = 2) o regime especial de tributação deve ser \"Nenhum\" (regEspTrib = 0).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0175": {
+    "msg": "Quando o prestador optante pelo Simples Nacional tiver o regime de apuração dos tributos ocorrendo também pelo Simples Nacional, o regime especial de tributação do ISSQN deve ser \"Nenhum\" (regEspTrib = 0).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0177": {
+    "msg": "Regime especial de tributação informado na DPS não é admitido na parametrização do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0176": {
+    "msg": "É permitido informar Profissional Autônomo na DPS somente se o prestador de serviço estiver parametrizado como Profissional Autônomo, na data de competência informada na DPS, em pelo menos um dos municípios, emissor ou de incidência do ISSQN (cLocIncid ou cLocEmi) ou se estiver admitido sem verifica",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0178": {
+    "msg": "Regime especial de tributação não permitido para o prestador do serviço com código de tributação na data de competência, informados na DPS, conforme parametrização do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0187": {
+    "msg": "O grupo de informações relativas ao tomador/adquirente do serviço é obrigatório para o indicador de operação informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0188": {
+    "msg": "CNPJ do tomador informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0190": {
+    "msg": "CNPJ do tomador não encontrado no cadastro CNPJ.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0194": {
+    "msg": "CNPJ do emitente tomador não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme cadastros CNPJ e CNC NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0202": {
+    "msg": "Na emissão da NFS-e não é permitido que o prestador do serviço seja igual ao tomador do serviço. ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0204": {
+    "msg": "CNPJ ou CPF do tomador não foi informado, mas existe uma indicação para retenção do ISSQN na DPS no campo de tipo de \"Retenção do ISSQN\".",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0206": {
+    "msg": "CPF do tomador informado na DPS é inválido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0207": {
+    "msg": "CPF do tomador não encontrado no cadastro CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0212": {
+    "msg": "CPF do emitente tomador não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme cadastros CPF e CNC NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0222": {
+    "msg": "O tomador de serviço, quando emitente da DPS, não pode ser identificado pelo NIF.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0223": {
+    "msg": "O NIF ou cNaoNIF do tomador deve ser informado quando o grupo de informações de endereço no exterior do tomador de serviços foi informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0224": {
+    "msg": "O tomador de serviço, quando emitente da DPS, somente pode ser identificado pelo CNPJ ou CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0226": {
+    "msg": "Valor 0 para o motivo da não informação do NIF do tomador não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0228": {
+    "msg": "A IM deve ser informada para o emitente tomador do serviço na DPS, conforme informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0231": {
+    "msg": "IM do emitente tomador não está autorizado a emitir NFS-e, conforme informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0232": {
+    "msg": "IM do tomador não deve ser informado, pois não existem informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0229": {
+    "msg": "O IM informado está inativo no CNC NFS-e do município emissor para a data de competência informada na DPS. ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0233": {
+    "msg": "O nome tomador deve ser preenchido obrigatoriamente quando o NIF do tomador for preenchido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0234": {
+    "msg": "O endereço do tomador é obrigatório para o indicador de operação informado ou quando a incidência do ISSQN definida para o serviço prestado ocorrer no local do estabelecimento/domicílio do tomador.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0235": {
+    "msg": "O endereço nacional do tomador do serviço deve ser informado na DPS quando o tomador for identificado pelo CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0236": {
+    "msg": "O endereço nacional do tomador do serviço não deve ser informado na DPS quando o próprio tomador do serviço for o emitente da DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0237": {
+    "msg": "O endereço nacional do tomador do serviço deve ser informado na DPS quando o valor do ISSQN for retido pelo tomador, exceto se o emitente da DPS é o próprio tomador do serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0238": {
+    "msg": "O código do município informado na DPS para o endereço do tomador do serviço não existe conforme tabela de município do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0240": {
+    "msg": "O CEP informado para o endereço nacional do tomador do serviço não existe ou não pertence ao município do endereço do tomador.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0242": {
+    "msg": "O grupo de informações de endereço no exterior deve ser informado obrigatoriamente quando o tomador for identificado pelo NIF e o emitente por CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0246": {
+    "msg": "O código de país informado para o endereço no exterior do tomador do serviço não existe ou é igual ao código do Brasil. Informe um código de país existente e diferente do codigo do Brasil (BR) para o endereço no exterior do tomador do serviço, conforme tabela de país ISO2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/end/endExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0247": {
+    "msg": "Email inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/toma/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0248": {
+    "msg": "CNPJ do intermediário informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0250": {
+    "msg": "CNPJ do intermediário não encontrado no cadastro CNPJ.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0254": {
+    "msg": "CNPJ do emitente intermediário não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme cadastros CNPJ e CNC NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0262": {
+    "msg": "Na emissão da NFS-e não é permitido que o prestador do serviço seja igual ao intermediário do serviço. ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0264": {
+    "msg": "CNPJ ou CPF do intermediário não foi informado, mas existe uma indicação para retenção do ISSQN na DPS no campo de tipo de \"Retenção do ISSQN\".",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0266": {
+    "msg": "CPF do intermediário informado na DPS é inválido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0268": {
+    "msg": "CPF do intermediário não encontrado no cadastro CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0272": {
+    "msg": "CPF do emitente intermediário não possui estabelecimento ou domicílio em um município correspondente ao município emissor, na data de competência informada na DPS, conforme cadastros CPF e CNC NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0280": {
+    "msg": "O intermediário de serviço, quando emitente da DPS, não pode ser identificado pelo NIF.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0281": {
+    "msg": "O NIF ou cNaoNIF do intermediário deve ser informado quando o grupo de informações de endereço no exterior do intermediário de serviços foi informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0284": {
+    "msg": "O intermediário de serviço, quando emitente da DPS, somente pode ser identificado pelo CNPJ ou CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0286": {
+    "msg": "Valor 0 para o motivo da não informação do NIF do intermediário não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0287": {
+    "msg": "A IM não foi informada para o emitente intermediário do serviço na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0289": {
+    "msg": "IM do emitente intermediário não está autorizado a emitir NFS-e, conforme informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0290": {
+    "msg": "IM do intermediário não deve ser informado, pois não existem informações complementares registradas no CNC NFS-e do município emissor informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0288": {
+    "msg": "O IM informado está inativo no CNC NFS-e do município emissor para a data de competência informada na DPS. ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0292": {
+    "msg": "O nome intermediário deve ser preenchido obrigatoriamente quando o NIF do intermediário for preenchido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1388": {
+    "msg": "O endereço nacional do intermediário do serviço deve ser informado na DPS quando o intermediário for identificado pelo CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0291": {
+    "msg": "O endereço nacional do intermediário do serviço não deve ser informado na DPS quando o próprio tomador do serviço for o emitente da DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0293": {
+    "msg": "O endereço nacional do intermediário do serviço deve ser informado na DPS quando o valor do ISSQN for retido pelo intermediário, exceto se o emitente da DPS é o intermediário do serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0294": {
+    "msg": "O código do município informado na DPS para o endereço do intermediário do serviço não existe conforme tabela de município do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0296": {
+    "msg": "O CEP informado para o endereço nacional do intermediário do serviço não existe ou não pertence ao município do endereço do intermediário.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0298": {
+    "msg": "O grupo de informações de endereço no exterior deve ser informado obrigatoriamente quando o intermediário for identificado pelo NIF e o emitente por CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0299": {
+    "msg": "O código de país informado para o endereço no exterior do intermediário do serviço não existe ou é igual ao código do Brasil. Informe um código de país existente e diferente do codigo do Brasil (BR) para o endereço no exterior do intermediário do serviço, conforme tabela de país ISO2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/end/endExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0300": {
+    "msg": "Email inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/interm/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0302": {
+    "msg": "O código do local da prestação do serviço não existe conforme a tabela de municípios IBGE disponibilizada no ANEXO_A-MUNICIPIO_IBGE-PAISES_ISO2-SNNFSe.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/locPrest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1402": {
+    "msg": "Quando é informado o subitem 200101 para o código de tributação nacional (cTribNac), não é permitido informar 0000000, que representa \"Águas Marítimas\", para o local de prestação do serviço (cLocPrestacao).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0304": {
+    "msg": "Informe um código de país existente diferente de Brasil (BR), conforme tabela de país ISO2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/locPrest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0310": {
+    "msg": "O código de tributação nacional informado não existe ou não está administrado pelo município de incidência do ISSQN na data de competência informada na DPS, \nconforme a lista de serviços nacional do Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/cServ/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0312": {
+    "msg": "O código de tributação nacional informado não está administrado pelo município de incidência do ISSQN na data de competência informada na DPS, \nconforme a lista de serviços nacional do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0314": {
+    "msg": "O código de tributação municipal informado não existe ou não está administrado pelo município de incidência do ISSQN na data de competência informada na DPS, ",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/cServ/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0315": {
+    "msg": "Não é permitido informar 000 para o codigo de tributação municipal na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0316": {
+    "msg": "Código da lista NBS informado inexistente tabela de NBS do sistema.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/cServ/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0318": {
+    "msg": "É obrigatório informar na DPS um item da NBS para casos de exportação de serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0320": {
+    "msg": "É obrigatório informar na DPS um item da NBS para casos de importação de serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0322": {
+    "msg": "É obrigatório informar na DPS um item da NBS se for declarada qualquer informação de IBS/CBS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0330": {
+    "msg": "É obrigatório prestar informações de comércio exterior para as situações de exportação de serviços.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0331": {
+    "msg": "É obrigatório prestar informações de comércio exterior para as situações de importação de serviços.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0333": {
+    "msg": "Valor 0 para o modo de prestação não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/comExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0341": {
+    "msg": "Valor 0 para o Mecanismo de apoio/fomento ao Comércio Exterior utilizado pelo prestador do serviço não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/comExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0343": {
+    "msg": "Valor 0 para o Mecanismo de apoio/fomento ao Comércio Exterior utilizado pelo tomador do serviço não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/comExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0345": {
+    "msg": "Valor 0 para o Vínculo da Operação à Movimentação Temporária de Bens não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/comExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0352": {
+    "msg": "O preenchimento do campo nDI (Número da Declaração de Importação) é obrigatório quando o campo (movTempBens) Vínculo da Operação à Movimentação Temporária de Bens for igual a 2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/comExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0354": {
+    "msg": "O preenchimento dos campos nDI (Número da Declaração de Importação) ou do nRE (úmero do Registro de Exportação) não é permitido quando o campo (movTempBens) Vínculo da Operação à Movimentação Temporária de Bens for igual a 1.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0356": {
+    "msg": "O preenchimento do campo nRE (úmero do Registro de Exportação) é obrigatório quando o campo (movTempBens) Vínculo da Operação à Movimentação Temporária de Bens for igual a 3.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0370": {
+    "msg": "O grupo de informações de obra é obrigatório quando o código de tributação nacional pertencer a um dos subitens 07.02.01, 07.02.02, 07.04.01, 07.05,01, 07.05.02, 07.06.01, 07.06.02, 07.07.01, 07.08.01, 07.17.01, 07.19.01, 1414.03 e 14.14.04 da lista de serviços.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0372": {
+    "msg": "O grupo de informações de obra não é permitido quando o código de tributação nacional não pertencer a algum dos subitens 07.02.01, 07.02.02, 07.04.01, 07.05,01, 07.05.02, 07.06.01, 07.06.02, 07.07.01, 07.08.01, 07.17.01, 07.19.01, 1414.03 e 14.14.04 da lista de serviços, com exceção do código 99.01.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0373": {
+    "msg": "Código CIB inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/obra/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0380": {
+    "msg": "Informe um CEP correspondente ao município do local da prestação do serviço informado nesta DPS para indicar corretamente o endereço da obra.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/obra/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0382": {
+    "msg": "O CEP não deve ser informado quando o endereço da obra ocorrer no exterior do país.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0384": {
+    "msg": "O grupo de informações de endereço da atividade de obra ocorrido no exterior deve ser informado quando o país do local da prestação for informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/obra/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0386": {
+    "msg": "O grupo de informações de endereço da atividade de obra ocorrido no exterior não deve ser informado quando o município do local da prestação for informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0390": {
+    "msg": "O grupo de informações de Atividade/Evento é obrigatório quando o código de tributação nacional pertencer ao item 12 da lista de serviços.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0392": {
+    "msg": "O grupo de informações de Atividade/Evento não é permitido quando o código de tributação nacional não pertencer ao item 12 da lista de serviços, com exceção do código 99.01.01.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0398": {
+    "msg": "Informe um CEP correspondente ao município do local da prestação do serviço informado nesta DPS para indicar corretamente o endereço da atividade ou evento.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/atvEvento/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0400": {
+    "msg": "O CEP não deve ser informado quando o endereço da atividade de evento ocorrer no exterior do país.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0402": {
+    "msg": "O grupo de informações de endereço da atividade de evento ocorrido no exterior deve ser informado quando o país do local da prestação for informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/atvEvento/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0404": {
+    "msg": "O grupo de informações de endereço da atividade de evento ocorrido no exterior não deve ser informado quando o município do local da prestação for informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0420": {
+    "msg": "O documento de referência deve ser obrigatoriamente informado quando o emitente da DPS for o tomador ou intermediário do serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/serv/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0423": {
+    "msg": "O valor recebido deve ser informado na DPS quando o intermediário do serviço for o emitente da DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vServPrest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0424": {
+    "msg": "O valor recebido não deve ser informado na DPS quando o prestador ou tomador do serviço for o emitente da DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0425": {
+    "msg": "O valor recebido não pode ser menor que o valor do serviço informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0427": {
+    "msg": "O valor do serviço deve ser maior ou igual ao somatório dos valores informados para Desconto Incondicionado, Deduções/Reduções e Benefício Municipal.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vServPrest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0428": {
+    "msg": "O valor do serviço deve ser maior ou igual ao somatório dos valores informados para Desconto Incondicionado, Desconto Condicionado, Deduções/Reduções, Benefício Municipal, valores de tributos devidos CP, IRRF, CSLL e ISSQN se o valor deste tributo for retido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0429": {
+    "msg": "O ISSQN não pode ser objeto de redução de base de cálculo que resulte em carga tributária menor que a decorrente da aplicação da alíquota mínima de 2,0% do valor do serviço, exceto para os serviços a que se referem aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202,",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0431": {
+    "msg": "O valor do desconto incondicionado informado na DPS deve ser menor que o valor do serviço e maior que zero.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDescCondIncond/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0432": {
+    "msg": "O valor do desconto condicionado informado na DPS deve ser menor que o valor do serviço e maior que zero.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDescCondIncond/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0435": {
+    "msg": "Não é permitido o preenchimento dos campos do grupo de informações relativas à Dedução/Redução do ISSQN quando ocorrer Imunidade, Exportação do serviço ou Não incidência.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0436": {
+    "msg": "Não é permitido o preenchimento dos campos do grupo de informações relativas à Dedução/Redução do ISSQN quando o prestador de serviço é MEI.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0438": {
+    "msg": "Não é permitido o preenchimento dos campos do grupo de informações relativas à Dedução/Redução do ISSQN, quando o prestador de serviço tiver algum regime especial de tributação.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0439": {
+    "msg": "Não é permitido o preenchimento dos campos do grupo de informações relativas à Dedução/Redução do ISSQN, quando o benefício municipal informado na DPS for do tipo \"Isenção\".",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0440": {
+    "msg": "O tipo de dedução/redução informado na DPS não é permitida pelo município de incidência do ISSQN, conforme parametrizações do código de serviço do município de incidência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0441": {
+    "msg": "Não é permitido o preenchimento de informações relativas à Dedução/Redução para o prestador de serviço ME/EPP, apurando pelo SN conforme parametrização do código de serviço admnistrado pelo municipio de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0442": {
+    "msg": "O tipo de dedução/redução informado na DPS não é permitida para o prestador de serviço ME/EPP, apurando pelo SN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0453": {
+    "msg": "O valor percentual para dedução/redução deve ser maior que 0 e menor ou igual a 100%.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0454": {
+    "msg": "Código de serviço informado na DPS não permite dedução/redução na base de cálculo do ISSQN por percentual.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0444": {
+    "msg": "O valor percentual  de dedução/redução informado na DPS não pode reduzir o valor da BC de forma que resulte no valor do ISSQN a uma alíquota efetiva menor que 2%, exceto para os códigos relativos aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202, 100101, 100102, 10",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0446": {
+    "msg": "Código de serviço informado na DPS não permite dedução/redução na base de cálculo do ISSQN por valor monetário.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0447": {
+    "msg": "O valor de dedução/redução informado na DPS não pode reduzir o valor da BC de forma que resulte no valor do ISSQN a uma alíquota efetiva menor que 2%, exceto para os códigos relativos aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202, 100101, 100102, 100103, 100104",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0449": {
+    "msg": "Código de serviço informado na DPS não permite dedução/redução na base de cálculo do ISSQN por documento informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0455": {
+    "msg": "Informe uma chave de NFS-e válida.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0456": {
+    "msg": "NFS-e não existe na base de dados do autorizador de NFS-e nacional. Informe uma chave de NFS-e existente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0458": {
+    "msg": "Uma NFS-e cancelada não pode ser informada para dedução/redução.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0460": {
+    "msg": "Informe uma chave de NF-e válida.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0462": {
+    "msg": "NF-e não existe na base de dados do autorizador de NF-e nacional. Informe uma chave de NF-e existente.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0464": {
+    "msg": "Uma NF-e cancelada não pode ser informada para dedução/redução.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0466": {
+    "msg": "Informe um código de município existente para o documento de nota, conforme tabela de municípios do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/NFSeMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0468": {
+    "msg": "Informar, obrigatoriamente, o campo de descrição no caso ideDedRed igual a 99 – Outras deduções.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0470": {
+    "msg": "Não informar o campo de descrição no caso ideDedRed diferente a 99 – Outras deduções.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0472": {
+    "msg": "A data de emissão do documento informado na DPS não pode ser posterior à data de competência da DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0474": {
+    "msg": "O valor de dedução/redução não pode ser superior ao valor dedutível/redutível.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0476": {
+    "msg": "O valor de dedução/redução informado na DPS não pode ser superior ao valor do serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0477": {
+    "msg": "O grupo de informações para o fornecedor deve ser informado obrigatoriamente para o tipo de documento de dedução/redução informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0478": {
+    "msg": "CNPJ do fornecedor informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0482": {
+    "msg": "CNPJ do fornecedor informado na DPS não encontrado no cadastro CNPJ.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0484": {
+    "msg": "CPF do fornecedor informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0488": {
+    "msg": "CPF do fornecedor informado na DPS não encontrado no cadastro CPF.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1538": {
+    "msg": "O NIF ou cNaoNIF do fornecedor deve ser informado quando o grupo de informações de endereço no exterior do fornecedor de serviços for informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0490": {
+    "msg": "Valor 0 para o motivo da não informação do NIF do fornecedor não é permitido na Sefin do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0492": {
+    "msg": "O grupo de informações de endereço nacional deve ser informado obrigatoriamente quando o fornecedor for identificado pelo CPF ou CNPJ.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0494": {
+    "msg": "O código do município informado na DPS para o endereço do fornecedor do serviço não existe conforme tabela de município do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0496": {
+    "msg": "O CEP informado para o endereço nacional do fornecedor não existe ou não pertence ao município do endereço do fornecedor.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0498": {
+    "msg": "O grupo de informações de endereço no exterior deve ser informado obrigatoriamente quando o fornecedor for identificado pelo NIF.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0499": {
+    "msg": "O código de país informado para o endereço no exterior do fornecedor não existe ou é igual ao código do Brasil. Informe um código de país existente e diferente do codigo do Brasil (BR) para o endereço no exterior do fornecedor, conforme tabela de país ISO2.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/vDedRed/documentos/docDedRed/fornec/end/endExt/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0529": {
+    "msg": "O sistema considera este cenário para a prestação de serviço informada na DPS uma operação tributável. Não é permitido ao emitente da DPS informar que a prestação de serviço se trata de uma exportação de serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0530": {
+    "msg": "O sistema considera este cenário para a prestação de serviço informada na DPS uma exportação de serviço. Não é permitido ao emitente da DPS informar que a prestação de serviço se trata de uma operação tributável.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0532": {
+    "msg": "O campo que informa sobre a tributação do ISSQN deve ser \"4 - Não Incidência\", quando houver o serviço prestado for 99.01.01 - Serviços sem a incidência de ISSQN e ICMS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0539": {
+    "msg": "Não é permitido informar não incidência do ISSQN = 4 (Não Incidência) para qualquer subitem da lista nacional de serviço informado na DPS, se o subitem for incidente, conforme a parametrização do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0540": {
+    "msg": "Não há incidência do ISSQN (tribISSQN = 4) pois a parametrização do muncípio de incidência do ISSQN indica que o código de serviço prestado, informado na DPS, não é incidente neste município.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0590": {
+    "msg": "É obrigatório informar o código do país onde ocorreu o resultado do serviço prestado para os cenários 2, 30, 58, 62, 72, 76, conforme a planilha \"EXPORTACAO_EMISSÃO_NFS-e\".",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0591": {
+    "msg": "Não é permitido informar o código do país onde ocorreu o resultado do serviço prestado para os cenários diferentes de 2, 30, 58, 62, 72, 76 conforme a planilha \"EXPORTACAO_EMISSÃO_NFS-e\".",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0592": {
+    "msg": "O tipo de imunidade é obrigatório e deve ser informado somente quando o campo referente à tributação do ISSQN for igual a \"2 - Imunidade\".",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0593": {
+    "msg": "Não permitido o valor \"0 - Imunidade (tipo não informado na nota de origem)\" na DPS quando utilizado os Emissores Públicos Nacionais para emissao de NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0585": {
+    "msg": "Somente é permitido informar suspensão de exigibilidade quando a opção da tributação do ISSQN for uma operação tributável \n(tribISSQN = 1).",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0533": {
+    "msg": "Não é permitido informar Benefício Municipal (BM deve ser nulo) quando o serviço prestado diferente de Tributável (tribISSQN = 1), ou seja, tribISSQN = 2, 3 ou 4.",
+    "campo": "NFSe/infNFSe/DPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0534": {
+    "msg": "Não é permitido o preenchimento de informações relativas à benefício municipal para o prestador de serviço MEI.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0535": {
+    "msg": "Não é permitido informar benefício municipal quando o prestador de serviço tiver um regime especial de tributação, ou seja, o campo que indica o regime especial de tributação é diferente de 0, (regEspTrib = 1, 2, 3, 4, 5 ou 6).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0537": {
+    "msg": "Não é permitido informar benefício municipal (BM deve ser nulo) quando o município de incidência do ISSQN não está \"Ativo\" no Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0536": {
+    "msg": "Não é permitido o preenchimento de informações relativas à benefício municipal para o prestador de serviço ME/EPP, apurando pelo SN, conforme parametrização do código de serviço admnistrado pelo municipio de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0541": {
+    "msg": "Não existe o código de identificação do benefício municipal informado na DPS para o municipío de incidência do ISSQN.",
+    "campo": "NFSe/infNFSe/DPS/valores/trib/tribMun/BM/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0544": {
+    "msg": "Período de vigência expirado para o código de identificação do Benefício Municipal no municipío de incidência do ISSQN para a data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0548": {
+    "msg": "O Benefício Municipal informado na DPS não permite benefício para prestadores de serviço que não estejam estabelecidos no município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0550": {
+    "msg": "O código de identificação de Benefício Municipal, informada na DPS, não permite benefício para o código de tributação e/ou prestador (CPF ou CNPJ) informado na DPS, conforme parametrização do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0565": {
+    "msg": "Não é permitido informar um valor monetário de redução de base de cálculo do ISSQN por benefício municipal, se o código de identificação do Benefício Municipal não corresponder ao tipo de redução por valor monetário.",
+    "campo": "NFSe/infNFSe/DPS/valores/trib/tribMun/BM/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0567": {
+    "msg": "É obrigatório informar vRedBCBM quando o código de identificação do Benefício Municipal (nBM) for um benefício do tipo Redução de Base de Cálculo por Valor Monetário.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0574": {
+    "msg": "O valor monetário do benefício municipal informado na DPS não pode ser superior ao valor do serviço.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0575": {
+    "msg": "O valor monetário do benefício municipal informado na DPS não pode reduzir o valor da BC de forma que resulte no valor do ISSQN a uma alíquota efetiva menor que 2%, exceto para os códigos relativos aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202, 100101, 100102, ",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0577": {
+    "msg": "Não é permitido informar um valor percentual de redução de base de cálculo do ISSQN por benefício municipal, se o código de identificação do Benefício Municipal não corresponder ao tipo de redução por valor percentual.",
+    "campo": "NFSe/infNFSe/DPS/valores/trib/tribMun/BM/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0579": {
+    "msg": "É obrigatório informar pRedBCBM quando o código de identificação do Benefício Municipal (nBM) for um benefício do tipo Redução de Base de Cálculo por percentual.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0586": {
+    "msg": "O valor percentual para redução da base de cálculo deve ser maior que 0 e menor ou igual ao percentual parametrizado pelo município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0587": {
+    "msg": "O valor percentual do benefício municipal informado na DPS não pode reduzir o valor da BC de forma que resulte no valor do ISSQN a uma alíquota efetiva menor que 2%, exceto para os códigos relativos aos subitens 042201, 042301, 050901, 070201, 070202, 070501 , 070502, 090201, 090202, 100101, 100102,",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0580": {
+    "msg": "Não é permitido haver retenção quando o campo referente à tributação do ISSQN indicar imunidade, exportação ou não incidência.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0583": {
+    "msg": "Não é permitido retenção do ISSQN para o prestador do serviço que seja MEI na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0588": {
+    "msg": "Não é permitido retenção do ISSQN para o prestador do serviço que tenha algum regime especial de tributação na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0594": {
+    "msg": "Não é permitido retenção do ISSQN quando houver Benefício Municipal do tipo Isenção.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0596": {
+    "msg": "Não é permitido retenção do ISSQN quando o serviço prestado corresponder ao subitem 220101 - Serviço de exploração de rodovia da lista de serviços do Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0650": {
+    "msg": "Em caso de importação de serviço pelo tomador, o ISSQN deve ser retido pelo tomador.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0652": {
+    "msg": "Em caso de importação de serviço pelo intermediário, o ISSQN deve ser retido pelo intermediário.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0667": {
+    "msg": "Município da incidência do ISSQN não autoriza que o CPF do tomador informado na DPS seja indicado para retenção deste imposto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0670": {
+    "msg": "Município da incidência do ISSQN não autoriza que o CPF do intermediário informado na DPS seja indicado para retenção deste imposto.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0672": {
+    "msg": "Não pode haver retenção do ISSQN se e o tomador for o emitente da DPS e estiver estabelecido em município diferente do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0673": {
+    "msg": "Não pode haver retenção do ISSQN se e o intermediário for o emitente da DPS e estiver estabelecido em município diferente do município de incidência do ISSQN.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0595": {
+    "msg": "Não é permitido informar alíquota superior a 5%.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribMun/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0600": {
+    "msg": "Não é permitido informar a alíquota para prestador de serviço optante do simples nacional do tipo MEI.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0602": {
+    "msg": "Não é permitido informar alíquota quando o campo referente à tributação do ISSQN indicar imunidade, exportação ou não incidência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0604": {
+    "msg": "Não é permitido informar alíquota quando o prestador de serviço possui algum regime especial de tributação.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0612": {
+    "msg": "Não é permitido informar alíquota quando o benefício municipal informado na DPS for do tipo \"Isenção\" ou \"Alíquota Diferenciada\".",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0617": {
+    "msg": "Não é permitido informar alíquota quando o prestador de serviço não é optante do simples nacional (opSimpNac = 1) na data de competência informada na DPS, com o município de incidência do ISSQN com situação \"ATIVO\" no Sistema Nacional NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0619": {
+    "msg": "É obrigatório informar alíquota quando o prestador de serviço não é optante do simples nacional (opSimpNac = 1) na data de competência informada na DPS, o município de incidência do ISSQN não está com situação \"ATIVO\" no Sistema Nacional NFS-e e não haja algum regime especial de tributaçao para o pr",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0621": {
+    "msg": "É obrigatório informar alíquota quando há indicação de retenção do ISSQN (tpRetISSQN = 2 ou 3) para o prestador de serviço ME/EPP (opSimpNac = 3) na data de competência informada na DPS, com apuração do ISSQN pelo simples nacional (regApTribISSQN = 1), sem benefício municipal ou, se houver, seja dif",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0625": {
+    "msg": "Não é permitido informar alíquota quando não há indicação de retenção do ISSQN (tpRetISSQN = 1) para o prestador de serviço ME/EPP (opSimpNac = 3) na data de competência informada na DPS, com apuração do ISSQN pelo simples nacional (regApTribISSQN = 1), sem benefício municipal ou, se houver, seja di",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0628": {
+    "msg": "É obrigatório informar alíquota quando o município de incidência do ISSQN não está Ativo no Sistema Nacional NFS-e, para o prestador de serviço ME/EPP (opSimpNac = 3) na data de competência informada na DPS, com apuração do ISSQN pelo simples nacional (regApTribISSQN = 1), com retenção do ISSQN (tpR",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0631": {
+    "msg": "Não é permitido informar alíquota quando o município de incidência do ISSQN não está Ativo no Sistema Nacional NFS-e, para o prestador de serviço ME/EPP (opSimpNac = 3) na data de competência informada na DPS, com apuração do ISSQN pelo simples nacional (regApTribISSQN = 1) sem retenção do ISSQN (tp",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0635": {
+    "msg": "Não é permitido informar alíquota quando o convênio do município de incidência do ISSQN está ativo na data de competência informada na DPS, para o prestador de serviço ME/EPP (opSimpNac = 3) com a apuração do ISSQN fora do Simples Nacional, ou seja, pela alíquota do município para o serviço prestado",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0640": {
+    "msg": "É obrigatório informar alíquota quando o prestador de serviço ME/EPP (opSimpNac = 3) na data de competência informada na DPS, com apuração do ISSQN fora do Simples Nacional (regApTribISSQN = 2 ou 3), ou seja, pela alíquota do município para o serviço prestado, cujo município de incidência não esteja",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0675": {
+    "msg": "Não é permitido a prestação de informações relativas aos tributos federais quando o emitente da DPS for identificado por um pessoa física (CPF).",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0676": {
+    "msg": "Não é permitido o preenchimento das informações relativas aos tributos federais quando o emitente for identificado como MEI na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0677": {
+    "msg": "O valor da BC para Pis/Cofins deve ser menor ou igual ao valor do serviço informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/piscofins/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0678": {
+    "msg": "O valor BC do Pis/Cofins deve ser informado quando o CST for diferente de 0, 8 ou 9.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0680": {
+    "msg": "O valor BC do Pis/Cofins informado deve ser maior que zero e menor que o valor do serviço informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0682": {
+    "msg": "O valor BC do Pis/Cofins não pode ser informado quando o valor de CST for igual a 0, 8 ou 9.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0684": {
+    "msg": "A alíquota do Pis deve ser informada quando a base de cálculo deste imposto for informada.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/piscofins/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0686": {
+    "msg": "A alíquota do Pis deve ser igual ou maior que 0 e menor ou igual a 100%.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0688": {
+    "msg": "Para os CST for \"4 - Operação Tributável monofásica - Revenda a Alíquota Zero\" ou \"6 - Operação Tributável a Alíquota Zero\", o valor das alíquotas para Pis e Cofins devem ser preenchidas com zero (0,00%).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0690": {
+    "msg": "A alíquota do Cofins deve ser informada quando a base de cálculo deste imposto for informada.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0692": {
+    "msg": "A alíquota do Cofins deve ser igual ou maior que 0 e menor ou igual a 100%.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0694": {
+    "msg": "O valor do Pis informado não corresponde ao resultado da BC Pis/Cofins x Alíquota Pis, que foram informados na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/piscofins/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0696": {
+    "msg": "O valor do Cofins informado não corresponde ao resultado da BC Pis/Cofins x Alíquota Cofins, que foram informados na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/piscofins/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0698": {
+    "msg": "Se CST informado for diferente de 0, 8 ou 9, o tipo de retenção para Pis/Cofins deve ser informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/piscofins/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0699": {
+    "msg": "O valor do tributo CP deve ser maior que zero e menor que o valor do serviço informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0700": {
+    "msg": "O valor do tributo IRRF deve ser maior que zero e menor que o valor do serviço informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0720": {
+    "msg": "Se o tipo de retenção do PIS/COFINS for igual a \"0 - PIS/COFINS/CSLL Não Retidos\", então não é permitido informar o campo vRetCSLL.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/tribFed/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0724": {
+    "msg": "Se o tipo de retenção do PIS/COFINS for diferente de \"0 - PIS/COFINS/CSLL Não Retidos\" ou \nde \"2 - PIS/COFINS Não Retido\", então é obrigatório informar o campo vRetCSLL.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0701": {
+    "msg": "O valor do tributo CSLL deve ser maior que zero e menor que o valor do serviço informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0702": {
+    "msg": "Se o valor for informado, então deve ser igual ou maior que 0 e menor ou igual o valor do serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/vTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0703": {
+    "msg": "Se o valor for informado, então deve ser igual ou maior que 0 e menor ou igual o valor do serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/vTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0704": {
+    "msg": "Se o valor for informado, então deve ser igual ou maior que 0 e menor ou igual o valor do serviço.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/vTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0706": {
+    "msg": "Se a alíquota for informada, então deve ser igual ou maior que 0 e menor ou igual a 100%.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/pTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0707": {
+    "msg": "Se a alíquota for informada, então deve ser igual ou maior que 0 e menor ou igual a 100%.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/pTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0708": {
+    "msg": "Se a alíquota for informada, então deve ser igual ou maior que 0 e menor ou igual a 100%.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totalTrib/pTotTrib",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0712": {
+    "msg": "Para ME/EPP indTotTrib nunca poderá ser informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/valores/trib/totTrib/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0713": {
+    "msg": "Para Não Optante do SN os campos, indicador de informação de valor total de tributos e  percentual aproximado do total dos tributos da alíquota do Simples Nacional (%), não podem ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0710": {
+    "msg": "Para MEI pTotTribSN nunca poderá ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0850": {
+    "msg": "É permitido declarar informações de IBS/CBS somente a partir da data de competência 01/01/2026.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0854": {
+    "msg": "Somente é permitio declarar informações de IBS/CBS a partir da versão 1,01 da DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0901": {
+    "msg": "Código indicador da operação inexistente.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0903": {
+    "msg": "Código do tipo de Operação (tpOper) deve ser informado quando se tratar de uma compra governamental ou um dos serviços da LC 116/2003 listados: 25.05; 15.09; 17.12; 10.05.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0904": {
+    "msg": "Código do tipo de Operação (tpOper) não pode ser informado quando não se tratar de uma compra governamental ou um dos serviços da LC 116/2003 listados: 25.05; 15.09; 17.12; 10.05.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0905": {
+    "msg": "O grupo de documentos referenciados deve ser informado para o tipo de operação (tpOper).",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0906": {
+    "msg": "O grupo de documentos referenciados não pode ser informado para o tipo de operação (tpOper).",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0907": {
+    "msg": "NFS-e referenciada é inválida.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/gRefNFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0910": {
+    "msg": "O destinatário não deve ser identificado para o código indicador indDest informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0911": {
+    "msg": "CNPJ do destinatário informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/dest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0912": {
+    "msg": "CNPJ do destinatário não encontrado no cadastro CNPJ na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0913": {
+    "msg": "CPF do destinatário informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/dest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0914": {
+    "msg": "CPF do destinatário não encontrado no cadastro CPF na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0920": {
+    "msg": "O código do município para o endereço do destinatário do serviço não existe conforme tabela de município do IBGE.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/dest/end/endNac/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0921": {
+    "msg": "O código do município informado na DPS para o endereço do destinatário do serviço, identificado pelo CNPJ, não corresponde ao município registrado em seus cadastros na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0922": {
+    "msg": "O código do município informado na DPS para o endereço do destinatário do serviço, identificado pelo CPF, não corresponde ao município registrado em seus cadastros na data de competência informada na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0930": {
+    "msg": "E-mail inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/dest/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0931": {
+    "msg": "Não é permitido o grupo de informações relativo a imóvel quando o código de tributação nacional, relativo à construção civil, for infomado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0932": {
+    "msg": "É obrigatório o grupo de informações relativo ao imóvel na DPS quando o código indicador da operação informado for relacionado à imóvel conforme a tabela IndOp do ANEXO_C-INDOP_IBSCBS-SNNFSe-ESPEC.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0928": {
+    "msg": "Não é permitido o grupo de informações relativo a imóvel quando o código de tributação nacional (cTribNac) não pertencer a algum dos subitens 07.02.01, 07.02.02, 07.04.01, 07.05,01, 07.05.02, 07.06.01, 07.06.02, 07.07.01, 07.08.01, 07.17.01 e 07.19.01 da lista de serviços e, o código indicador da op",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0933": {
+    "msg": "Código CIB inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/imovel/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0934": {
+    "msg": "O grupo de informações de endereço da atividade sobre bem imóvel ocorrido no exterior deve ser informado quando o país do local da prestação for informado na DPS.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/imovel/end/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0935": {
+    "msg": "O grupo de informações de endereço da atividade sobre bem imóvel ocorrido no exterior não deve ser informado quando o município do local da prestação for informado na DPS.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0940": {
+    "msg": "Chave DF-e incorreta.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/dFeNacional/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0942": {
+    "msg": "Outros documentos ficais fiscais não podem ser informados quando a data de competência for posterior a 31 de dezembro de 2025.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0943": {
+    "msg": "O código do município emissor do documento fiscal para fins de reembolso, repasse e ressarcimento que não está no repositório nacional está incorreto.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/docFiscalOutro/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0945": {
+    "msg": "CNPJ do fornecedor de reembolso, repasse e ressarcimento informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/fornec/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0946": {
+    "msg": "CNPJ do fornecedor de reembolso, repasse e ressarcimento informado não encontrado no cadastro CNPJ na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0947": {
+    "msg": "CPF do fornecedor de reembolso, repasse e ressarcimento informado informado na DPS é inválido.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/fornec/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0948": {
+    "msg": "CPF do fornecedor de reembolso, repasse e ressarcimento informado não encontrado no cadastro CPF na data de competência.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0950": {
+    "msg": "Data de emissão do documento tem que ser igual ou posterior à data de competência (dtCompDoc)",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0951": {
+    "msg": "Data de competência do documento tem que ser igual ou anterior à data de emissão (dtEmiDoc)",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0952": {
+    "msg": "A descrição do tipo de reembolso, repasse e ressarcimento não deve ser preenchida.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0953": {
+    "msg": "O valor reembolso, repasse e ressarcimento deve ser menor ou igual ao valor do serviço prestado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/gReeRepRes/documentos/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0958": {
+    "msg": "cClassTrib para IBS/CBS incorreto para operação de prestação de serviços.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/trib/gIBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0959": {
+    "msg": "cClassTrib não pertence ao grupo CST indicado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0964": {
+    "msg": "Grupo de tributação regular não deve ser informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/trib/gIBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0965": {
+    "msg": "Grupo de tributação regular deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0969": {
+    "msg": "cClassTribReg para IBS/CBS incorreto para operação de prestação de serviços.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/trib/gIBSCBS/gTribRegular/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0970": {
+    "msg": "cClassTribReg não pertence ao grupo CST indicado em CSTReg.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0971": {
+    "msg": "Grupo de diferimento para IBS/CBS não deve ser informado.",
+    "campo": "NFSe/infNFSe/DPS/infDPS/IBSCBS/valores/trib/gIBSCBS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0972": {
+    "msg": "Grupo de diferimento para IBS/CBS deve ser informado.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0714": {
+    "msg": "Arquivo enviado com erro na assinatura.",
+    "campo": "NFSe/infNFSe/DPS/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0715": {
+    "msg": "Certificado Digital da assinatura inválido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0716": {
+    "msg": "Certificado Digital fora do padrão estabelecido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0717": {
+    "msg": "A assinatura é obrigatória quando for enviado para o Web Service.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E0718": {
+    "msg": "A assinatura deve ser feita com o certificado digital do emitente da DPS.\n",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1630": {
+    "msg": "Arquivo enviado com erro na assinatura.",
+    "campo": "NFSe/",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1632": {
+    "msg": "Certificado Digital da assinatura inválido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1634": {
+    "msg": "Certificado Digital fora do padrão estabelecido.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1636": {
+    "msg": "A assinatura é obrigatória quando for enviado paraa API.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  },
+  "E1638": {
+    "msg": "A assinatura deve ser feita com o certificado digital do municiípio emissor da NFS-e.",
+    "campo": "",
+    "efeito": "Rej.",
+    "sheet": "RN DPS_NFS-e"
+  }
+}
