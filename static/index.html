@@ -385,9 +385,34 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 /* ── Toast ── */
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:7px 14px;border-radius:var(--r);font-family:var(--mono);font-size:11px;z-index:9999;transition:opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
 
+
+/* ── Painel Ajuda ── */
+#ajudaPanel{display:none;flex:1;overflow-y:auto;background:var(--bg);padding:24px 20px;min-height:0}
+#ajudaPanel.show{display:flex;flex-direction:column;height:calc(100vh - 42px);overflow-y:auto;padding-bottom:32px}
+.ajuda-kbd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--border);
+  background:var(--bg2);font-size:11px;color:var(--text2);
+}
+.ajuda-kbd-key{
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  color:var(--text);
+}
+.ajuda-kbd-key kbd{
+  background:var(--bg4);border:0.5px solid var(--border2);
+  border-radius:4px;padding:2px 6px;font-family:var(--mono);
+  font-size:10px;color:var(--text);
+}
+.ajuda-how{
+  padding:10px 12px;border-radius:var(--r);border:0.5px solid var(--border);
+  background:var(--bg2);font-size:11px;color:var(--text2);line-height:1.6;
+}
+.ajuda-how strong{color:var(--text);font-weight:500}
+
 /* ── Painel Documentação ── */
-.doc-panel{display:none;flex:1;overflow-y:auto;background:var(--bg);padding:20px}
-.doc-panel.show{display:block}
+.doc-panel{display:none;flex:1;overflow-y:auto;background:var(--bg);padding:20px;width:100%}
+.doc-panel.show{display:flex;flex-direction:column;width:100%;height:calc(100vh - 42px);overflow-y:auto;padding-bottom:32px}
 
 /* ── Toast e painel de notificações ── */
 
@@ -1153,6 +1178,11 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
     Fórum
     <span id="forum-badge" style="display:none;min-width:16px;height:14px;background:var(--blue);color:#fff;border-radius:7px;font-size:9px;font-weight:700;line-height:14px;text-align:center;padding:0 4px;font-family:var(--mono);margin-left:2px"></span>
   </div>
+  <!-- Aba Ajuda -->
+  <div class="doc-tab" id="tab-ajuda" onclick="abrirAjuda()" title="Ajuda e atalhos de teclado" style="border-left:1px solid var(--border)">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    Ajuda
+  </div>
   <!-- Botão sino de notificações -->
   <div class="doc-tab" id="btn-notif" onclick="toggleNotifPanel()" title="Notificações" style="border-left:1px solid var(--border);padding:0 12px;position:relative">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -1352,219 +1382,129 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 <!-- ── Painel Documentação Oficial ── -->
 <div class="doc-panel" id="docPanel">
   <!-- Sub-tabs: Documentação / Changelog NTs -->
-  <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px">
+  <div style="display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px">
     <button class="doc-sub-tab active" id="dstDocs"     onclick="setDocSubTab('docs',this)"     style="padding:7px 14px;font-size:11px;font-weight:500;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);cursor:pointer">Documentação</button>
     <button class="doc-sub-tab"       id="dstChangelog" onclick="setDocSubTab('changelog',this)" style="padding:7px 14px;font-size:11px;font-weight:500;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer">Changelog NTs</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:4px">
+      <span id="docMonitorStatus" style="font-size:10px;color:var(--muted2);font-family:var(--mono)"></span>
+      <button class="btn" id="btnAtualizarDocs" onclick="atualizarDocumentos()" title="Verificar novos documentos no portal gov.br agora" style="padding:3px 10px;font-size:10px">
+        <svg id="docMonitorIcon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Verificar agora
+      </button>
+    </div>
   </div>
   <!-- Conteúdo: Documentação -->
-  <div id="docSubDocs">
-  <p class="doc-panel-title">Documentação Técnica Oficial — NFS-e Nacional</p>
-  <p class="doc-panel-sub" id="docPanelSub">Fonte: <a href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc" target="_blank" style="color:var(--blue)">gov.br/nfse — Biblioteca / Documentação Técnica / RTC</a> · <span id="docDataVerif">verificando…</span></p>
-
-  <!-- Seção dinâmica: novos documentos detectados automaticamente -->
-  <div id="docNovidades" style="display:none;margin-bottom:20px">
-    <div class="doc-section-title" style="color:var(--accent);display:flex;align-items:center;gap:6px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-      Novidades detectadas automaticamente
+  <!-- Barra de progresso da verificação -->
+  <div id="docProgressBar" style="display:none;margin-bottom:12px;padding:10px 14px;background:var(--bg3);border-radius:var(--r);border:0.5px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span id="docProgressLabel" style="font-size:11px;color:var(--text2)">Verificando…</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">aguarde</span>
     </div>
-    <div id="docNovidadesLista"></div>
-  </div>
-
-  <!-- Seção dinâmica: schema XSD atual -->
-  <div id="docSchemaAtual" style="display:none;margin-bottom:20px">
-    <div class="doc-section-title" style="color:var(--blue);display:flex;align-items:center;gap:6px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      Schemas XSD instalados
-    </div>
-    <div id="docSchemaInfo"></div>
-  </div>
-
-  <!-- DOC_PANEL_START -->
-
-  <!-- NT 007 — Vigente em Produção -->
-  <div class="doc-section">
-    <div class="doc-section-title">Notas Técnicas — RTC (Reforma Tributária do Consumo)</div>
-
-    <div class="doc-nt-card nt-new">
-      <div class="doc-nt-title">
-        Nota Técnica SE/CGNFS-e nº 007
-        <span class="doc-nt-badge badge-prod">Produção</span>
-      </div>
-      <div class="doc-nt-desc">Dispõe sobre adequações do layout da NFS-e e esclarecimentos acerca da plataforma. Versão atual em produção com grupos IBS/CBS da Reforma Tributária.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-007 (PDF)
-        </a>
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovi-leiautesrn_rtc_ibscbs-v1-03-00-2013-nt007.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VI — Leiautes RN v1.03.00 (XLSX)
-        </a>
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-01-00.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VII — IndOp IBS/CBS v1.01.00 (XLSX)
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card nt-new">
-      <div class="doc-nt-title">
-        Nota Técnica SE/CGNFS-e nº 004
-        <span class="doc-nt-badge badge-piloto">Piloto RTC</span>
-      </div>
-      <div class="doc-nt-desc">Versão disponível no ambiente de Produção Restrita desde 10/12/2025. Documentação do piloto para testes. Disponibilizada em produção a partir de 5 de janeiro de 2026.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita/nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-004 (PDF)
-        </a>
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita/anexovi-leiautesrn_rtc_ibscbs-v1-01-03-nt004.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VI — Leiautes v1.01.03 (XLSX)
-        </a>
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VII — IndOp v1.00.00 (XLSX)
-        </a>
-        <a class="doc-link zip" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita/nfse-esquemas_xsd-rtc-v1-00-20251210.zip" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Esquemas XSD (ZIP)
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">
-        Nota Técnica SE/CGNFS-e nº 008 — Anexo VIII
-        <span class="doc-nt-badge badge-dev">Em desenvolvimento</span>
-      </div>
-      <div class="doc-nt-desc">Correlação entre Item de Serviço, NBS, cClassTrib e cIndOp (Anexo VII). Trabalho inicial ainda em desenvolvimento — não há regras de negócio baseadas neste anexo.</div>
-      <div class="doc-links">
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexoviii-correlacaoitemnbsindopcclasstrib_ibscbs_v1-00-00.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VIII — Correlação (XLSX)
-        </a>
-      </div>
-      <div class="doc-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Este anexo está em desenvolvimento. Sugestões: <a href="mailto:atendimento.nfs-e@rfb.gov.br?subject=AnexoVIII - Sugestão" style="color:var(--yellow)">atendimento.nfs-e@rfb.gov.br</a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">Nota Técnica SE/CGNFS-e nº 006 — NFS-e Via</div>
-      <div class="doc-nt-desc">Adequações do layout da NFS-e Via no contexto da Reforma Tributária do Consumo.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-006-se-cgnfse-leiaute-nfse-via.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-006 (PDF)
-        </a>
-        <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/nfs-e-via/documentacao-tecnica" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-          Documentação NFS-e Via
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">
-        Nota Técnica SE/CGNFS-e nº 005
-        <span class="doc-nt-badge badge-dev">Não disponível em produção</span>
-      </div>
-      <div class="doc-nt-desc">Adequações do layout da NFS-e no contexto da Reforma Tributária. Esta versão NÃO estará disponível em produção em janeiro de 2026.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-005-se-cgnfse-novo-layout-rtc.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-005 (PDF)
-        </a>
-        <a class="doc-link xls" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovi-leiautesrn_rtc_ibscbs-v1-02-00.xlsx" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Anexo VI v1.02.01 (XLSX)
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">Nota Técnica SE/CGNFS-e nº 003</div>
-      <div class="doc-nt-desc">Adequações do layout da NFS-e no contexto da Reforma Tributária do Consumo.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-003-1-2-se-cgnfse-novo-layout-rtc.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-003 (PDF)
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">Nota Técnica SE/CGNFS-e nº 002</div>
-      <div class="doc-nt-desc">Adequações do layout da NFS-e no contexto da Reforma Tributária do Consumo.</div>
-      <div class="doc-links">
-        <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-se-cgnfs-e-no-002-de-28-de-fevereiro-de-2025" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-          NT-002 (Portal gov.br)
-        </a>
-      </div>
-    </div>
-
-    <div class="doc-nt-card">
-      <div class="doc-nt-title">Nota Técnica SE/CGNFS-e nº 001</div>
-      <div class="doc-nt-desc">Nota Técnica inicial sobre as adequações do layout da NFS-e no contexto da Reforma Tributária do Consumo.</div>
-      <div class="doc-links">
-        <a class="doc-link pdf" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-001-se-cgnfse-novo-layout-rtc.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          NT-001 (PDF)
-        </a>
-      </div>
+    <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+      <div id="docProgressFill" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .6s ease"></div>
     </div>
   </div>
+  <div id="docSubDocs" style="display:block">
+<!-- DOC_PANEL_START -->
 
-  <!-- Links rápidos -->
-  <div class="doc-section">
-    <div class="doc-section-title">Links Rápidos — Portal NFS-e</div>
-    <div class="doc-links">
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        Documentação Atual (Produção)
-      </a>
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        Produção Restrita (Piloto RTC)
-      </a>
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/apis-prod-restrita-e-producao" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        APIs — Prod. Restrita e Produção
-      </a>
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/leiaute-e-esquemas-antigos" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        Leiautes e Esquemas Antigos
-      </a>
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/biblioteca/copy_of_perguntas-frequentes/copy_of_faq-nfs-e" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        FAQ NFS-e
-      </a>
-      <a class="doc-link web" href="https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        Lista de Serviços LC 116/2003
-      </a>
-    </div>
-  </div>
+  <!-- Cabeçalho: injetado pelo JS em _renderDocsDynamic -->
+  <p class="doc-panel-title" id="docPanelTitle" style="display:none">Documentação Técnica Oficial — NFS-e Nacional</p>
+  <p class="doc-panel-sub" id="docPanelSub" style="display:none">
+    Fonte: <a href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc"
+      target="_blank" rel="noopener" style="color:var(--blue)">
+      gov.br/nfse — Biblioteca / Documentação Técnica / RTC
+    </a>
+    · <span id="docDataVerif">—</span>
+  </p>
 
+  <!-- Schemas XSD instalados (injetado pelo JS) -->
+  <div id="docSecSchemas"></div>
 
-  </div><!-- /docSubDocs -->
-  <!-- Changelog sub-aba -->
-  <div id="docSubChangelog" style="display:none">
-    <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:12px;font-weight:600;color:var(--text)">Histórico de Notas Técnicas — NFS-e Nacional</span>
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">gov.br/nfse</span>
-    </div>
-    <div id="changelogLista"></div>
-  </div>
+  <!-- Notas Técnicas do RTC (injetado pelo JS via /api/docs) -->
+  <div id="docSecDynamic"></div>
 
-  <!-- DOC_PANEL_END -->
+<!-- DOC_PANEL_END -->
+</div>
+<div id="docSubChangelog" style="display:none;padding:4px 0">
+  <div id="changelogLista"></div>
+</div>
 </div>
 
+
 <!-- ── Workspace: coluna esquerda (upload+editor) | divisória | coluna direita (resultado) ── -->
-<div class="workspace" id="workspace">
+
+
+<!-- ── Painel Ajuda ── -->
+<!-- ── Painel Ajuda ── -->
+<div class="doc-panel" id="ajudaPanel">
+  <div style="max-width:720px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:0.5px solid var(--border)">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#16a34a,#4ade80);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.1 · Suporte Interno · XMLVariavel</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:10px;color:var(--muted2)">Suporta</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--mono)">DPS · NFS-e · CNC · TX2</div>
+      </div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
+        Atalhos de teclado
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="ajudaAtalhosGrid"></div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Como usar
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="ajudaComoUsarGrid"></div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        O que significa cada tipo de resultado
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r);background:rgba(248,113,113,.06);border:0.5px solid rgba(248,113,113,.2)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--red);padding:2px 7px;background:rgba(248,113,113,.15);border-radius:3px;flex-shrink:0">ERRO</span>
+          <span style="font-size:11px;color:var(--text2);line-height:1.6">Rejeição garantida pela SEFAZ. O XML <strong>não será autorizado</strong> enquanto o erro existir. Corrigir obrigatoriamente antes de enviar.</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r);background:rgba(251,191,36,.06);border:0.5px solid rgba(251,191,36,.2)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--yellow);padding:2px 7px;background:rgba(251,191,36,.12);border-radius:3px;flex-shrink:0">ALERTA</span>
+          <span style="font-size:11px;color:var(--text2);line-height:1.6">Situação suspeita ou inconsistente. O XML pode ser aceito pela SEFAZ, mas há risco de rejeição ou problema fiscal. Avaliar caso a caso.</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r);background:rgba(96,165,250,.06);border:0.5px solid rgba(96,165,250,.2)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue);padding:2px 7px;background:rgba(96,165,250,.12);border-radius:3px;flex-shrink:0">INFO</span>
+          <span style="font-size:11px;color:var(--text2);line-height:1.6">Informação extraída do XML para conferência: município, serviço, regime tributário. Não indica problema.</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Links úteis
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <a href="https://www.gov.br/nfse/pt-br" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);border:0.5px solid var(--border);text-decoration:none;color:var(--text2);font-size:11px">Portal NFS-e Nacional (gov.br)</a>
+        <a href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);border:0.5px solid var(--border);text-decoration:none;color:var(--text2);font-size:11px">Notas Técnicas (RTC)</a>
+        <a href="https://forum.nfsebrasil.com.br" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);border:0.5px solid var(--border);text-decoration:none;color:var(--text2);font-size:11px">Fórum NFS-e Brasil</a>
+
+      </div>
+    </div>
+    <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.1 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
+    </div>
+  </div>
+</div>
+
+<div class="workspace" id="workspace" style="display:flex">
 
   <!-- COLUNA ESQUERDA: upload + editor empilhados verticalmente -->
   <div class="pane pane-left" id="paneLeft">
@@ -1671,7 +1611,6 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 
 </div>
 </div>
-
 </div><!-- #main-content -->
 <div id="toast"></div>
 
@@ -2029,26 +1968,190 @@ async function _carregarDocsDynamic() {
 
 async function _renderDocsDynamic() {
   const dados = await _carregarDocsDynamic();
-  if (!dados || !dados.nts || dados.nts.length === 0) return; // usar HTML estático
+  if (!dados) return;
 
-  const lista = document.getElementById('changelogLista');
+  // Mostrar cabeçalho e atualizar timestamp
+  const titleEl = document.getElementById('docPanelTitle');
+  const subEl   = document.getElementById('docPanelSub');
+  if (titleEl) titleEl.style.display = '';
+  if (subEl)   subEl.style.display   = '';
   const verif = document.getElementById('docDataVerif');
-  if (verif) verif.textContent = `Última verificação: ${dados.ultima_verificacao}`;
-
-  // Atualizar o Changelog com NTs do servidor (inclui novas detectadas)
-  if (lista && dados.nts.length > 0) {
-    // Mesclar com _CHANGELOG_NTS existente — NTs do servidor têm prioridade
-    const idsServer = new Set(dados.nts.map(n => n.id));
-    const apenasLocal = _CHANGELOG_NTS.filter(n => !idsServer.has(n.id));
-    const merged = [...dados.nts, ...apenasLocal];
-    // Re-renderizar changelog com dados mesclados
-    _renderChangelogComDados(merged, dados.novas || []);
+  if (verif && dados.ultima_verificacao) {
+    verif.textContent = `Última verificação gov.br: ${dados.ultima_verificacao}`;
   }
 
-  // Marcar NTs novas no sino
-  if (dados.novas && dados.novas.length > 0) {
-    toast(`${dados.novas.length} NT(s) nova(s) detectada(s) pelo monitor`, 4000);
+  // Renderizar schemas XSD instalados em docSecSchemas
+  const secSchemas = document.getElementById('docSecSchemas');
+  if (secSchemas) {
+    try {
+      const rs = await fetch('/api/status');
+      const st = await rs.json();
+      if (st.xsd_state) {
+        const xs = st.xsd_state;
+        const v100 = xs.schemas_instalados?.v100?.length || 0;
+        const v101 = xs.schemas_instalados?.v101?.length || 0;
+        const dataXsd = xs.data_xsd || '—';
+        const instEm  = xs.atualizado_em ? xs.atualizado_em.replace('T',' ').substring(0,16) : '—';
+        const zipUrl  = xs.ultimo_zip
+          ? `https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual`
+          : null;
+        secSchemas.innerHTML = `
+          <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin:16px 0 8px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Schemas XSD instalados
+          </div>
+          <div style="padding:14px 16px;border-radius:var(--r2);border:0.5px solid var(--border);background:var(--bg2)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px">Schemas XSD atualizados — v1.01</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Data do arquivo: ${escH(dataXsd)} · instalado em ${escH(instEm)}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+              <span style="font-family:var(--mono);font-size:10px;background:rgba(96,165,250,.1);color:var(--blue);padding:2px 8px;border-radius:3px">v100: ${v100} arquivo(s)</span>
+              <span style="font-family:var(--mono);font-size:10px;background:rgba(96,165,250,.1);color:var(--blue);padding:2px 8px;border-radius:3px">v101: ${v101} arquivo(s)</span>
+            </div>
+            ${zipUrl ? `<a href="${escH(zipUrl)}" target="_blank" rel="noopener"
+              style="font-size:10px;color:var(--blue);font-family:var(--mono);text-decoration:none">
+              ↗ Baixar via portal gov.br (Documentação Atual)
+            </a>` : ''}
+          </div>`;
+      }
+    } catch { /* sem status de schema */ }
   }
+
+  // Renderizar grupos da página RTC
+  if (dados.grupos?.length > 0) {
+    _renderDocsPainel(dados);
+  }
+
+  // Seção de links externos do portal NFS-e
+  const secDyn = document.getElementById('docSecDynamic');
+  if (secDyn) {
+    const linksExt = `
+      <div style="margin-top:28px;padding-top:20px;border-top:0.5px solid var(--border)">
+        <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:12px">
+          Outros portais e recursos — gov.br/nfse
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;padding-bottom:24px">
+          ${[
+            { href:'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual',
+              label:'Documentação Atual — Produção',
+              desc:'Leiautes e anexos vigentes em ambiente de produção',
+              ico:'📄', cor:'var(--accent)' },
+            { href:'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita',
+              label:'Produção Restrita — Piloto RTC',
+              desc:'Documentação do ambiente piloto de testes RTC',
+              ico:'🔒', cor:'var(--blue)' },
+            { href:'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc',
+              label:'RTC — Reforma Tributária do Consumo',
+              desc:'Notas Técnicas e anexos da Reforma Tributária',
+              ico:'📋', cor:'var(--accent)' },
+            { href:'https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs',
+              label:'Lista de Serviços / NBS',
+              desc:'Códigos de tributação nacional (cTribNac) e NBS',
+              ico:'📑', cor:'var(--yellow)' },
+            { href:'https://www.gov.br/nfse/pt-br/perguntas-frequentes',
+              label:'FAQ — Perguntas Frequentes',
+              desc:'Dúvidas comuns sobre NFS-e Nacional',
+              ico:'❓', cor:'var(--blue)' },
+            { href:'https://app.powerbi.com/view?r=eyJrIjoiNGQ4YTcxNmMtMzdhNC00Mzc5LTllM2EtMjY1MTM3NWQyZDgyIiwidCI6IjZmNDlhYTQzLTgyMmEtNGMyMC05NjcwLWRiNzcwMGJmMWViMCJ9&pageName=608609c2e0a53d7a3c6e',
+              label:'Municípios Conveniados',
+              desc:'Painel de municípios ativos no Sistema Nacional (Power BI)',
+              ico:'🏙️', cor:'var(--muted2)' },
+            { href:'https://forum.nfsebrasil.com.br/',
+              label:'Fórum NFS-e Brasil',
+              desc:'Discussões técnicas da comunidade NFS-e',
+              ico:'💬', cor:'var(--blue)' },
+          ].map(l => `<a href="${escH(l.href)}" target="_blank" rel="noopener"
+            style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;
+              border-radius:var(--r2);border:0.5px solid var(--border);
+              background:var(--bg2);text-decoration:none;
+              transition:border-color .15s,background .15s"
+            onmouseover="this.style.borderColor='${l.cor}';this.style.background='var(--bg3)'"
+            onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg2)'">
+            <span style="font-size:16px;line-height:1;flex-shrink:0;margin-top:1px">${l.ico}</span>
+            <div>
+              <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px">${escH(l.label)}</div>
+              <div style="font-size:10px;color:var(--muted2);line-height:1.4">${escH(l.desc)}</div>
+            </div>
+          </a>`).join('')}
+        </div>
+      </div>`;
+    secDyn.insertAdjacentHTML('beforeend', linksExt);
+  }
+
+  // Toast de novidades
+  if (dados.novas?.length > 0) {
+    toast(`${dados.novas.length} documento(s) novo(s) detectado(s)!`, 4000);
+  }
+}
+
+function _renderDocsPainel(dados) {
+  const container = document.getElementById('docSubDocs');
+  if (!container) return;
+
+  // Filtrar apenas grupos da página RTC
+  const gruposRTC = (dados.grupos || []).filter(g =>
+    g.pagina_nome && g.pagina_nome.includes('RTC')
+  );
+  if (gruposRTC.length === 0) return;
+
+  const novasSet = new Set(dados.novas || []);
+  const statusBg  = { 'Produção':'rgba(74,222,128,.12)', 'Produção Restrita':'rgba(96,165,250,.12)',
+    'Não disponível em produção':'rgba(248,113,113,.1)', 'Piloto RTC':'rgba(96,165,250,.12)',
+    'Em desenvolvimento':'rgba(251,191,36,.12)', 'Documento':'var(--bg3)' };
+  const statusCor = { 'Produção':'var(--accent)', 'Produção Restrita':'var(--blue)',
+    'Não disponível em produção':'var(--red)', 'Piloto RTC':'var(--blue)',
+    'Em desenvolvimento':'var(--yellow)', 'Documento':'var(--muted2)' };
+  const tipoCor   = { pdf:'var(--red)', xlsx:'var(--accent)', zip:'var(--yellow)', web:'var(--blue)' };
+  const tipoIco   = {
+    pdf: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+    xlsx:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>',
+    zip: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>',
+    web: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  };
+
+  // Encontrar ou criar seção dinâmica
+  let secDyn = document.getElementById('docSecDynamic');
+  if (!secDyn) {
+    secDyn = document.createElement('div');
+    secDyn.id = 'docSecDynamic';
+    // Inserir no início do docSubDocs
+    const primeiro = container.querySelector('.doc-section, p');
+    if (primeiro) container.insertBefore(secDyn, primeiro);
+    else container.appendChild(secDyn);
+  }
+
+  const html = gruposRTC.map(g => {
+    const isNovo  = novasSet.has(g.id);
+    const sbg     = statusBg[g.status]  || 'var(--bg3)';
+    const scor    = statusCor[g.status] || 'var(--muted2)';
+    const novaBdg = isNovo ? '<span style="font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(74,222,128,.2);color:var(--accent);font-weight:700;margin-left:5px">NOVO</span>' : '';
+
+    const docsHtml = (g.docs || []).map(d => {
+      const cor = tipoCor[d.tipo] || 'var(--blue)';
+      const ico = tipoIco[d.tipo] || tipoIco.web;
+      return `<a href="${escH(d.url)}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+          border-radius:var(--r);border:0.5px solid var(--border);
+          text-decoration:none;font-size:10px;color:${cor};
+          background:rgba(0,0,0,.0);font-family:var(--mono);white-space:nowrap;
+          transition:background .1s"
+        onmouseover="this.style.background='var(--bg3)'"
+        onmouseout="this.style.background=''">
+        ${ico}${escH(d.nome)}
+      </a>`;
+    }).join('');
+
+    return `<div style="padding:14px 16px;margin-bottom:8px;border-radius:var(--r2);
+        border:0.5px solid ${isNovo ? 'var(--accent)' : 'var(--border)'};
+        background:${isNovo ? 'rgba(74,222,128,.03)' : 'var(--bg2)'}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:500;color:var(--text);flex:1">${escH(g.titulo)}${novaBdg}</span>
+        <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:${sbg};color:${scor};font-weight:600">${escH(g.status)}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${docsHtml}</div>
+    </div>`;
+  }).join('');
+
+  secDyn.innerHTML = `<div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin:16px 0 8px">Notas Técnicas — RTC (Reforma Tributária do Consumo)</div>${html}`;
 }
 
 function _renderChangelogComDados(nts, novas) {
@@ -2084,6 +2187,111 @@ function _renderChangelogComDados(nts, novas) {
   }).join('');
 }
 
+
+// ── Botão "Verificar agora" na aba Documentação ──────────────────────────
+const _DOC_ETAPAS = [
+  { pct: 10, msg: 'Conectando ao portal gov.br…' },
+  { pct: 30, msg: 'Baixando página de documentação…' },
+  { pct: 55, msg: 'Analisando documentos publicados…' },
+  { pct: 75, msg: 'Comparando com versão local…' },
+  { pct: 90, msg: 'Atualizando sistema…' },
+];
+
+function _docSetProgress(pct, msg) {
+  const bar  = document.getElementById('docProgressBar');
+  const fill = document.getElementById('docProgressFill');
+  const lbl  = document.getElementById('docProgressLabel');
+  if (bar)  bar.style.display  = pct > 0 && pct < 100 ? '' : 'none';
+  if (fill) fill.style.width   = pct + '%';
+  if (lbl)  lbl.textContent    = msg || '';
+}
+
+async function atualizarDocumentos() {
+  const btn    = document.getElementById('btnAtualizarDocs');
+  const icon   = document.getElementById('docMonitorIcon');
+  const status = document.getElementById('docMonitorStatus');
+
+  if (btn) btn.disabled = true;
+  if (icon) icon.style.animation = 'spin .7s linear infinite';
+  if (status) status.textContent = '';
+  _docSetProgress(5, 'Iniciando verificação…');
+
+  // Simular progresso enquanto o backend processa
+  let etapaIdx = 0;
+  const _simProgress = setInterval(() => {
+    if (etapaIdx < _DOC_ETAPAS.length) {
+      const e = _DOC_ETAPAS[etapaIdx++];
+      _docSetProgress(e.pct, e.msg);
+    }
+  }, 4000);
+
+  const _finalizar = (novas, erro) => {
+    clearInterval(_simProgress);
+    if (icon) icon.style.animation = '';
+    if (btn) btn.disabled = false;
+    _docSetProgress(0, '');
+
+    if (erro) {
+      if (status) status.textContent = erro;
+      toast('Erro ao verificar documentos: ' + erro, 4000);
+      return;
+    }
+    if (novas > 0) {
+      if (status) status.textContent = `${novas} novo(s) documento(s) encontrado(s)!`;
+      toast(`${novas} novo(s) documento(s) encontrado(s) no gov.br!`, 6000);
+    } else {
+      if (status) status.textContent = 'Nenhum documento novo encontrado';
+    }
+  };
+
+  try {
+    const r = await fetch('/api/monitorar-docs');
+    const d = await r.json();
+
+    if (!d.ok) {
+      _finalizar(0, d.erro || 'Erro ao iniciar monitor');
+      return;
+    }
+
+    // Polling até detectar novo gerado_em (max 120s / 40 tentativas)
+    let tentativas = 0;
+    const tsAntes = _docsDynamic?.gerado_em || '';
+
+    const _poll = async () => {
+      tentativas++;
+      if (tentativas > 40) {
+        // Timeout — considerar sem novidades
+        _finalizar(0, null);
+        _docsCarregado = false;
+        _renderDocsDynamic();
+        return;
+      }
+      try {
+        const r2 = await fetch('/api/docs');
+        const d2 = await r2.json();
+        const tsDepois = d2.gerado_em || '';
+        if (tsDepois && tsDepois !== tsAntes) {
+          // Dados atualizados
+          _docsCarregado = false;
+          _docsDynamic   = d2;
+          _docsCarregado = true;
+          _docSetProgress(100, '');
+          const novas = d2.novas?.length || 0;
+          _finalizar(novas, null);
+          _renderChangelog();
+          _renderDocsDynamic();
+          return;
+        }
+      } catch {}
+      setTimeout(_poll, 3000);
+    };
+    setTimeout(_poll, 6000);
+
+  } catch (ex) {
+    _finalizar(0, 'Erro de conexão com o servidor');
+  }
+}
+
 function setDocSubTab(tab, btn) {
   document.querySelectorAll('.doc-sub-tab').forEach(b => {
     b.style.borderBottomColor = 'transparent';
@@ -2096,50 +2304,136 @@ function setDocSubTab(tab, btn) {
   document.getElementById('docSubDocs').style.display      = tab === 'docs'      ? '' : 'none';
   document.getElementById('docSubChangelog').style.display = tab === 'changelog' ? '' : 'none';
   if (tab === 'changelog') {
-    _renderChangelog(); // renderizar com dados locais imediatamente
-    _renderDocsDynamic(); // sobrescrever com dados do servidor (async)
+    _renderChangelog(); // timeline de NTs (dados locais _CHANGELOG_NTS)
   }
   if (tab === 'docs') {
-    _renderDocsDynamic(); // atualizar verif timestamp
+    _docsCarregado = false; // forçar reload ao trocar para docs
+    _renderDocsDynamic();
   }
 }
 
 function _renderChangelog() {
   const lista = document.getElementById('changelogLista');
   if (!lista) return;
-  const impactoCor = { alto:'var(--red)', medio:'var(--yellow)', baixo:'var(--accent)' };
-  const statusBg   = { 'Produção':'rgba(74,222,128,.12)', 'Produção Restrita':'rgba(96,165,250,.12)', 'Não disponível em produção':'rgba(248,113,113,.1)' };
-  const statusCor  = { 'Produção':'var(--accent)', 'Produção Restrita':'var(--blue)', 'Não disponível em produção':'var(--red)' };
 
-  lista.innerHTML = _CHANGELOG_NTS.map(nt => {
-    const cor  = impactoCor[nt.impacto] || 'var(--muted2)';
-    const sbg  = statusBg[nt.status]   || 'var(--bg3)';
-    const scor = statusCor[nt.status]  || 'var(--text2)';
-    const temPdf = nt.url && nt.url.endsWith('.pdf');
-    return `<div id="nt-card-${escH(nt.id)}" style="border:0.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;border-left:3px solid ${cor}">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-        <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text)">${escH(nt.id)}</span>
-        <span style="font-size:12px;font-weight:500;color:var(--text);flex:1">${escH(nt.titulo)}</span>
-        <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:${sbg};color:${scor};font-weight:600;white-space:nowrap">${escH(nt.status)}</span>
-        <span style="font-size:9px;font-family:var(--mono);color:var(--muted2)">${escH(nt.data)}</span>
-        <span style="font-size:9px;padding:1px 5px;background:var(--bg3);border-radius:3px;font-family:var(--mono);color:var(--muted2)">${escH(nt.versao)}</span>
+  // Mapa de impacto → cor da barra lateral e do bullet
+  const impactoCor = { alto:'#f87171', medio:'#fbbf24', baixo:'#4ade80' };
+  const impactoLabel = { alto:'Alto impacto', medio:'Médio impacto', baixo:'Baixo impacto' };
+
+  // Mapa de status → badge
+  const statusBg  = { 'Produção':'rgba(74,222,128,.15)', 'Produção Restrita':'rgba(96,165,250,.15)',
+    'Não disponível em produção':'rgba(248,113,113,.12)', 'Piloto RTC':'rgba(96,165,250,.15)',
+    'Em desenvolvimento':'rgba(251,191,36,.12)' };
+  const statusCor = { 'Produção':'#4ade80', 'Produção Restrita':'#60a5fa',
+    'Não disponível em produção':'#f87171', 'Piloto RTC':'#60a5fa',
+    'Em desenvolvimento':'#fbbf24' };
+  const statusIco = { 'Produção':'✅', 'Produção Restrita':'🔒',
+    'Não disponível em produção':'⛔', 'Piloto RTC':'🧪', 'Em desenvolvimento':'🚧' };
+
+  // Cabeçalho explicativo
+  lista.innerHTML = `
+    <div style="margin-bottom:20px;padding:12px 16px;background:var(--bg2);border-radius:var(--r2);border:0.5px solid var(--border)">
+      <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">📋 O que é o Changelog de NTs?</div>
+      <div style="font-size:10px;color:var(--muted2);line-height:1.6">
+        Histórico resumido das Notas Técnicas publicadas pela SEFIN no contexto da Reforma Tributária do Consumo (RTC).
+        Cada NT descreve mudanças no leiaute da DPS/NFS-e. Use o botão <strong style="color:var(--purple)">Resumir com IA</strong> para obter um resumo automático via Gemini.
       </div>
-      <p style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px">${escH(nt.descricao)}</p>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <a href="${escH(nt.url)}" target="_blank" rel="noopener"
-           style="font-size:10px;color:var(--blue);font-family:var(--mono);text-decoration:none">
-          ↗ Abrir no portal gov.br
-        </a>
-        ${temPdf ? `<button class="btn" onclick="ntResumir('${nt.id.replace(/'/g,"\'")}','${nt.url.replace(/'/g,"\'")}',this)"
-            style="font-size:10px;padding:3px 10px;color:var(--purple);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06)">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            Resumir com IA
-          </button>` : ''}
-      </div>
-      <!-- Área do resumo IA (oculta inicialmente) -->
-      <div id="nt-resumo-${escH(nt.id)}" style="display:none;margin-top:12px"></div>
+    </div>
+    <div style="position:relative">
+      <div style="position:absolute;left:18px;top:0;bottom:0;width:1px;background:var(--border);z-index:0"></div>
+      ${_CHANGELOG_NTS.map((nt, i) => {
+        const cor   = impactoCor[nt.impacto] || 'var(--muted2)';
+        const sbg   = statusBg[nt.status]    || 'var(--bg3)';
+        const scor  = statusCor[nt.status]   || 'var(--muted2)';
+        const sico  = statusIco[nt.status]   || '📄';
+        const label = impactoLabel[nt.impacto] || '';
+        const temPdf = nt.url && nt.url.endsWith('.pdf');
+        const isFirst = i === 0;
+
+        return `<div id="nt-card-${escH(nt.id)}" style="
+            display:flex;gap:14px;margin-bottom:${isFirst ? '0' : '4px'};
+            position:relative;z-index:1">
+          <!-- Bullet da timeline -->
+          <div style="flex-shrink:0;width:37px;display:flex;justify-content:center;padding-top:14px">
+            <div style="
+              width:12px;height:12px;border-radius:50%;
+              background:${cor};
+              box-shadow:0 0 0 3px var(--bg),0 0 0 4px ${cor}40;
+              flex-shrink:0"></div>
+          </div>
+          <!-- Card -->
+          <div style="
+            flex:1;padding:14px 16px;margin-bottom:12px;
+            border-radius:var(--r2);border:0.5px solid var(--border);
+            background:var(--bg2);
+            ${isFirst ? 'border-color:'+cor+';box-shadow:0 0 0 1px '+cor+'20' : ''}">
+
+            <!-- Linha 1: ID + título + status + data -->
+            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+              <span style="
+                font-family:var(--mono);font-size:10px;font-weight:700;
+                background:${cor}20;color:${cor};
+                padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0">
+                ${escH(nt.id)}
+              </span>
+              <span style="font-size:12px;font-weight:500;color:var(--text);flex:1;line-height:1.4">
+                ${escH(nt.titulo.replace(nt.id+' — ',''))}
+              </span>
+              <span style="
+                font-size:9px;padding:2px 8px;border-radius:8px;
+                background:${sbg};color:${scor};font-weight:600;white-space:nowrap;flex-shrink:0">
+                ${sico} ${escH(nt.status)}
+              </span>
+            </div>
+
+            <!-- Linha 2: versão + data + impacto -->
+            <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+              <span style="font-family:var(--mono);font-size:9px;padding:1px 6px;background:var(--bg3);border-radius:3px;color:var(--muted2)">
+                ${escH(nt.versao)}
+              </span>
+              <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">
+                ${escH(nt.data)}
+              </span>
+              <span style="font-size:9px;color:${cor};font-weight:500">
+                ● ${label}
+              </span>
+            </div>
+
+            <!-- Descrição -->
+            <p style="font-size:11px;color:var(--text2);line-height:1.65;margin-bottom:12px;padding:10px 12px;background:var(--bg);border-radius:var(--r);border-left:2px solid ${cor}40">
+              ${escH(nt.descricao)}
+            </p>
+
+            <!-- Ações -->
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <a href="${escH(nt.url)}" target="_blank" rel="noopener"
+                style="display:inline-flex;align-items:center;gap:5px;font-size:10px;
+                  color:var(--blue);font-family:var(--mono);text-decoration:none;
+                  padding:3px 10px;border:0.5px solid rgba(96,165,250,.3);border-radius:var(--r);
+                  background:rgba(96,165,250,.06);transition:background .1s"
+                onmouseover="this.style.background='rgba(96,165,250,.12)'"
+                onmouseout="this.style.background='rgba(96,165,250,.06)'">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Abrir no portal gov.br
+              </a>
+              ${temPdf ? `<button onclick="ntResumir('${nt.id.replace(/'/g,"\\'")}','${nt.url.replace(/'/g,"\\'")}',this)"
+                style="display:inline-flex;align-items:center;gap:5px;font-size:10px;
+                  cursor:pointer;padding:3px 10px;border-radius:var(--r);
+                  border:0.5px solid rgba(167,139,250,.3);background:rgba(167,139,250,.06);
+                  color:var(--purple);font-family:var(--sans);transition:background .1s"
+                onmouseover="this.style.background='rgba(167,139,250,.12)'"
+                onmouseout="this.style.background='rgba(167,139,250,.06)'">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 8v4l3 3"/></svg>
+                Resumir com IA
+              </button>` : ''}
+            </div>
+
+            <!-- Área do resumo IA -->
+            <div id="nt-resumo-${escH(nt.id)}" style="display:none;margin-top:12px"></div>
+          </div>
+        </div>`;
+      }).join('')}
     </div>`;
-  }).join('');
 }
 
 // ── Chamar /api/nt-resumo com polling (evita timeout de conexão) ──────────
@@ -2545,6 +2839,7 @@ function _esconderWorkspace() {
   document.getElementById('layoutPanel').classList.remove('show');
   document.getElementById('rejPanel').classList.remove('show');
   document.getElementById('forumPanel')?.classList.remove('show');
+  document.getElementById('ajudaPanel')?.classList.remove('show');
   if(document.getElementById('loteSidebar')){document.getElementById('loteSidebar').classList.remove('show');document.getElementById('loteDivider').style.display='none';}
 }
 
@@ -2552,8 +2847,11 @@ function abrirDocs() {
   _esconderWorkspace();
   document.getElementById('tab-docs').classList.add('active');
   document.getElementById('docPanel').classList.add('show');
-  // Renderizar novidades se já tiver cache
-  if (_notifCache) _renderizarNovidadesNoPainel(_notifCache);
+  // Carregar dados dinâmicos do servidor
+  _docsCarregado = false; // forçar reload ao abrir
+  _renderDocsDynamic();
+  // Renderizar changelog também
+  _renderChangelog();
 }
 
 // ════════════════════════════════════════════════════════
@@ -4394,6 +4692,150 @@ const FORUM_TS_KEY = 'nfse-forum-ts';
 let _forumAberto  = false;
 let _forumTimer   = null;
 
+
+// ════════════════════════════════════════════════════════
+// PAINEL AJUDA / SOBRE
+// ════════════════════════════════════════════════════════
+const _ATALHOS = [
+  { tecla: 'Ctrl + Enter', acao: 'Validar XML' },
+  { tecla: 'Ctrl + L',     acao: 'Limpar editor' },
+  { tecla: 'Alt + 1',      acao: 'Modo Individual' },
+  { tecla: 'Alt + 2',      acao: 'Modo Lote' },
+  { tecla: 'Alt + L',      acao: 'Abrir Leiaute' },
+  { tecla: 'Alt + R',      acao: 'Abrir Rejeições' },
+  { tecla: 'Alt + D',      acao: 'Abrir Documentação' },
+  { tecla: 'Alt + F',      acao: 'Abrir Fórum' },
+  { tecla: 'Alt + H',      acao: 'Abrir Ajuda' },
+  { tecla: 'Escape',        acao: 'Fechar painel lateral' },
+  { tecla: 'Ctrl + +',     acao: 'Aumentar fonte editor' },
+  { tecla: 'Ctrl + -',     acao: 'Diminuir fonte editor' },
+];
+
+const _COMO_USAR = [
+  { titulo: 'Validação individual', desc: 'Cole ou arraste um XML no editor e clique em Validar (ou Ctrl+Enter). O resultado aparece à direita com todos os erros.' },
+  { titulo: 'Modo Lote', desc: 'Clique na aba Lote e arraste vários XMLs de uma vez. O sistema processa em fila e mostra o status de cada arquivo.' },
+  { titulo: 'Leiaute', desc: 'Árvore com os 416 campos da NFS-e Nacional. Clique em qualquer badge E-code para ver a rejeição correspondente.' },
+  { titulo: 'Rejeições', desc: '442 rejeições catalogadas com regra, campo e NT de origem. Adicione notas internas clicando no ícone de documento.' },
+  { titulo: 'Documentação', desc: 'NTs do portal gov.br monitoradas automaticamente. Use o botão "Resumir com IA" para análise completa da NT.' },
+  { titulo: 'Agrupamento', desc: 'No resultado, clique em "Agrupar" para organizar os erros por seção: Transmissão, Prestador, IBS/CBS, etc.' },
+];
+
+let _ajudaIniciado = false;
+
+function abrirAjuda() {
+  _esconderWorkspace();
+  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-ajuda')?.classList.add('active');
+  const panel = document.getElementById('ajudaPanel');
+  if (panel) {
+    panel.classList.add('show');
+    panel.scrollTop = 0; // sempre rolar ao topo
+  }
+  if (!_ajudaIniciado) {
+    _renderAjuda();
+    _ajudaIniciado = true;
+  }
+}
+
+function _renderAjuda() {
+  // Grid de atalhos
+  const grid = document.getElementById('ajudaAtalhosGrid');
+  if (grid) {
+    grid.innerHTML = _ATALHOS.map(a => `
+      <div class="ajuda-kbd">
+        <span style="color:var(--text2)">${escH(a.acao)}</span>
+        <span class="ajuda-kbd-key">
+          ${a.tecla.split('+').map(k => `<kbd>${k.trim()}</kbd>`).join('<span style="color:var(--muted2);margin:0 1px">+</span>')}
+        </span>
+      </div>`).join('');
+  }
+
+  // Grid como usar
+  const grid2 = document.getElementById('ajudaComoUsarGrid');
+  if (grid2) {
+    grid2.innerHTML = _COMO_USAR.map(c => `
+      <div class="ajuda-how">
+        <div style="font-weight:500;color:var(--text);margin-bottom:4px;font-size:11px">${escH(c.titulo)}</div>
+        <div>${escH(c.desc)}</div>
+      </div>`).join('');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// ATALHOS DE TECLADO GLOBAIS
+// ════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  const tag  = document.activeElement?.tagName?.toLowerCase();
+  const inEditor = tag === 'textarea' || tag === 'input' ||
+    document.activeElement?.closest?.('.CodeMirror');
+
+  // Ctrl + Enter — Validar (funciona mesmo dentro do editor)
+  if (e.ctrlKey && e.key === 'Enter') {
+    e.preventDefault();
+    validar();
+    return;
+  }
+
+  // Ctrl + L — Limpar
+  if (e.ctrlKey && e.key === 'l' && !inEditor) {
+    e.preventDefault();
+    limpar();
+    return;
+  }
+
+  // Ctrl + +/- — Zoom do editor
+  if (e.ctrlKey && (e.key === '=' || e.key === '+')) {
+    e.preventDefault();
+    _zoomEditor(1);
+    return;
+  }
+  if (e.ctrlKey && e.key === '-') {
+    e.preventDefault();
+    _zoomEditor(-1);
+    return;
+  }
+
+  // Alt + tecla — navegação (não interfere em inputs)
+  if (e.altKey && !inEditor) {
+    switch (e.key) {
+      case '1': e.preventDefault(); abrirIndividual(); break;
+      case '2': e.preventDefault(); abrirLote();       break;
+      case 'l': case 'L': e.preventDefault(); abrirLeiaute();    break;
+      case 'r': case 'R': e.preventDefault(); abrirRejeicoes();  break;
+      case 'd': case 'D': e.preventDefault(); abrirDocs();       break;
+      case 'f': case 'F': e.preventDefault(); abrirForum();      break;
+      case 'h': case 'H': e.preventDefault(); abrirAjuda();      break;
+    }
+    return;
+  }
+
+  // Escape — fechar painéis laterais
+  if (e.key === 'Escape' && !inEditor) {
+    const paineis = ['layoutPanel','rejPanel','docPanel','forumPanel','ajudaPanel'];
+    paineis.forEach(id => {
+      const el = document.getElementById(id);
+      if (el?.classList.contains('show')) {
+        el.classList.remove('show');
+        // Reativar workspace
+        const ws = document.getElementById('workspace');
+        if (ws) ws.style.display = '';
+      }
+    });
+    return;
+  }
+});
+
+// Zoom do editor
+let _editorFontSize = 12.5;
+function _zoomEditor(delta) {
+  _editorFontSize = Math.min(22, Math.max(9, _editorFontSize + delta));
+  if (typeof cm !== 'undefined' && cm) {
+    cm.getWrapperElement().style.fontSize = _editorFontSize + 'px';
+    cm.refresh();
+  }
+  toast(`Editor: ${_editorFontSize}px`, 1000);
+}
+
 function abrirForum() {
   _esconderWorkspace();
   document.getElementById('tab-forum').classList.add('active');
@@ -4779,6 +5221,8 @@ function _inicializar() {
   initCM();
   cm.setOption('theme', _isDark ? 'dracula' : 'default');
   setExemplo('dps');
+  // Garantir workspace visível na inicialização
+  abrirIndividual();
   _verificarNotificacoes();
   setInterval(_verificarNotificacoes, 5 * 60 * 1000);
   _forumIniciarPolling(); // polling fórum a cada 2h

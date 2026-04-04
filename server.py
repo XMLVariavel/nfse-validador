@@ -1113,6 +1113,7 @@ class Handler(BaseHTTPRequestHandler):
                 "xxe_protection":True,
                 "max_body_mb":MAX_BODY_BYTES//1024//1024,
                 "forum_cache_topics":len(_FORUM_CACHE.get("topics",[])),
+                "xsd_state": _load_json_safe(_XSD_STATE),
             },ensure_ascii=False).encode())
         elif path=="/api/nt-resumo":
             from urllib.parse import parse_qs as _pqs, urlparse as _up
@@ -1147,6 +1148,24 @@ class Handler(BaseHTTPRequestHandler):
                         _NT_JOBS[url] = {"status":"done" if res.get("ok") else "error","result":res}
                     threading.Thread(target=_run_job, daemon=True).start()
                     self._send(200,b'{"status":"running"}')
+        elif path=="/api/monitorar-docs":
+            # Roda monitorar_docs.py em background e retorna status
+            import subprocess as _sp
+            _script = BASE / "monitorar_docs.py"
+            if not _script.exists():
+                self._send(404, b'{"ok":false,"erro":"monitorar_docs.py nao encontrado"}')
+            else:
+                def _rodar_monitor():
+                    try:
+                        _sp.run(
+                            [__import__("sys").executable, str(_script)],
+                            cwd=str(BASE), timeout=120,
+                            capture_output=True
+                        )
+                    except Exception as ex:
+                        print(f"[monitor] erro: {ex}")
+                threading.Thread(target=_rodar_monitor, daemon=True).start()
+                self._send(200, b'{"ok":true,"msg":"Monitor iniciado em background"}')
         elif path=="/api/docs":
             # Serve docs_dynamic.json gerado pelo monitorar_docs.py
             if _DOCS_DYNAMIC.exists():

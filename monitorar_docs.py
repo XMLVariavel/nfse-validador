@@ -90,61 +90,143 @@ def fetch_page(url: str) -> str | None:
 
 
 def extrair_nts(html: str) -> list[dict]:
-    """Extrai Notas Técnicas do HTML da página gov.br."""
-    nts = []
+    """
+    Extrai TODOS os grupos de documentos da página gov.br.
+    Captura nome correto da célula de texto, não do nome do arquivo.
+    Agrupa: NT principal + seus anexos.
+    """
+    grupos = []
+    vistos = set()
 
-    # Padrão principal: links com nt-NNN no nome do arquivo
-    padrao = re.compile(
-        r'href="([^"]*(?:nt-0*(\d{1,3})|nota-tecnica[^"]*?(\d{1,3}))[^"]*\.(pdf|zip|xlsx))"[^>]*>([^<]{3,200})',
-        re.IGNORECASE
+    # Extrair todas as células de tabela com links de documentos
+    # A página usa tabelas <table><tr><td> com links
+    # Padrão: texto do parágrafo antes dos links = título do grupo
+    linhas_celula = re.findall(
+        r'<td[^>]*>(.*?)</td>',
+        html, re.DOTALL | re.IGNORECASE
     )
-    for m in padrao.finditer(html):
-        href    = m.group(1)
-        num1    = m.group(2) or m.group(3) or ""
-        ext     = m.group(4).lower()
-        texto   = re.sub(r'\s+', ' ', m.group(5)).strip()
-        url     = href if href.startswith("http") else "https://www.gov.br" + href
-        num     = num1.zfill(3) if num1 else ""
 
-        if not num:
+    for celula in linhas_celula:
+        # Extrair links de arquivos nesta célula
+        links_cel = re.findall(
+            r'href="([^"]+\.(pdf|xlsx|zip))"[^>]*>([^<]{2,150})',
+            celula, re.IGNORECASE
+        )
+        links_pagina = re.findall(
+            r'href="([^"]+nota-tecnica[^"]*)"[^>]*>([^<]{5,150})',
+            celula, re.IGNORECASE
+        )
+
+        if not links_cel and not links_pagina:
             continue
 
-        nts.append({
-            "num":   num,
-            "id":    f"NT-{num}",
-            "texto": texto[:120],
-            "url":   url,
-            "ext":   ext,
-        })
+        # Extrair título da célula (primeiro parágrafo com texto significativo)
+        textos = re.findall(r'>([^<]{10,200})<', celula)
+        titulo = ""
+        for t in textos:
+            t = re.sub(r'\s+', ' ', t).strip()
+            if len(t) > 15 and not t.startswith("http") and not t.startswith("/"):
+                titulo = t[:150]
+                break
 
-    # Padrão secundário: links de páginas de notas técnicas (sem arquivo)
-    padrao2 = re.compile(
-        r'href="([^"]*nota-tecnica[^"]*?(\d{1,3})[^"]*)"[^>]*>([^<]{5,200})',
-        re.IGNORECASE
-    )
-    for m in padrao2.finditer(html):
-        href  = m.group(1)
-        num   = m.group(2).zfill(3)
-        texto = re.sub(r'\s+', ' ', m.group(3)).strip()
-        url   = href if href.startswith("http") else "https://www.gov.br" + href
-        # Só adicionar se não existe ainda
-        if not any(n["num"] == num for n in nts):
-            nts.append({
-                "num":   num,
-                "id":    f"NT-{num}",
-                "texto": texto[:120],
-                "url":   url,
-                "ext":   "web",
+        if not titulo:
+            continue
+
+        # Determinar ID e status
+        nt_m = re.search(r'n[oº°]?\s*(\d{3})', titulo, re.IGNORECASE)
+        anexo_m = re.search(r'[Aa]nexo\s+([IVXivx]+|\w+)', titulo)
+
+        if nt_m:
+            num = nt_m.group(1).zfill(3)
+            gid = f"NT-{num}"
+        elif anexo_m:
+            gid = f"ANEXO-{anexo_m.group(1).upper()}"
+        else:
+            gid = re.sub(r'[^a-zA-Z0-9]', '-', titulo[:30]).strip('-')
+
+        if gid in vistos:
+            continue
+        vistos.add(gid)
+
+        # Inferir status pelo conteúdo da célula
+        cel_lower = celula.lower()
+        if "em desenvolvimento" in cel_lower or "trabalho inicial" in cel_lower:
+            status = "Em desenvolvimento"
+        elif "produção restrita" in cel_lower or "piloto" in cel_lower:
+            status = "Produção Restrita"
+        elif "não estará disponível" in cel_lower or "não disponível" in cel_lower:
+            status = "Não disponível em produção"
+        elif nt_m:
+            status = "Produção"
+        else:
+            status = "Documento"
+
+        # Montar lista de arquivos do grupo
+        docs = []
+        for href, ext, label in links_cel:
+            url = href if href.startswith("http") else "https://www.gov.br" + href
+            label_limpo = re.sub(r'\s+', ' ', label).strip()[:100]
+            # Se label não é informativo, usar nome do arquivo formatado
+            nome_arq = url.split("/")[-1]
+            if len(label_limpo) < 5:
+                label_limpo = nome_arq
+            docs.append({
+                "nome": label_limpo,
+                "url":  url,
+                "tipo": ext.lower(),
+            })
+        for href, label in links_pagina:
+            url = href if href.startswith("http") else "https://www.gov.br" + href
+            label_limpo = re.sub(r'\s+', ' ', label).strip()[:100]
+            docs.append({
+                "nome": label_limpo or "Ver documento",
+                "url":  url,
+                "tipo": "web",
             })
 
-    # Deduplicar por num, preferindo PDF
-    seen: dict[str, dict] = {}
-    for nt in nts:
-        num = nt["num"]
-        if num not in seen or nt["ext"] == "pdf":
-            seen[num] = nt
-    return sorted(seen.values(), key=lambda x: x["num"], reverse=True)
+        if not docs:
+            continue
 
+        grupo = {
+            "id":      gid,
+            "num":     nt_m.group(1).zfill(3) if nt_m else "",
+            "titulo":  titulo,
+            "status":  status,
+            "docs":    docs,
+            "novo":    False,
+        }
+        grupos.append(grupo)
+
+    # Se nada foi encontrado pela tabela, fallback para extração simples de links
+    if not grupos:
+        log.warning("Nenhum grupo encontrado via tabela — usando extração simples de links")
+        for href, ext in re.findall(r'href="([^"]+\.(pdf|xlsx|zip))"', html, re.IGNORECASE):
+            url = href if href.startswith("http") else "https://www.gov.br" + href
+            nome = url.split("/")[-1]
+            if url not in vistos:
+                vistos.add(url)
+                grupos.append({
+                    "id": nome, "num": "", "titulo": nome,
+                    "status": "Documento", "docs": [{"nome": nome, "url": url, "tipo": ext.lower()}],
+                    "novo": False,
+                })
+
+    return grupos
+
+
+def comparar(antigo: list, novo: list) -> list:
+    """Retorna grupos que estão em novo mas não em antigo (por id ou URLs dos docs)."""
+    ids_antigos = {g.get("id","") for g in antigo}
+    urls_antigas = set()
+    for g in antigo:
+        for d in g.get("docs", []):
+            urls_antigas.add(d.get("url",""))
+    novos = []
+    for g in novo:
+        docs_novos = [d for d in g.get("docs",[]) if d.get("url","") not in urls_antigas]
+        if g.get("id","") not in ids_antigos or docs_novos:
+            novos.append(g)
+    return novos
 
 def inferir_dados_nt(nt: dict) -> dict:
     """Infere título, descrição e status a partir dos dados disponíveis."""
@@ -303,8 +385,8 @@ def patch_changelog(html_path: Path, nts_novas: list[dict]) -> bool:
 
 
 # ── Criar notificação no sistema ──────────────────────────────────────────────
-def criar_notificacao(nts_novas: list[dict]):
-    """Cria entrada em notificacoes_lidas.json para aparecer no sino."""
+def criar_notificacao(nts_novas: list):
+    """Cria notificações para o sino — suporta formato grupo (docs[]) e antigo (url)."""
     try:
         notifs = []
         if NOTIF_FILE.exists():
@@ -315,17 +397,26 @@ def criar_notificacao(nts_novas: list[dict]):
         notifs = []
 
     ts = datetime.now().isoformat()
-    for nt in nts_novas:
+    for g in nts_novas:
+        gid = g.get("id", "DOC")
+        # Suportar formato novo (grupos com docs[]) e antigo (url direto)
+        if "docs" in g:
+            docs = g.get("docs", [])
+            url  = docs[0].get("url", "") if docs else ""
+            msg  = f"{len(docs)} arquivo(s) — disponível na aba Documentação"
+        else:
+            url  = g.get("url", g.get("texto",""))
+            msg  = f"{g.get('texto','Documento')} — disponível na aba Documentação"
+
         notif = {
-            "id":       f"nt-nova-{nt['id']}-{ts[:10]}",
+            "id":       f"nt-nova-{gid}-{ts[:10]}",
             "tipo":     "nt_nova",
-            "titulo":   f"Nova {nt['id']} publicada no gov.br",
-            "mensagem": f"{nt.get('texto','Nota Técnica')} — disponível na aba Documentação",
-            "url":      nt["url"],
+            "titulo":   f"Novo: {g.get('titulo', gid)[:60]}",
+            "mensagem": msg,
+            "url":      url,
             "ts":       ts,
             "lida":     False,
         }
-        # Evitar duplicata
         if not any(n.get("id") == notif["id"] for n in notifs):
             notifs.append(notif)
             log.info(f"✔ Notificação criada: {notif['titulo']}")
@@ -337,30 +428,39 @@ def criar_notificacao(nts_novas: list[dict]):
 
 def _gerar_docs_dynamic(state: dict, nts_novas: list) -> dict:
     """
-    Gera o JSON dinâmico com todas as NTs para o servidor servir via /api/docs.
-    Substitui a necessidade de modificar o index.html.
+    Gera o JSON dinâmico com todos os grupos de documentos para /api/docs.
     """
-    todas_nts = []
+    todos_grupos = []
     ids_vistos = set()
 
     for page in PAGES:
         pid = page["id"]
-        for nt in state["paginas"].get(pid, {}).get("nts", []):
-            if nt["id"] not in ids_vistos:
-                ids_vistos.add(nt["id"])
-                dados = inferir_dados_nt(nt)
-                dados["novo"] = nt.get("novo", False)
-                dados["pagina"] = pid
-                todas_nts.append(dados)
+        pdata = state.get("paginas", {}).get(pid, {})
+        # Tentar "grupos" primeiro, depois "nts" para compatibilidade
+        grupos = pdata.get("grupos") or pdata.get("nts") or []
+        log.info(f"  [{pid}] {len(grupos)} grupo(s) no state")
+        for g in grupos:
+            gid = g.get("id","") or g.get("nome","") or str(id(g))
+            if gid not in ids_vistos:
+                ids_vistos.add(gid)
+                g2 = dict(g)  # cópia para não alterar state
+                g2["pagina_nome"] = page["nome"]
+                todos_grupos.append(g2)
 
-    # Ordenar do mais recente ao mais antigo
-    todas_nts.sort(key=lambda x: x.get("id",""), reverse=True)
+    # Ordenar: grupos com número de NT primeiro (desc), depois outros
+    def _sort_key(g):
+        num = g.get("num","")
+        return (0 if num else 1, num)
+    todos_grupos.sort(key=_sort_key, reverse=False)
+    todos_grupos.sort(key=lambda g: g.get("num","999"), reverse=True)
+
+    ids_novos = {g.get("id","") for g in nts_novas}
 
     return {
         "ultima_verificacao": state.get("ultima_verificacao","—"),
-        "nts": todas_nts,
-        "total": len(todas_nts),
-        "novas": [nt["id"] for nt in nts_novas],
+        "grupos": todos_grupos,
+        "total": len(todos_grupos),
+        "novas": list(ids_novos),
         "gerado_em": datetime.now().isoformat(),
     }
 
@@ -398,22 +498,26 @@ def main():
         globais    = set(state.get("nts_conhecidas", []))
 
         novas_pagina = []
-        for nt in nts_encontradas:
-            if nt["id"] not in globais or forcar:
-                nt["novo"] = True
-                novas_pagina.append(nt)
-                log.info(f"  + {nt['id']} NOVA: {nt['texto'][:60]}")
+        grupos_antigos = state["paginas"].get(pid, {}).get("grupos", [])
+        grupos_novos_detectados = comparar(grupos_antigos, nts_encontradas)
+
+        for g in nts_encontradas:
+            if any(gn["id"] == g["id"] for gn in grupos_novos_detectados) or forcar:
+                g["novo"] = True
+                novas_pagina.append(g)
+                log.info(f"  + {g['id']} NOVO: {g['titulo'][:60]}")
             else:
-                nt["novo"] = False
+                g["novo"] = False
 
         if novas_pagina:
             houve_mudanca = True
             nts_novas.extend(novas_pagina)
 
-        # Salvar todas as NTs desta página (novas + antigas)
+        # Salvar todos os grupos desta página
         state["paginas"][pid] = {
             "ultima_verificacao": datetime.now().isoformat(),
-            "nts": nts_encontradas,
+            "nts": nts_encontradas,  # compatibilidade
+            "grupos": nts_encontradas,
         }
 
     # Atualizar lista global de NTs conhecidas
@@ -450,6 +554,8 @@ def main():
 
     # 1. Salvar dados da documentação em arquivo JSON separado
     log.info("\n[1/3] Salvando dados de documentação em docs_dynamic.json...")
+    # Garantir que state já tem os grupos salvos antes de gerar o dynamic
+    save_state(state)
     docs_dynamic = _gerar_docs_dynamic(state, nts_novas)
     DOCS_DYNAMIC = BASE / "tabelas" / "docs_dynamic.json"
     DOCS_DYNAMIC.parent.mkdir(exist_ok=True)
