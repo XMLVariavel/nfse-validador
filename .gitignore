@@ -1,0 +1,7 @@
+.env
+tabelas/docs_state.json
+tabelas/xsd_update_state.json
+tabelas/notificacoes_lidas.json
+logs/
+__pycache__/
+*.pyc
