@@ -952,7 +952,8 @@ def _get_forum_topics() -> dict:
         return {"ok": False, "topics": [], "ts": 0, "erro": str(ex)}
 
 
-_DOCS_STATE  = BASE / "tabelas" / "docs_state.json"
+_DOCS_STATE    = BASE / "tabelas" / "docs_state.json"
+_DOCS_DYNAMIC  = BASE / "tabelas" / "docs_dynamic.json"
 _XSD_STATE   = BASE / "tabelas" / "xsd_update_state.json"
 _NOTIF_LIDAS = BASE / "tabelas" / "notificacoes_lidas.json"
 
@@ -967,8 +968,16 @@ def _get_notificacoes() -> dict:
     Lê docs_state.json e xsd_update_state.json e retorna notificações não lidas.
     Retorna: {"total": N, "docs": [...], "schemas": [...], "ultima_verificacao": "..."}
     """
-    lidas      = _load_json_safe(_NOTIF_LIDAS)
-    ids_lidos  = set(lidas.get("ids", []))
+    lidas_raw  = _load_json_safe(_NOTIF_LIDAS)
+    # Suportar dois formatos:
+    # - antigo: {"ids": [...]}
+    # - novo (monitorar_docs.py): lista de objetos [{id, lida, ...}]
+    if isinstance(lidas_raw, list):
+        ids_lidos = set(n.get("id","") for n in lidas_raw if n.get("lida", False))
+    elif isinstance(lidas_raw, dict):
+        ids_lidos = set(lidas_raw.get("ids", []))
+    else:
+        ids_lidos = set()
 
     docs_state = _load_json_safe(_DOCS_STATE)
     xsd_state  = _load_json_safe(_XSD_STATE)
@@ -1023,18 +1032,29 @@ def _get_notificacoes() -> dict:
     }
 
 def _marcar_lidas():
-    """Marca todas as notificações atuais como lidas."""
+    """Marca todas as notificações como lidas — suporta formato lista e dict."""
     dados = _get_notificacoes()
-    todos_ids = (
-        [n["id"] for n in dados["docs"]] +
-        [n["id"] for n in dados["schemas"]]
+    todos_ids = set(
+        [n["id"] for n in dados.get("docs", [])] +
+        [n["id"] for n in dados.get("schemas", [])]
     )
+    # Ler arquivo existente e preservar notificações do monitorar_docs.py
+    lidas_raw = _load_json_safe(_NOTIF_LIDAS)
+    if isinstance(lidas_raw, list):
+        # Formato novo: lista de objetos — marcar todos como lidos
+        for item in lidas_raw:
+            item["lida"] = True
+        # Adicionar IDs do servidor que ainda não estão na lista
+        ids_na_lista = {n.get("id") for n in lidas_raw}
+        for nid in todos_ids:
+            if nid not in ids_na_lista:
+                lidas_raw.append({"id": nid, "lida": True})
+        novo = lidas_raw
+    else:
+        # Formato antigo: dict com "ids"
+        novo = {"ids": list(todos_ids), "em": time.strftime("%Y-%m-%dT%H:%M:%S")}
     _NOTIF_LIDAS.parent.mkdir(exist_ok=True)
-    _NOTIF_LIDAS.write_text(
-        json.dumps({"ids": todos_ids, "em": time.strftime("%Y-%m-%dT%H:%M:%S")},
-                   ensure_ascii=False),
-        encoding="utf-8"
-    )
+    _NOTIF_LIDAS.write_text(json.dumps(novo, ensure_ascii=False), encoding="utf-8")
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self,fmt,*args): pass
@@ -1127,6 +1147,16 @@ class Handler(BaseHTTPRequestHandler):
                         _NT_JOBS[url] = {"status":"done" if res.get("ok") else "error","result":res}
                     threading.Thread(target=_run_job, daemon=True).start()
                     self._send(200,b'{"status":"running"}')
+        elif path=="/api/docs":
+            # Serve docs_dynamic.json gerado pelo monitorar_docs.py
+            if _DOCS_DYNAMIC.exists():
+                self._send(200, _DOCS_DYNAMIC.read_bytes())
+            else:
+                self._send(200, json.dumps({
+                    "ultima_verificacao": "—",
+                    "nts": [], "total": 0, "novas": [],
+                    "msg": "Execute monitorar_docs.py para gerar os dados"
+                }, ensure_ascii=False).encode())
         elif path=="/api/forum":
             self._send(200,json.dumps(_get_forum_topics(),ensure_ascii=False).encode())
         elif path=="/api/notificacoes":

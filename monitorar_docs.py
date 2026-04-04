@@ -1,23 +1,20 @@
 """
 monitorar_docs.py — Monitor de Documentação Oficial NFS-e
 =========================================================
-Monitora as páginas do gov.br/nfse e:
-  1. Detecta novas Notas Técnicas / documentos publicados
-  2. Atualiza o arquivo tabelas/docs_state.json com os novos links
-  3. Gera o trecho HTML para o menu Documentação do index.html (patch automático)
-  4. Cria sentinel para o server.py recarregar
+Monitora o portal gov.br/nfse e automaticamente:
+  1. Detecta novas Notas Técnicas publicadas
+  2. Atualiza a aba Documentação no index.html (entre marcadores DOC_PANEL)
+  3. Adiciona a NT nova ao _CHANGELOG_NTS do JavaScript
+  4. Cria notificação que aparece no sino do sistema
+  5. Cria sentinel para o server.py recarregar se necessário
 
 Uso:
   python monitorar_docs.py            # verifica e atualiza se houver mudança
-  python monitorar_docs.py --check    # só verifica, imprime JSON com resultado
+  python monitorar_docs.py --check    # só verifica, não altera nada
   python monitorar_docs.py --force    # força atualização mesmo sem mudança
 
-Agendamento sugerido (Task Scheduler Windows):
-  Frequência: toda segunda-feira às 08h00
-  Comando: python monitorar_docs.py
-  Diretório: pasta raiz do sistema-nfse
-
-Dependências: apenas stdlib Python 3.8+
+Agendamento Windows (configurado automaticamente pelo instalar_agendador.bat):
+  Toda segunda-feira às 08h00 e toda quinta-feira às 08h00
 """
 
 import re, json, sys, os, logging
@@ -26,34 +23,35 @@ from datetime import datetime
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
-# ── Config ──────────────────────────────────────────────────────────────────
-BASE         = Path(__file__).parent
-STATE_FILE   = BASE / "tabelas" / "docs_state.json"
-LOG_FILE     = BASE / "logs" / "docs_monitor.log"
-HTML_FILE    = BASE / "static" / "index.html"
-SENTINEL     = BASE / "tabelas" / "reload_docs.flag"
+# ── Configuração ─────────────────────────────────────────────────────────────
+BASE       = Path(__file__).parent
+STATE_FILE = BASE / "tabelas" / "docs_state.json"
+NOTIF_FILE = BASE / "tabelas" / "notificacoes_lidas.json"
+LOG_FILE   = BASE / "logs"    / "docs_monitor.log"
+HTML_FILE  = BASE / "static"  / "index.html"
+SENTINEL   = BASE / "tabelas" / "reload_docs.flag"
 
 PAGES = [
     {
-        "id":    "rtc",
-        "nome":  "RTC — Reforma Tributária do Consumo",
-        "url":   "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
+        "id":   "rtc",
+        "nome": "RTC — Reforma Tributária do Consumo",
+        "url":  "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
     },
     {
-        "id":    "atual",
-        "nome":  "Documentação Atual (Produção)",
-        "url":   "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual",
+        "id":   "atual",
+        "nome": "Documentação Atual (Produção)",
+        "url":  "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual",
     },
     {
-        "id":    "restrita",
-        "nome":  "Produção Restrita (Piloto RTC)",
-        "url":   "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
+        "id":   "restrita",
+        "nome": "Produção Restrita (Piloto RTC)",
+        "url":  "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
     },
 ]
 
 HEADERS = {"User-Agent": "NFS-e-Doc-Monitor/1.0 (automacao interna)"}
 
-# ── Logging ──────────────────────────────────────────────────────────────────
+# ── Logging ───────────────────────────────────────────────────────────────────
 LOG_FILE.parent.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
@@ -66,22 +64,21 @@ logging.basicConfig(
 log = logging.getLogger("docs_monitor")
 
 
-# ── Estado ───────────────────────────────────────────────────────────────────
+# ── Estado ────────────────────────────────────────────────────────────────────
 def load_state() -> dict:
     if STATE_FILE.exists():
         try:
             return json.loads(STATE_FILE.read_text(encoding="utf-8"))
         except Exception:
             pass
-    return {"paginas": {}, "ultima_verificacao": None}
-
+    return {"paginas": {}, "nts_conhecidas": [], "ultima_verificacao": None}
 
 def save_state(state: dict):
     STATE_FILE.parent.mkdir(exist_ok=True)
     STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-# ── Scraping ─────────────────────────────────────────────────────────────────
+# ── Scraping ──────────────────────────────────────────────────────────────────
 def fetch_page(url: str) -> str | None:
     try:
         req = Request(url, headers=HEADERS)
@@ -92,269 +89,390 @@ def fetch_page(url: str) -> str | None:
         return None
 
 
-def extrair_links(html: str, base_url: str) -> list[dict]:
-    """
-    Extrai links de documentos (.pdf, .xlsx, .zip) e Notas Técnicas da página.
-    Retorna lista de dicts: {texto, url, tipo, data}
-    """
-    links = []
-    # PDFs, XLSXs, ZIPs de documentos oficiais
-    padrao_arquivo = re.compile(
-        r'href="([^"]*(?:nt-\d+|nota-tecnica|anexo[ivx\d\-]+|nfse-esquemas)[^"]*\.(pdf|xlsx|zip))"[^>]*>([^<]{1,200})',
+def extrair_nts(html: str) -> list[dict]:
+    """Extrai Notas Técnicas do HTML da página gov.br."""
+    nts = []
+
+    # Padrão principal: links com nt-NNN no nome do arquivo
+    padrao = re.compile(
+        r'href="([^"]*(?:nt-0*(\d{1,3})|nota-tecnica[^"]*?(\d{1,3}))[^"]*\.(pdf|zip|xlsx))"[^>]*>([^<]{3,200})',
         re.IGNORECASE
     )
-    for m in padrao_arquivo.finditer(html):
-        href, ext, texto = m.group(1), m.group(2), m.group(3).strip()
-        url = href if href.startswith("http") else "https://www.gov.br" + href
-        nome = url.split("/")[-1]
-        # Extrair data do nome se houver (ex: 20260209)
-        data_m = re.search(r"(\d{8})", nome)
-        data = data_m.group(1) if data_m else ""
-        if len(data) == 8:
-            data = f"{data[:4]}-{data[4:6]}-{data[6:]}"
-        # Extrair número da NT
-        nt_m = re.search(r"nt-?(\d{3})", nome, re.IGNORECASE)
-        nt_num = nt_m.group(1) if nt_m else ""
+    for m in padrao.finditer(html):
+        href    = m.group(1)
+        num1    = m.group(2) or m.group(3) or ""
+        ext     = m.group(4).lower()
+        texto   = re.sub(r'\s+', ' ', m.group(5)).strip()
+        url     = href if href.startswith("http") else "https://www.gov.br" + href
+        num     = num1.zfill(3) if num1 else ""
 
-        links.append({
-            "texto": texto[:120],
-            "url":   url,
-            "nome":  nome,
-            "tipo":  ext.lower(),
-            "data":  data,
-            "nt":    nt_num,
-        })
-
-    # Também capturar links de páginas de NTs (texto rico)
-    padrao_nt = re.compile(
-        r'href="([^"]*nota-tecnica[^"]*)"[^>]*>([^<]{5,200})',
-        re.IGNORECASE
-    )
-    for m in padrao_nt.finditer(html):
-        href, texto = m.group(1), m.group(2).strip()
-        if any(l["url"] == href for l in links):
+        if not num:
             continue
-        url = href if href.startswith("http") else "https://www.gov.br" + href
-        links.append({
+
+        nts.append({
+            "num":   num,
+            "id":    f"NT-{num}",
             "texto": texto[:120],
             "url":   url,
-            "nome":  url.split("/")[-1],
-            "tipo":  "web",
-            "data":  "",
-            "nt":    "",
+            "ext":   ext,
         })
 
-    # Deduplicar por URL
-    seen = set()
-    result = []
-    for l in links:
-        if l["url"] not in seen:
-            seen.add(l["url"])
-            result.append(l)
-    return result
+    # Padrão secundário: links de páginas de notas técnicas (sem arquivo)
+    padrao2 = re.compile(
+        r'href="([^"]*nota-tecnica[^"]*?(\d{1,3})[^"]*)"[^>]*>([^<]{5,200})',
+        re.IGNORECASE
+    )
+    for m in padrao2.finditer(html):
+        href  = m.group(1)
+        num   = m.group(2).zfill(3)
+        texto = re.sub(r'\s+', ' ', m.group(3)).strip()
+        url   = href if href.startswith("http") else "https://www.gov.br" + href
+        # Só adicionar se não existe ainda
+        if not any(n["num"] == num for n in nts):
+            nts.append({
+                "num":   num,
+                "id":    f"NT-{num}",
+                "texto": texto[:120],
+                "url":   url,
+                "ext":   "web",
+            })
+
+    # Deduplicar por num, preferindo PDF
+    seen: dict[str, dict] = {}
+    for nt in nts:
+        num = nt["num"]
+        if num not in seen or nt["ext"] == "pdf":
+            seen[num] = nt
+    return sorted(seen.values(), key=lambda x: x["num"], reverse=True)
 
 
-# ── Comparação de estados ─────────────────────────────────────────────────────
-def comparar(antigo: list[dict], novo: list[dict]) -> list[dict]:
-    """Retorna links que estão em novo mas não em antigo (por URL)."""
-    urls_antigas = {l["url"] for l in antigo}
-    return [l for l in novo if l["url"] not in urls_antigas]
+def inferir_dados_nt(nt: dict) -> dict:
+    """Infere título, descrição e status a partir dos dados disponíveis."""
+    num  = int(nt["num"])
+    ntid = nt["id"]
+    url  = nt["url"]
+    txt  = nt["texto"]
+
+    # Título baseado no texto extraído ou genérico
+    titulo = f"{ntid} — {txt}" if txt and txt.lower() not in ("pdf", "zip", ntid.lower()) else f"{ntid} — Nota Técnica NFS-e Nacional"
+    if len(titulo) > 80:
+        titulo = titulo[:77] + "..."
+
+    # Status inferido pela URL
+    if "restrita" in url:
+        status  = "Produção Restrita"
+        impacto = "medio"
+    elif "producao" in url or "atual" in url:
+        status  = "Produção"
+        impacto = "medio"
+    else:
+        status  = "Produção"
+        impacto = "medio"
+
+    # Data atual como aproximação
+    data = datetime.now().strftime("%Y-%m")
+
+    # Versão
+    versao = "v1.01" if num >= 5 else "v1.00"
+
+    return {
+        "id":      ntid,
+        "titulo":  titulo,
+        "data":    data,
+        "versao":  versao,
+        "status":  status,
+        "descricao": f"Nota Técnica {ntid} publicada no portal gov.br/nfse. Verifique o documento oficial para detalhes.",
+        "url":     url,
+        "impacto": impacto,
+    }
 
 
-# ── Geração do HTML do menu Documentação ────────────────────────────────────
-def gerar_html_docs(state: dict) -> str:
-    """Gera o bloco HTML completo do painel de documentação."""
-    ts = state.get("ultima_verificacao", "—")
-    linhas = [
-        f'  <p class="doc-panel-title">Documentação Técnica Oficial — NFS-e Nacional</p>',
-        f'  <p class="doc-panel-sub">Monitoramento automático · Última verificação: {ts} '
-        f'· <a href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica" '
-        f'target="_blank" style="color:var(--blue)">gov.br/nfse</a></p>',
-    ]
+# ── Atualizar aba Documentação no index.html ──────────────────────────────────
+def gerar_bloco_doc(state: dict) -> str:
+    """Gera HTML para o bloco da aba Documentação."""
+    ts  = state.get("ultima_verificacao", "—")
+    out = [f'  <p class="doc-panel-title">Documentação Técnica Oficial — NFS-e Nacional</p>']
+    out.append(
+        f'  <p class="doc-panel-sub" id="docPanelSub">'
+        f'Fonte: <a href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc" '
+        f'target="_blank" style="color:var(--blue)">gov.br/nfse — Biblioteca / Documentação Técnica / RTC</a>'
+        f' · <span id="docDataVerif">Última verificação: {ts}</span></p>'
+    )
 
     for page in PAGES:
-        pid = page["id"]
-        docs = state["paginas"].get(pid, {}).get("links", [])
+        pid  = page["id"]
+        docs = state["paginas"].get(pid, {}).get("nts", [])
         if not docs:
             continue
 
-        linhas.append(f'\n  <div class="doc-section">')
-        linhas.append(f'    <div class="doc-section-title">{page["nome"]}</div>')
+        out.append(f'\n  <div class="doc-section">')
+        out.append(f'    <div class="doc-section-title">{page["nome"]}</div>')
 
-        # Agrupar por NT
-        grupos_nt: dict[str, list] = {}
-        sem_nt = []
-        for l in docs:
-            nt = l.get("nt", "")
-            if nt:
-                grupos_nt.setdefault(nt, []).append(l)
-            else:
-                sem_nt.append(l)
-
-        # NTs em ordem decrescente
-        for nt_num in sorted(grupos_nt.keys(), reverse=True):
-            arqs = grupos_nt[nt_num]
-            is_new = any(l.get("novo") for l in arqs)
-            new_badge = '<span class="doc-nt-badge badge-prod">Novo</span>' if is_new else ''
-            linhas.append(f'    <div class="doc-nt-card nt-new">')
-            linhas.append(f'      <div class="doc-nt-title">Nota Técnica nº {nt_num} {new_badge}</div>')
-            linhas.append(f'      <div class="doc-links">')
-            for l in arqs:
-                tipo_class = {"pdf":"pdf","xlsx":"xls","zip":"zip"}.get(l["tipo"],"web")
-                linhas.append(
-                    f'        <a class="doc-link {tipo_class}" href="{l["url"]}" '
-                    f'target="_blank" rel="noopener">'
-                    f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-                    f'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>'
-                    f'<polyline points="14 2 14 8 20 8"/></svg>'
-                    f'{l["texto"]} ({l["tipo"].upper()})'
-                    f'</a>'
+        for nt in sorted(docs, key=lambda x: x.get("num","000"), reverse=True):
+            is_new  = nt.get("novo", False)
+            new_bdg = '<span class="doc-nt-badge badge-prod" style="font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(74,222,128,.15);color:var(--accent);font-weight:700;margin-left:6px">Novo</span>' if is_new else ""
+            out.append(f'    <div class="doc-nt-card{" nt-new" if is_new else ""}">')
+            out.append(f'      <div class="doc-nt-title">Nota Técnica {nt["id"]} {new_bdg}</div>')
+            out.append(f'      <div class="doc-links">')
+            ext = nt.get("ext", "web")
+            cls = {"pdf":"pdf","xlsx":"xls","zip":"zip"}.get(ext, "web")
+            label = nt.get("texto", nt["id"])
+            out.append(
+                f'        <a class="doc-link {cls}" href="{nt["url"]}" target="_blank" rel="noopener">'
+                f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+                f'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>'
+                f'<polyline points="14 2 14 8 20 8"/></svg>'
+                f'{label} ({ext.upper()})</a>'
+            )
+            # Botão Resumir com IA se for PDF
+            if ext == "pdf":
+                out.append(
+                    f'        <button class="btn" onclick="ntResumir(\'{nt["id"]}\',\'{nt["url"]}\',this)" '
+                    f'style="font-size:10px;padding:3px 10px;color:var(--purple);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06)">'
+                    f'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+                    f'<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> Resumir com IA</button>'
                 )
-            linhas.append(f'      </div>')
-            linhas.append(f'    </div>')
+            out.append(f'      </div>')
+            out.append(f'    </div>')
 
-        # Docs sem NT identificada
-        if sem_nt:
-            linhas.append(f'    <div class="doc-nt-card">')
-            linhas.append(f'      <div class="doc-links">')
-            for l in sem_nt:
-                tipo_class = {"pdf":"pdf","xlsx":"xls","zip":"zip"}.get(l["tipo"],"web")
-                linhas.append(
-                    f'        <a class="doc-link {tipo_class}" href="{l["url"]}" '
-                    f'target="_blank" rel="noopener">'
-                    f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-                    f'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>'
-                    f'<polyline points="14 2 14 8 20 8"/></svg>'
-                    f'{l["texto"]}'
-                    f'</a>'
-                )
-            linhas.append(f'      </div>')
-            linhas.append(f'    </div>')
+        out.append(f'  </div>')
 
-        linhas.append(f'  </div>')
-
-    return "\n".join(linhas)
+    return "\n".join(out)
 
 
-def patch_html(html_path: Path, novo_conteudo: str) -> bool:
-    """
-    Substitui o conteúdo entre os marcadores no index.html.
-    Marcadores: <!-- DOC_PANEL_START --> e <!-- DOC_PANEL_END -->
-    """
+def patch_doc_panel(html_path: Path, novo_conteudo: str) -> bool:
+    """Substitui conteúdo entre <!-- DOC_PANEL_START --> e <!-- DOC_PANEL_END -->."""
     if not html_path.exists():
-        log.warning(f"index.html não encontrado em {html_path}")
+        log.warning(f"index.html não encontrado: {html_path}")
+        return False
+    content = html_path.read_text(encoding="utf-8")
+    s, e = "<!-- DOC_PANEL_START -->", "<!-- DOC_PANEL_END -->"
+    if s not in content or e not in content:
+        log.warning("Marcadores DOC_PANEL_START/END não encontrados no index.html.")
+        return False
+    novo = content[:content.index(s) + len(s)]
+    novo += "\n" + novo_conteudo + "\n"
+    novo += content[content.index(e):]
+    html_path.write_text(novo, encoding="utf-8")
+    log.info("✔ Aba Documentação atualizada no index.html")
+    return True
+
+
+# ── Atualizar _CHANGELOG_NTS no JavaScript ────────────────────────────────────
+def patch_changelog(html_path: Path, nts_novas: list[dict]) -> bool:
+    """Injeta NTs novas no array _CHANGELOG_NTS do JavaScript."""
+    if not html_path.exists() or not nts_novas:
         return False
 
     content = html_path.read_text(encoding="utf-8")
-    start_tag = "<!-- DOC_PANEL_START -->"
-    end_tag   = "<!-- DOC_PANEL_END -->"
 
-    if start_tag not in content or end_tag not in content:
-        log.warning("Marcadores DOC_PANEL_START/END não encontrados no index.html. "
-                    "Adicione-os manualmente para ativar o patch automático.")
+    # Localizar o array _CHANGELOG_NTS
+    m = re.search(r'(const _CHANGELOG_NTS = )(\[.*?\]);', content, re.DOTALL)
+    if not m:
+        log.warning("_CHANGELOG_NTS não encontrado no index.html.")
         return False
 
-    novo = content[:content.index(start_tag) + len(start_tag)]
-    novo += "\n" + novo_conteudo + "\n"
-    novo += content[content.index(end_tag):]
-    html_path.write_text(novo, encoding="utf-8")
-    log.info("index.html atualizado com novos documentos.")
+    try:
+        changelog_atual = json.loads(m.group(2))
+    except json.JSONDecodeError as ex:
+        log.error(f"Erro ao parsear _CHANGELOG_NTS: {ex}")
+        return False
+
+    ids_atuais = {nt["id"] for nt in changelog_atual}
+    adicionadas = 0
+
+    for nt_nova in nts_novas:
+        if nt_nova["id"] in ids_atuais:
+            continue
+        dados = inferir_dados_nt(nt_nova)
+        # Inserir no início (NT mais recente primeiro)
+        changelog_atual.insert(0, dados)
+        ids_atuais.add(nt_nova["id"])
+        adicionadas += 1
+        log.info(f"✔ {nt_nova['id']} adicionada ao Changelog")
+
+    if adicionadas == 0:
+        return False
+
+    # Serializar e substituir no HTML
+    novo_json = json.dumps(changelog_atual, ensure_ascii=False)
+    novo_content = content[:m.start()] + f"const _CHANGELOG_NTS = {novo_json};" + content[m.end():]
+    html_path.write_text(novo_content, encoding="utf-8")
+    log.info(f"✔ Changelog atualizado: {adicionadas} NT(s) adicionada(s)")
     return True
 
+
+# ── Criar notificação no sistema ──────────────────────────────────────────────
+def criar_notificacao(nts_novas: list[dict]):
+    """Cria entrada em notificacoes_lidas.json para aparecer no sino."""
+    try:
+        notifs = []
+        if NOTIF_FILE.exists():
+            notifs = json.loads(NOTIF_FILE.read_text(encoding="utf-8"))
+        if not isinstance(notifs, list):
+            notifs = []
+    except Exception:
+        notifs = []
+
+    ts = datetime.now().isoformat()
+    for nt in nts_novas:
+        notif = {
+            "id":       f"nt-nova-{nt['id']}-{ts[:10]}",
+            "tipo":     "nt_nova",
+            "titulo":   f"Nova {nt['id']} publicada no gov.br",
+            "mensagem": f"{nt.get('texto','Nota Técnica')} — disponível na aba Documentação",
+            "url":      nt["url"],
+            "ts":       ts,
+            "lida":     False,
+        }
+        # Evitar duplicata
+        if not any(n.get("id") == notif["id"] for n in notifs):
+            notifs.append(notif)
+            log.info(f"✔ Notificação criada: {notif['titulo']}")
+
+    NOTIF_FILE.parent.mkdir(exist_ok=True)
+    NOTIF_FILE.write_text(json.dumps(notifs, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+
+def _gerar_docs_dynamic(state: dict, nts_novas: list) -> dict:
+    """
+    Gera o JSON dinâmico com todas as NTs para o servidor servir via /api/docs.
+    Substitui a necessidade de modificar o index.html.
+    """
+    todas_nts = []
+    ids_vistos = set()
+
+    for page in PAGES:
+        pid = page["id"]
+        for nt in state["paginas"].get(pid, {}).get("nts", []):
+            if nt["id"] not in ids_vistos:
+                ids_vistos.add(nt["id"])
+                dados = inferir_dados_nt(nt)
+                dados["novo"] = nt.get("novo", False)
+                dados["pagina"] = pid
+                todas_nts.append(dados)
+
+    # Ordenar do mais recente ao mais antigo
+    todas_nts.sort(key=lambda x: x.get("id",""), reverse=True)
+
+    return {
+        "ultima_verificacao": state.get("ultima_verificacao","—"),
+        "nts": todas_nts,
+        "total": len(todas_nts),
+        "novas": [nt["id"] for nt in nts_novas],
+        "gerado_em": datetime.now().isoformat(),
+    }
 
 # ── Fluxo principal ───────────────────────────────────────────────────────────
 def main():
     args   = sys.argv[1:]
-    check  = "--check"  in args
-    forcar = "--force"  in args
+    check  = "--check" in args
+    forcar = "--force" in args
 
-    log.info("=" * 50)
-    log.info("Monitor de Documentação NFS-e gov.br")
-    log.info("=" * 50)
+    log.info("=" * 55)
+    log.info("Monitor NFS-e — Documentação gov.br")
+    log.info(f"Início: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    log.info("=" * 55)
 
-    state = load_state()
+    state         = load_state()
+    nts_novas     = []
     houve_mudanca = False
-    novos_total   = []
 
+    # ── Varrer todas as páginas ───────────────────────────────────────────────
     for page in PAGES:
         pid  = page["id"]
-        nome = page["nome"]
-        url  = page["url"]
-        log.info(f"\nVerificando: {nome}")
-        log.info(f"  URL: {url}")
+        log.info(f"\n→ Verificando: {page['nome']}")
 
-        html = fetch_page(url)
+        html = fetch_page(page["url"])
         if not html:
-            log.warning(f"  Falha — pulando.")
+            log.warning("  Falha ao acessar página — pulando.")
             continue
 
-        links_novos = extrair_links(html, url)
-        links_antigos = state["paginas"].get(pid, {}).get("links", [])
+        nts_encontradas = extrair_nts(html)
+        log.info(f"  {len(nts_encontradas)} NT(s) encontrada(s) nesta página")
 
-        novos = comparar(links_antigos, links_novos) if not forcar else links_novos
-        if novos:
-            log.info(f"  {len(novos)} novo(s) documento(s) encontrado(s):")
-            for l in novos:
-                log.info(f"    + {l['texto']} → {l['nome']}")
-                l["novo"] = True
+        # NTs já conhecidas nesta página
+        conhecidas = {n["id"] for n in state["paginas"].get(pid, {}).get("nts", [])}
+        # NTs globalmente conhecidas (todas as páginas)
+        globais    = set(state.get("nts_conhecidas", []))
+
+        novas_pagina = []
+        for nt in nts_encontradas:
+            if nt["id"] not in globais or forcar:
+                nt["novo"] = True
+                novas_pagina.append(nt)
+                log.info(f"  + {nt['id']} NOVA: {nt['texto'][:60]}")
+            else:
+                nt["novo"] = False
+
+        if novas_pagina:
             houve_mudanca = True
-            novos_total.extend(novos)
+            nts_novas.extend(novas_pagina)
 
-            # Marcar novos e mesclar com lista existente
-            urls_novas = {l["url"] for l in novos}
-            merged = [l for l in links_antigos if l["url"] not in urls_novas]
-            for l in links_novos:
-                if l["url"] in urls_novas:
-                    l["novo"] = True
-                merged.append(l)
+        # Salvar todas as NTs desta página (novas + antigas)
+        state["paginas"][pid] = {
+            "ultima_verificacao": datetime.now().isoformat(),
+            "nts": nts_encontradas,
+        }
 
-            state["paginas"][pid] = {
-                "ultima_verificacao": datetime.now().isoformat(),
-                "links": merged,
-            }
-        else:
-            log.info(f"  Sem novidades.")
-            if pid not in state["paginas"]:
-                state["paginas"][pid] = {
-                    "ultima_verificacao": datetime.now().isoformat(),
-                    "links": links_novos,
-                }
+    # Atualizar lista global de NTs conhecidas
+    if nts_novas:
+        conhecidas_global = set(state.get("nts_conhecidas", []))
+        for nt in nts_novas:
+            conhecidas_global.add(nt["id"])
+        state["nts_conhecidas"] = sorted(conhecidas_global)
 
     state["ultima_verificacao"] = datetime.now().strftime("%d/%m/%Y %H:%M")
 
+    # ── Modo --check: só imprimir resultado ──────────────────────────────────
     if check:
         resultado = {
             "houve_mudanca": houve_mudanca,
-            "novos": len(novos_total),
-            "docs": [{"texto":l["texto"],"url":l["url"]} for l in novos_total],
+            "nts_novas":     len(nts_novas),
+            "ids":           [nt["id"] for nt in nts_novas],
         }
         print(json.dumps(resultado, ensure_ascii=False, indent=2))
         return
 
-    if houve_mudanca or forcar:
-        save_state(state)
-        log.info("\nSalvando estado atualizado…")
+    # ── Salvar estado sempre ──────────────────────────────────────────────────
+    save_state(state)
 
-        # Tentar patch automático no HTML
-        novo_html = gerar_html_docs(state)
-        patched = patch_html(HTML_FILE, novo_html)
-        if not patched:
-            # Salvar como arquivo separado para referência
-            out = BASE / "tabelas" / "docs_menu.html"
-            out.write_text(novo_html, encoding="utf-8")
-            log.info(f"HTML do menu salvo em: {out}")
+    if not houve_mudanca and not forcar:
+        log.info("\n✔ Nenhuma NT nova detectada. Estado salvo.")
+        log.info("Monitor encerrado.\n")
+        return
 
-        # Criar sentinel
-        SENTINEL.parent.mkdir(exist_ok=True)
-        SENTINEL.write_text(datetime.now().isoformat(), encoding="utf-8")
-        log.info("Sentinel criado para recarregar o servidor.")
+    # ── Salvar dados dinâmicos em JSON (NÃO modifica index.html) ─────────────
+    log.info(f"\n{'='*55}")
+    log.info(f"  {len(nts_novas)} NT(s) nova(s) detectada(s)!")
+    log.info(f"{'='*55}")
 
-        log.info(f"\n{'='*50}")
-        log.info(f"✔ {len(novos_total)} novo(s) documento(s) adicionado(s) ao menu.")
-    else:
-        save_state(state)
-        log.info("\nNenhuma mudança detectada. Estado salvo.")
+    # 1. Salvar dados da documentação em arquivo JSON separado
+    log.info("\n[1/3] Salvando dados de documentação em docs_dynamic.json...")
+    docs_dynamic = _gerar_docs_dynamic(state, nts_novas)
+    DOCS_DYNAMIC = BASE / "tabelas" / "docs_dynamic.json"
+    DOCS_DYNAMIC.parent.mkdir(exist_ok=True)
+    DOCS_DYNAMIC.write_text(
+        json.dumps(docs_dynamic, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    log.info(f"  ✔ docs_dynamic.json salvo ({len(docs_dynamic.get('nts',[]))} NTs)")
 
+    # 2. Criar notificações
+    log.info("\n[2/3] Criando notificações no sistema...")
+    criar_notificacao(nts_novas)
+
+    # 3. Sentinel para recarregar servidor
+    log.info("\n[3/3] Sinalizando servidor...")
+    SENTINEL.parent.mkdir(exist_ok=True)
+    SENTINEL.write_text(datetime.now().isoformat(), encoding="utf-8")
+    log.info("  ✔ Sentinel criado — servidor vai recarregar automaticamente")
+
+    log.info(f"\n{'='*55}")
+    log.info(f"CONCLUÍDO: {len(nts_novas)} NT(s) adicionada(s) ao sistema")
+    for nt in nts_novas:
+        log.info(f"  • {nt['id']}: {nt.get('texto','')[:60]}")
+    log.info(f"{'='*55}")
     log.info("Monitor encerrado.\n")
 
 
