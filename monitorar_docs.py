@@ -24,12 +24,26 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError
 
 # ── Configuração ─────────────────────────────────────────────────────────────
-BASE       = Path(__file__).parent
+# Quando rodado dentro do exe (_internal), DATA é a pasta pai (_internal/..)
+# Quando rodado como script normal, BASE é a pasta do script
+import sys as _sys, os as _os
+_frozen = getattr(_sys, "frozen", False)
+if _frozen:
+    # Dentro do exe: __file__ = _internal/monitorar_docs.py
+    # Dados ficam em AppData/Local/NFS-e Validador/
+    _appdata = Path(_os.environ.get("LOCALAPPDATA") or
+                    _os.environ.get("APPDATA") or
+                    Path(__file__).parent.parent)
+    BASE = Path(_appdata) / "NFS-e Validador"
+else:
+    BASE = Path(__file__).parent
+
 STATE_FILE = BASE / "tabelas" / "docs_state.json"
 NOTIF_FILE = BASE / "tabelas" / "notificacoes_lidas.json"
 LOG_FILE   = BASE / "logs"    / "docs_monitor.log"
 HTML_FILE  = BASE / "static"  / "index.html"
 SENTINEL   = BASE / "tabelas" / "reload_docs.flag"
+DYNAMIC_FILE = BASE / "tabelas" / "docs_dynamic.json"
 
 PAGES = [
     {
@@ -52,7 +66,7 @@ PAGES = [
 HEADERS = {"User-Agent": "NFS-e-Doc-Monitor/1.0 (automacao interna)"}
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-LOG_FILE.parent.mkdir(exist_ok=True)
+LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s",
@@ -472,7 +486,10 @@ def main():
 
     log.info("=" * 55)
     log.info("Monitor NFS-e — Documentação gov.br")
-    log.info(f"Início: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    log.info(f"Início: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    log.info(f"BASE   : {BASE}")
+    log.info(f"LOG    : {LOG_FILE}")
+    log.info(f"STATE  : {STATE_FILE}")
     log.info("=" * 55)
 
     state         = load_state()
@@ -581,6 +598,11 @@ def main():
     log.info(f"{'='*55}")
     log.info("Monitor encerrado.\n")
 
+
+# Permite ser chamado tanto como script quanto via importlib pelo servidor
+def _executar_como_modulo():
+    """Chamado pelo servidor via importlib — equivale a rodar como __main__."""
+    main()
 
 if __name__ == "__main__":
     main()

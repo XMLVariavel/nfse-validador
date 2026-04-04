@@ -1157,12 +1157,17 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 def _rodar_monitor():
                     try:
-                        import importlib.util as _ilu
+                        import importlib.util as _ilu, traceback as _tb
                         _spec = _ilu.spec_from_file_location("monitorar_docs", str(_script))
                         _mod  = _ilu.module_from_spec(_spec)
                         _spec.loader.exec_module(_mod)
+                        # Chamar função principal
+                        if hasattr(_mod, "_executar_como_modulo"):
+                            _mod._executar_como_modulo()
+                        elif hasattr(_mod, "main"):
+                            _mod.main()
                     except Exception as ex:
-                        print(f"[monitor] erro: {ex}")
+                        print(f"[monitor] erro: {_tb.format_exc()}")
                 threading.Thread(target=_rodar_monitor, daemon=True).start()
                 self._send(200, b'{"ok":true,"msg":"Monitor iniciado em background"}')
         elif path=="/api/docs":
