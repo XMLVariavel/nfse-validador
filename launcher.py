@@ -16,8 +16,15 @@ else:
     BASE = Path(__file__).parent
     DATA = BASE
 
-PORT = 8000
-URL  = f"http://localhost:{PORT}"
+PORT        = 8000
+URL         = f"http://localhost:{PORT}"
+
+# Modo servidor apenas — quando chamado pelo Electron
+# O Electron cuida de abrir a janela, o launcher só sobe o servidor
+SERVER_ONLY = (
+    "--server-only" in sys.argv or
+    os.environ.get("NFSE_SERVER_ONLY") == "1"
+)
 
 # ── Log em AppData\Local (sempre gravável sem admin) ─────────────────────────
 try:
@@ -119,6 +126,16 @@ if not _aguardar():
     sys.exit(1)
 
 _log_print(f"Servidor OK em {URL}")
+
+# ── Modo servidor apenas (chamado pelo Electron) ──────────────────────────────
+if SERVER_ONLY:
+    _log_print("Modo servidor apenas — Electron cuida da janela.")
+    try:
+        while True:
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        pass
+    sys.exit(0)
 
 # ── Abrir Chrome/Edge em modo App ─────────────────────────────────────────────
 def _configurar_taskbar_icon():

@@ -1260,21 +1260,19 @@ class Handler(BaseHTTPRequestHandler):
             self._send(500,json.dumps({"erro":str(ex)}).encode())
 
 if __name__=="__main__":
-    HOST,PORT="0.0.0.0",8000
-    print("""
-╔══════════════════════════════════════════════════════════╗
-║   Validador NFS-e Nacional  v3.0                         ║
-║   Suporte: DPS · NFSe · CNC · TecnoNFSeNacional (TX2)   ║
-╠══════════════════════════════════════════════════════════╣
-║   Novidades: XXE Protection · Rate Limit · Cache XSD     ║
-╚══════════════════════════════════════════════════════════╝
-""")
-    print("── Pré-compilando schemas XSD ──────────────────────────")
-    ok=_preload_schemas()
-    print(f"   {ok}/6 schema(s) carregado(s)\n")
-    print(f"── Servidor iniciado em http://localhost:{PORT}")
-    _iniciar_watchdog(intervalo=10)  # hot-reload automático a cada 10s
-    print()
-    srv=ThreadingHTTPServer((HOST,PORT),Handler)
-    try: srv.serve_forever()
-    except KeyboardInterrupt: print("\nServidor encerrado.")
+    import os as _os, sys as _sys, io as _io
+    # Forcar UTF-8 globalmente (evita UnicodeEncodeError no Windows)
+    _os.environ['PYTHONUTF8'] = '1'
+    if hasattr(_sys.stdout, 'buffer'):
+        try:
+            _sys.stdout = _io.TextIOWrapper(_sys.stdout.buffer, encoding='utf-8', errors='replace')
+            _sys.stderr = _io.TextIOWrapper(_sys.stderr.buffer, encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+    HOST, PORT = "0.0.0.0", 8000
+    try:
+        print(f"NFS-e Validador v3.1 | http://{HOST}:{PORT}", flush=True)
+    except Exception:
+        pass
+    server = ThreadingHTTPServer((HOST, PORT), Handler)
+    server.serve_forever()

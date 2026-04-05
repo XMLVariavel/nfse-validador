@@ -1,0 +1,88 @@
+{
+  "name": "nfse-validador",
+  "version": "3.1.0",
+  "description": "NFS-e Validador Nacional",
+  "main": "main.js",
+  "author": "XMLVariavel",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "pack": "electron-builder --dir"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.1.7"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "br.gov.nfse.validador",
+    "productName": "NFS-e Validador",
+    "copyright": "Uso interno XMLVariavel",
+    "icon": "build/nfse.ico",
+    "publish": {
+      "provider": "github",
+      "owner": "XMLVariavel",
+      "repo": "nfse-validador",
+      "private": true,
+      "releaseType": "release"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/nfse.ico",
+      "requestedExecutionLevel": "asInvoker",
+      "signAndEditExecutable": false,
+      "sign": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NFS-e Validador",
+      "installerIcon": "build/nfse.ico",
+      "uninstallerIcon": "build/nfse.ico",
+      "installerHeaderIcon": "build/nfse.ico",
+      "license": null,
+      "language": "1046"
+    },
+    "extraResources": [
+      {
+        "from": "../",
+        "to": "app",
+        "filter": [
+          "server.py",
+          "launcher.py",
+          "monitorar_docs.py",
+          "atualizar_schemas.py",
+          "versao.json",
+          "nfse.ico",
+          "static/**",
+          "tabelas/**",
+          "schemas/**"
+        ]
+      }
+    ],
+    "extraFiles": [
+      {
+        "from": "build/nfse.ico",
+        "to": "nfse.ico"
+      }
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    }
+  }
+}
