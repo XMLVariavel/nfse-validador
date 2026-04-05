@@ -70,6 +70,10 @@
           "tabelas/**",
           "schemas/**"
         ]
+      },
+      {
+        "from": "../sheets_config.json",
+        "to": "app/sheets_config.json"
       }
     ],
     "extraFiles": [
