@@ -1,5 +1,5 @@
 """
-Validador NFS-e Nacional — v3.0
+Validador NFS-e Nacional — v3.2
 Suporte: DPS Nacional, NFSe Nacional, CNC, TecnoNFSeNacional (TX2/XML)
 Novidades v3.0: XXE Protection · Rate Limiting · Cache de Schemas (pré-compilados no startup)
 """
@@ -1271,7 +1271,7 @@ if __name__=="__main__":
             pass
     HOST, PORT = "0.0.0.0", 8000
     try:
-        print(f"NFS-e Validador v3.1 | http://{HOST}:{PORT}", flush=True)
+        print(f"NFS-e Validador v3.3 | http://{HOST}:{PORT}", flush=True)
     except Exception:
         pass
     server = ThreadingHTTPServer((HOST, PORT), Handler)

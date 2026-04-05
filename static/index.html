@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador NFS-e Nacional v3.1</title>
+<title>Validador NFS-e Nacional v3.3</title>
 
 <!-- CodeMirror 5 via CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -56,6 +56,25 @@
 }
 /* Logo especial no tema NFS-e */
 [data-theme="nfse"] .logo-icon{
+[data-theme="keevo"]{
+  --bg:#0F0A1E; --bg2:#160D2B; --bg3:#1E1240; --bg4:#261855;
+  --border:#2D1B6B; --border2:#3D2590;
+  --accent:#FF6B35; --accent2:#E8561F; --accent-glow:rgba(255,107,53,.14);
+  --blue:#4D9FFF; --red:#ff6b6b; --red-dim:#e85555;
+  --yellow:#FFD166; --orange:#FF6B35; --purple:#B57BFF;
+  --muted:#2D1B6B; --muted2:#6040A8;
+  --text:#F5F0FF; --text2:#C4B0F0; --text3:#8B70D0;
+  --mono:'JetBrains Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  --r:6px; --r2:10px;
+  --err-line:rgba(255,107,53,.15); --err-gutter:rgba(255,107,53,.5);
+}
+/* Logo especial tema Keevo */
+[data-theme="keevo"] .logo-check{background:linear-gradient(135deg,#B57BFF,#4D9FFF);}
+[data-theme="keevo"] .logo-ver{color:#FF6B35;border-color:rgba(255,107,53,.3);background:rgba(255,107,53,.1);}
+[data-theme="keevo"] .doc-tab.active{border-bottom-color:#FF6B35;color:#FF6B35;}
+[data-theme="keevo"] .btn-primary{background:#FF6B35;color:#fff;}
+[data-theme="keevo"] .btn-primary:hover{background:#E8561F;}
+
   background:linear-gradient(135deg,#1B3A6B,#2E9B6A);
 }
 [data-theme="nfse"] .logo-ver{
@@ -1028,7 +1047,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <span class="logo-name">NFS-e Validador</span>
-    <span class="logo-ver">v3.1</span>
+    <span class="logo-ver">v3.3</span>
   </div>
 
   <!-- Dropdown Modelo de XML -->
@@ -1449,7 +1468,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
       <div>
         <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
-        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.1 · Suporte Interno · XMLVariavel</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.3 · Suporte Interno · XMLVariavel</div>
       </div>
       <div style="margin-left:auto;text-align:right">
         <div style="font-size:10px;color:var(--muted2)">Suporta</div>
@@ -1462,6 +1481,35 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
         Atalhos de teclado
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="ajudaAtalhosGrid"></div>
+    </div>
+
+    <!-- Card versão + atualização -->
+    <div style="margin-bottom:24px;padding:14px 16px;background:var(--bg2);
+      border-radius:var(--r2);border:0.5px solid var(--border)">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:3px">
+            🔖 Versão instalada
+          </div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);
+            font-family:var(--mono)" id="ajudaVersaoAtual">v3.3</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <button onclick="_verificarUpdateManual()" id="btn-check-update"
+            style="display:inline-flex;align-items:center;gap:6px;
+              padding:6px 14px;border-radius:var(--r2);border:0.5px solid var(--accent);
+              background:rgba(74,222,128,.08);color:var(--accent);
+              font-size:11px;font-weight:600;cursor:pointer;
+              transition:background .15s;white-space:nowrap"
+            onmouseover="this.style.background='rgba(74,222,128,.18)'"
+            onmouseout="this.style.background='rgba(74,222,128,.08)'">
+            🔄 Verificar atualização
+          </button>
+          <span id="update-status" style="font-size:10px;color:var(--accent);
+            text-align:right;min-height:14px"></span>
+        </div>
+      </div>
     </div>
     <div style="margin-bottom:24px">
       <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
@@ -1503,7 +1551,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
     </div>
     <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.1 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.3 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
     </div>
   </div>
@@ -2673,12 +2721,15 @@ function _hrMostrarBadge(info) {
 // ════════════════════════════════════════════════════════
 // NOTIFICAÇÃO DE ATUALIZAÇÃO DO SISTEMA
 // ════════════════════════════════════════════════════════
-const _VERSAO_ATUAL = '3.0';
+const _VERSAO_ATUAL = '3.3';
 const _UPDATE_CHECK_INTERVAL = 6 * 3600 * 1000; // 6h
 // URL do arquivo de versão remoto (ajustar quando publicado)
 const _UPDATE_URL = 'https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json';
 
 async function _checarAtualizacao() {
+  // No Electron: o electron-updater cuida das atualizações via dialog nativo
+  // Não mostrar badge — evita confusão com o updater do Electron
+  if (window.electronAPI?.isElectron) return;
   try {
     const r = await fetch(_UPDATE_URL, { signal: AbortSignal.timeout(8000) });
     if (!r.ok) return;
@@ -2721,6 +2772,7 @@ const _TEMAS = {
   dark:  { nome:'Escuro',   label:'Escuro',    cmTheme:'dracula' },
   light: { nome:'Claro',    label:'Claro',     cmTheme:'default' },
   nfse:  { nome:'NFS-e Gov',label:'NFS-e Gov', cmTheme:'dracula' },
+  keevo: { nome:'Keevo',    label:'Keevo',     cmTheme:'dracula' },
 };
 let _temaAberto  = false;
 let _temaAtual   = 'dark';
@@ -5268,6 +5320,41 @@ function _verificarNotificacoes() {
 let _updateDisponivel = false;
 let _updateInfo       = null;
 
+async function _verificarUpdateManual() {
+  const btn = document.getElementById('btn-check-update');
+  const status = document.getElementById('update-status');
+
+  // No Electron: o electron-updater cuida de tudo automaticamente
+  // O botão apenas dispara uma verificação manual
+  if (window.electronAPI?.isElectron) {
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Verificando...'; }
+    if (status) status.textContent = 'Consultando GitHub...';
+    // Verificar via API do servidor
+    fetch('/api/check-update')
+      .then(r => r.json())
+      .then(d => {
+        if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar atualização'; }
+        if (d.tem_atualizacao) {
+          if (status) status.textContent = `v${d.versao_remota} disponível — aguarde o dialog do sistema`;
+          toast(`Nova versão v${d.versao_remota} disponível! O sistema irá notificá-lo automaticamente.`, 5000);
+        } else if (d.erro) {
+          if (status) status.textContent = 'Erro ao verificar — verifique sua conexão';
+        } else {
+          if (status) status.textContent = '✔ Você já tem a versão mais recente!';
+          setTimeout(() => { if (status) status.textContent = ''; }, 4000);
+        }
+      })
+      .catch(() => {
+        if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar atualização'; }
+        if (status) status.textContent = 'Erro de conexão';
+      });
+    return;
+  }
+
+  // Fora do Electron (browser normal): comportamento original
+  _verificarAtualizacao();
+}
+
 async function _verificarAtualizacao() {
   try {
     const r = await fetch('/api/check-update');
@@ -5360,7 +5447,14 @@ async function _aplicarAtualizacao(btn) {
       // Recarregar a página após 2s para aplicar o novo index.html
       setTimeout(() => {
         toast('Atualização aplicada! Recarregando…', 2000);
-        setTimeout(() => location.reload(true), 2000);
+        setTimeout(() => {
+          // No Electron: usar IPC para recarregar (mais limpo)
+          if (window.electronAPI?.reloadApp) {
+            window.electronAPI.reloadApp();
+          } else {
+            location.reload(true);
+          }
+        }, 2000);
       }, 1000);
     } else {
       statusEl.textContent = '✗ Erro ao atualizar — tente novamente';
