@@ -187,6 +187,12 @@ function aguardarServidor(tentativas = 0) {
       http.get(`${URL}/api/health`, res => {
         if (res.statusCode === 200) {
           log('Servidor OK.')
+  // Atualizar mensagem na splash
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.webContents.executeJavaScript(
+      "document.querySelector('p') && (document.querySelector('p').textContent = 'Servidor pronto!')"
+    ).catch(() => {})
+  }
           resolve()
         } else {
           retry()
@@ -524,6 +530,7 @@ app.whenReady().then(async () => {
   }
 
   // Mostrar splash enquanto inicia
+  const _splashInicio = Date.now()
   criarSplash()
 
   // Iniciar servidor Python
@@ -541,10 +548,15 @@ app.whenReady().then(async () => {
     return
   }
 
-  // Fechar splash e abrir janela principal
-  fecharSplash()
-  criarJanela()
-  criarTray()
+  // Garantir tempo mínimo de 2.5s para splash ser visível
+  const _tempoSplash = Date.now() - _splashInicio
+  const _espera = Math.max(0, 2500 - _tempoSplash)
+
+  setTimeout(() => {
+    fecharSplash()
+    criarJanela()
+    criarTray()
+  }, _espera)
 
   // Registrar máquina no Google Sheets (controle de instalações)
   setTimeout(() => _registrarMaquina(), 5000)
