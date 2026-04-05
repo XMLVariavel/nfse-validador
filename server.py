@@ -1240,6 +1240,27 @@ class Handler(BaseHTTPRequestHandler):
             _ok = all(r["ok"] for r in _resultados)
             self._send(200, _js.dumps({"ok": _ok, "arquivos": _resultados}).encode())
 
+        elif path=="/api/atualizar-schemas":
+            import importlib.util as _ilu, traceback as _tb
+            _script = BASE / "atualizar_schemas.py"
+            if not _script.exists():
+                self._send(404, b'{"ok":false,"erro":"atualizar_schemas.py nao encontrado"}')
+            else:
+                def _rodar_schemas():
+                    try:
+                        _spec = _ilu.spec_from_file_location("atualizar_schemas", str(_script))
+                        _mod  = _ilu.module_from_spec(_spec)
+                        _spec.loader.exec_module(_mod)
+                        if hasattr(_mod, "_executar_como_modulo"):
+                            _mod._executar_como_modulo()
+                        elif hasattr(_mod, "main"):
+                            _mod.main()
+                    except Exception:
+                        print(f"[schemas] erro: {_tb.format_exc()}")
+                import threading as _thr
+                _thr.Thread(target=_rodar_schemas, daemon=True).start()
+                self._send(200, b'{"ok":true,"msg":"Atualizacao de schemas iniciada em background"}')
+
         else: self._send(404,b'{"erro":"nao encontrado"}')
     def do_POST(self):
         path=urlparse(self.path).path

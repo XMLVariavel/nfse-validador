@@ -17,12 +17,34 @@ Dependências: apenas stdlib Python 3.8+ (urllib, zipfile, hashlib, re, json)
 
 import re, json, sys, shutil, hashlib, zipfile, urllib.request, urllib.error
 from pathlib import Path
+import logging
 from datetime import datetime
 
 # ── Configuração ────────────────────────────────────────────────────────────
-BASE          = Path(__file__).parent
+import sys as _sys, os as _os
+_frozen = getattr(_sys, "frozen", False)
+if _frozen:
+    _appdata = Path(_os.environ.get("LOCALAPPDATA") or
+                    _os.environ.get("APPDATA") or
+                    Path(__file__).parent.parent)
+    BASE = Path(_appdata) / "NFS-e Validador"
+else:
+    BASE = Path(__file__).parent
 ESTADO_FILE   = BASE / "tabelas" / "xsd_update_state.json"
 LOG_FILE      = BASE / "logs" / "xsd_update.log"
+
+# Garantir pasta de logs
+LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(str(LOG_FILE), encoding="utf-8"),
+    ]
+)
+log = logging.getLogger("xsd_updater")
 SCHEMAS_DIR   = BASE / "schemas"
 BACKUP_DIR    = BASE / "schemas" / "_backup"
 
@@ -364,6 +386,10 @@ def main():
     print("\n✔ Schemas XSD atualizados com sucesso!")
     print(f"  Versão: {info['versao']}  |  Data: {info['data']}")
     total = sum(len(v) for v in instalados.items())
+
+def _executar_como_modulo():
+    """Chamado pelo servidor via importlib."""
+    main()
 
 if __name__ == "__main__":
     main()

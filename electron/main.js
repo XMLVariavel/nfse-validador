@@ -82,6 +82,7 @@ let mainWindow   = null
 let serverProc   = null
 let tray         = null
 let serverReady  = false
+let icon         = undefined  // ícone global — usado no updater e na janela
 
 // ── Forçar instância única ────────────────────────────────────────────────────
 const gotLock = app.requestSingleInstanceLock()
@@ -210,7 +211,7 @@ function aguardarServidor(tentativas = 0) {
 function criarJanela() {
   // Criar ícone — Windows prefere .ico para taskbar
   // Tentar arquivo .ico primeiro, depois base64 como fallback
-  let icon = undefined
+  // icon é global — declarado acima
   try {
     if (ICON_FILE && fs.existsSync(ICON_FILE)) {
       // .ico nativo funciona melhor no Windows para taskbar
