@@ -318,6 +318,122 @@ function criarTray() {
 ipcMain.handle('app-version', () => app.getVersion())
 ipcMain.handle('app-path',    () => RESOURCES)
 
+
+// ════════════════════════════════════════════════════════
+// CONTROLE DE INSTALAÇÕES — Google Sheets
+// Registra cada máquina que abre o app
+// ════════════════════════════════════════════════════════
+const _SHEET_ID      = '1uScn0Zbt_5I3xq04t5_rQRtNRDwTr_ClDGcjCSRvajM'
+const _CLIENT_EMAIL  = 'nfs-e-validador-control@nfs-e-validador-controle.iam.gserviceaccount.com'
+const _PRIVATE_KEY   = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJvYqhFlVKO0W1\neiypt+AmDnrQQN2dgBwYMr/xMH+5drTFkj+porUvtRyCewH8Y/P4dQJ2QR+6x2eQ\n1l7ZmC3GWZSolB58t7BwnEjdwHDVGTakjtn6fo485kbeCLMRzvLT0eBOKUqrbHH2\nUZt7JfjwE5aJQcSsBtlWRXSnQ6Zv/MOr7JMaUFX4CUQImV6F/7nEEifSCtNMzZ/2\n/UzD8w79GaOyDRDWq1p1bt1Hx9PSFqgAmFwnkDzZvX13Q8RRqJ3vGY3kqHLtZENa\nqKPDbYlyKDD58jziRnEQQrNJS2q+YN0WNefXpnVVp/uIV+vzau6c2L/W46myiAed\nZ4r7yKp7AgMBAAECggEADSWI22XO0uvG54RHedJ2zQZfiX6PgE6KRidrWWtIv4MV\nVWb8W4LYi7L9PNhk1ao706cxiGDZEY+PxWpNKVfp6yotJTbsrWZiL3ouo21c8ZBp\nkNK3MMQ+9WNxHvaW4e1swlH6x2iYc1BeNR7/UH9/DtRdqscoD4RkK9FJUr32feLv\nlCm61dD7EvmAvI9qphEpuczgdacw/dv2oRmrul1JFWmkpjR9kVs9T/rictoQhsfV\nnEwRPFEyakELVRPTaGFW0fq9fr2Tu84B+CBQvsRl98wCOzXLB1GJlLJsrLKotuRh\n4hcbOg7b3k205XQ4FowHj2W2Ytn5ZpfAdj6N6XqqyQKBgQD0bzrYHzpLmbVYelp6\nTX2n03WhJ9NHiZ3efrZloR7R2y/ZP6UfOIhCLMMq5e7MmF0OuQx9ALLALNIGjcsi\nE0TfDXvjt+fU0mOgdgyKTFrBvEUZtuZ6GOj2iplYVLGfQxS0Y8De+NtRIGU9rY5j\nQ5sl3aoG7LWE94R2KIeGiEcq4wKBgQDTSStexjGkULzco51Kx0admUPrlqqy7n0m\neQiwX12S2K4qhH3aew1yFMZR1eUa9KrKfzagsvQ4nB30zxHw4TUnf/DaZSdUeloH\nIS+FomLDWUTx2Eq1DIJcpN+7AnqQ47CBy03GY45RQw9eJ+0EZDEfrzVug6HFAwMt\n+E9gT30diQKBgQCFqHzIyOqbhEVBSEZJMi5PorVjld9V8s48Z5VdJSkxH2Weqcqk\ns8juRoPB5VEa1wWrk0xc3hDgPKHrq4Uz8M1sGndwIZPHL/QCPgrFZNMLtOMkGHsW\nsKBSj58iSc2GhKvBp/pC8lkal1hEza5aYRFpNzhN6Qmo15+67JaO3d3seQKBgEex\nhlPscJ/O/abopdDf+ag0f4WLZHS+1Byf6UDfu0K+36pxtrrSEmfpgLn4GHujFekM\nbZ7t2kzzPH77XJ0d7glvMm0I8eWKds4Ahr2TsmuS+QAPYpo4mmuRTpGIb8qGWDhS\noht1YK9WT/qlFZnt3XVg4IKVi+jr8sJAhb6qekvxAoGAD0vnEa/oA0Xtlci4rspm\n16XKrO9ZJbyThrqt6lVYpsdpH/7jLw/n+1yoN4Aw2mitByUwNrRVtfcsb743uXVr\nlYw/qKl1eOlgpdhMe2wruPkZEOpRE1pmNMf6TeN0+6kIhcqDc5xt3/IEppfeH/0M\nGxIsB82Tb3ck038teesvkYQ=\n-----END PRIVATE KEY-----\n"
+
+// Gerar JWT para autenticação Google
+async function _gerarJWT() {
+  const now   = Math.floor(Date.now() / 1000)
+  const claim = {
+    iss: _CLIENT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  }
+
+  // Encode base64url
+  const b64 = s => Buffer.from(JSON.stringify(s))
+    .toString('base64')
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')
+
+  const header  = b64({ alg:'RS256', typ:'JWT' })
+  const payload = b64(claim)
+  const signing = `${header}.${payload}`
+
+  // Assinar com chave privada RSA
+  const crypto = require('crypto')
+  const sign   = crypto.createSign('RSA-SHA256')
+  sign.update(signing)
+  const sig = sign.sign(_PRIVATE_KEY, 'base64')
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')
+
+  const jwt = `${signing}.${sig}`
+
+  // Trocar JWT por access token
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`
+  })
+  const data = await resp.json()
+  return data.access_token
+}
+
+// Formatar data BR
+function _dataBR(d = new Date()) {
+  return d.toLocaleString('pt-BR', { timeZone:'America/Sao_Paulo',
+    day:'2-digit', month:'2-digit', year:'numeric',
+    hour:'2-digit', minute:'2-digit' })
+}
+
+// Registrar/atualizar máquina na planilha
+async function _registrarMaquina() {
+  try {
+    const os      = require('os')
+    const maquina = os.hostname()
+    const usuario = os.userInfo().username
+    const versao  = 'v' + app.getVersion()
+    const sistema = `${os.platform()} ${os.release()}`
+    const agora   = _dataBR()
+    const token   = await _gerarJWT()
+    if (!token) { log('Sheets: falha ao obter token'); return }
+
+    const base = `https://sheets.googleapis.com/v4/spreadsheets/${_SHEET_ID}`
+    const auth = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+
+    // Ler planilha atual
+    const leitura = await fetch(`${base}/values/A:G`, { headers: auth })
+    const dados   = await leitura.json()
+    const linhas  = dados.values || []
+
+    // Criar cabeçalho se planilha vazia
+    if (linhas.length === 0) {
+      await fetch(`${base}/values/A1:G1?valueInputOption=RAW`, {
+        method: 'PUT', headers: auth,
+        body: JSON.stringify({ values: [['Máquina','Usuário','Versão','Atualizado','Último acesso','Sistema','Observação']] })
+      })
+      linhas.push(['Máquina','Usuário','Versão','Atualizado','Último acesso','Sistema','Observação'])
+    }
+
+    // Verificar se máquina já existe (coluna A)
+    let linhaExistente = -1
+    for (let i = 1; i < linhas.length; i++) {
+      if ((linhas[i][0] || '').toLowerCase() === maquina.toLowerCase()) {
+        linhaExistente = i + 1  // linha 1-indexed
+        break
+      }
+    }
+
+    const atualizado = versao === ('v' + app.getVersion()) ? '✅ Sim' : '⚠️ Não'
+    const novaLinha  = [maquina, usuario, versao, atualizado, agora, sistema, '']
+
+    if (linhaExistente > 0) {
+      // Atualizar linha existente
+      await fetch(`${base}/values/A${linhaExistente}:G${linhaExistente}?valueInputOption=RAW`, {
+        method: 'PUT', headers: auth,
+        body: JSON.stringify({ values: [novaLinha] })
+      })
+      log(`Sheets: máquina ${maquina} atualizada (linha ${linhaExistente})`)
+    } else {
+      // Adicionar nova linha
+      await fetch(`${base}/values/A:G:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, {
+        method: 'POST', headers: auth,
+        body: JSON.stringify({ values: [novaLinha] })
+      })
+      log(`Sheets: nova máquina registrada: ${maquina}`)
+    }
+  } catch (ex) {
+    log(`Sheets erro: ${ex.message}`)
+  }
+}
+
 // ── App ready ─────────────────────────────────────────────────────────────────
 app.whenReady().then(async () => {
   log('='.repeat(50))
@@ -350,6 +466,11 @@ app.whenReady().then(async () => {
   // Criar janela e tray
   criarJanela()
   criarTray()
+
+  // Registrar máquina no Google Sheets (controle de instalações)
+  setTimeout(() => _registrarMaquina(), 5000)
+  // Atualizar a cada 4 horas
+  setInterval(() => _registrarMaquina(), 4 * 60 * 60 * 1000)
 
   // Verificar atualizações após 10s (não bloquear abertura)
   if (autoUpdater && app.isPackaged) {
