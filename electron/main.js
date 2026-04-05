@@ -207,6 +207,81 @@ function aguardarServidor(tentativas = 0) {
   })
 }
 
+
+// ── Tela de Splash ────────────────────────────────────────────────────────────
+let splashWindow = null
+
+function criarSplash() {
+  splashWindow = new BrowserWindow({
+    width:           380,
+    height:          240,
+    frame:           false,       // sem barra de título
+    transparent:     false,
+    resizable:       false,
+    center:          true,
+    alwaysOnTop:     true,
+    skipTaskbar:     true,
+    icon:            icon || undefined,
+    backgroundColor: '#0F0A1E',
+    webPreferences:  { nodeIntegration: false }
+  })
+
+  const html = `<!DOCTYPE html><html>
+  <head><meta charset="UTF-8"><style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    body {
+      background:#0F0A1E; color:#F5F0FF;
+      font-family:'Segoe UI',sans-serif;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      height:100vh; gap:16px;
+      user-select:none;
+    }
+    .logo {
+      width:64px; height:64px; border-radius:16px;
+      background:linear-gradient(135deg,#B57BFF,#4D9FFF);
+      display:flex; align-items:center; justify-content:center;
+      font-size:32px;
+    }
+    h1 { font-size:18px; font-weight:600; color:#F5F0FF; letter-spacing:.3px }
+    p  { font-size:12px; color:#8B70D0; }
+    .dots { display:flex; gap:6px; margin-top:8px }
+    .dot {
+      width:7px; height:7px; border-radius:50%; background:#B57BFF;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay:.2s; background:#4D9FFF }
+    .dot:nth-child(3) { animation-delay:.4s; background:#FF6B35 }
+    @keyframes bounce {
+      0%,80%,100% { transform:scale(.6); opacity:.4 }
+      40%          { transform:scale(1);  opacity:1  }
+    }
+  </style></head>
+  <body>
+    <div class="logo">✓</div>
+    <div>
+      <h1>NFS-e Validador</h1>
+      <p style="text-align:center;margin-top:4px">Iniciando servidor...</p>
+    </div>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </body></html>`
+
+  splashWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(html))
+  log('Splash exibido.')
+}
+
+function fecharSplash() {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.close()
+    splashWindow = null
+    log('Splash fechado.')
+  }
+}
+
 // ── Criar janela principal ────────────────────────────────────────────────────
 function criarJanela() {
   // Criar ícone — Windows prefere .ico para taskbar
@@ -448,6 +523,9 @@ app.whenReady().then(async () => {
     app.setAppUserModelId('br.gov.nfse.validador')
   }
 
+  // Mostrar splash enquanto inicia
+  criarSplash()
+
   // Iniciar servidor Python
   iniciarServidor()
 
@@ -463,7 +541,8 @@ app.whenReady().then(async () => {
     return
   }
 
-  // Criar janela e tray
+  // Fechar splash e abrir janela principal
+  fecharSplash()
   criarJanela()
   criarTray()
 
@@ -502,6 +581,13 @@ autoUpdater?.on('update-available', (info) => {
     cancelId:  1,
     icon:      icon || undefined,
   }).then(result => {
+    // Sempre mostrar banner na aba Ajuda (independente de aceitar ou não)
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(
+        `typeof _mostrarUpdateNaAjuda === 'function' && _mostrarUpdateNaAjuda('${info.version}', '${info.releaseDate ? new Date(info.releaseDate).toLocaleDateString("pt-BR") : ""}')`
+      ).catch(() => {})
+    }
+
     if (result.response === 0) {
       log('Usuario aceitou o download...')
 

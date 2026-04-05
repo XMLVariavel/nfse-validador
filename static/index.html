@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador NFS-e Nacional v3.5</title>
+<title>Validador NFS-e Nacional v3.6</title>
 
 <!-- CodeMirror 5 via CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -1088,7 +1088,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <span class="logo-name">NFS-e Validador</span>
-    <span class="logo-ver">v3.5</span>
+    <span class="logo-ver">v3.6</span>
   </div>
 
   <!-- Dropdown Modelo de XML -->
@@ -1519,7 +1519,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
       <div>
         <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
-        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.5 · Suporte Interno · XMLVariavel</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.6 · Suporte Interno · XMLVariavel</div>
       </div>
       <div style="margin-left:auto;text-align:right">
         <div style="font-size:10px;color:var(--muted2)">Suporta</div>
@@ -1544,7 +1544,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
             🔖 Versão instalada
           </div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);
-            font-family:var(--mono)" id="ajudaVersaoAtual">v3.5</div>
+            font-family:var(--mono)" id="ajudaVersaoAtual">v3.6</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <button onclick="_verificarUpdateManual()" id="btn-check-update"
@@ -1559,6 +1559,30 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
           </button>
           <span id="update-status" style="font-size:10px;color:var(--accent);
             text-align:right;min-height:14px"></span>
+        </div>
+        <!-- Banner de atualização disponível — persiste na aba Ajuda -->
+        <div id="ajuda-update-banner" style="display:none;margin-top:12px;
+          padding:12px 16px;border-radius:var(--r2);
+          background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#FF6B35;margin-bottom:3px">
+                🔄 Nova versão disponível!
+              </div>
+              <div id="ajuda-update-info" style="font-size:10px;color:var(--text2)">
+                Clique para baixar e instalar
+              </div>
+            </div>
+            <button onclick="_instalarUpdateAjuda()"
+              style="padding:6px 14px;border-radius:var(--r2);border:none;cursor:pointer;
+                background:#FF6B35;color:#fff;font-size:11px;font-weight:600;
+                white-space:nowrap;flex-shrink:0"
+              onmouseover="this.style.background='#E8561F'"
+              onmouseout="this.style.background='#FF6B35'">
+              ↓ Atualizar agora
+            </button>
+          </div>
+        <div
         </div>
       </div>
     </div>
@@ -1602,7 +1626,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
     </div>
     <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.5 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.6 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
     </div>
   </div>
@@ -2774,7 +2798,7 @@ function _hrMostrarBadge(info) {
 // ════════════════════════════════════════════════════════
 // NOTIFICAÇÃO DE ATUALIZAÇÃO DO SISTEMA
 // ════════════════════════════════════════════════════════
-const _VERSAO_ATUAL = '3.5';
+const _VERSAO_ATUAL = '3.6';
 const _UPDATE_CHECK_INTERVAL = 6 * 3600 * 1000; // 6h
 // URL do arquivo de versão remoto (ajustar quando publicado)
 const _UPDATE_URL = 'https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json';
@@ -5376,6 +5400,27 @@ function _verificarNotificacoes() {
 // ════════════════════════════════════════════════════════
 let _updateDisponivel = false;
 let _updateInfo       = null;
+
+// Mostrar banner de atualização na aba Ajuda
+function _mostrarUpdateNaAjuda(versao, data) {
+  const banner = document.getElementById('ajuda-update-banner')
+  const info   = document.getElementById('ajuda-update-info')
+  if (banner) banner.style.display = 'block'
+  if (info)   info.textContent = `v${versao} disponível${data ? ' · ' + data : ''} — clique para instalar`
+}
+
+// Instalação a partir do botão na aba Ajuda
+function _instalarUpdateAjuda() {
+  if (window.electronAPI?.isElectron) {
+    // Acionar download via Electron
+    window.electronAPI.downloadUpdate()
+    const banner = document.getElementById('ajuda-update-banner')
+    const btn = banner?.querySelector('button')
+    if (btn) { btn.textContent = '⏳ Baixando...'; btn.disabled = true }
+    const info = document.getElementById('ajuda-update-info')
+    if (info) info.textContent = 'Download iniciado — aguarde...'
+  }
+}
 
 async function _verificarUpdateManual() {
   const btn = document.getElementById('btn-check-update');

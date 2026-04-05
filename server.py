@@ -1292,7 +1292,7 @@ if __name__=="__main__":
             pass
     HOST, PORT = "0.0.0.0", 8000
     try:
-        print(f"NFS-e Validador v3.5 | http://{HOST}:{PORT}", flush=True)
+        print(f"NFS-e Validador v3.6 | http://{HOST}:{PORT}", flush=True)
     except Exception:
         pass
     server = ThreadingHTTPServer((HOST, PORT), Handler)
