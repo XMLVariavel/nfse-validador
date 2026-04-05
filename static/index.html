@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador NFS-e Nacional v3.3</title>
+<title>Validador NFS-e Nacional v3.4</title>
 
 <!-- CodeMirror 5 via CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -18,7 +18,11 @@
 /* ════════════════════════════════════════════════════════
    TOKENS DE TEMA (dark / light)
 ════════════════════════════════════════════════════════ */
-:root,[data-theme="dark"]{
+:root{
+  --mono:'JetBrains Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  --r:6px; --r2:10px;
+}
+[data-theme="dark"]{
   --bg:#0e1116; --bg2:#13171f; --bg3:#1a1f2a; --bg4:#1e2433;
   --border:#252b38; --border2:#2d3545;
   --accent:#4ade80; --accent2:#22c55e; --accent-glow:rgba(74,222,128,.12);
@@ -56,24 +60,28 @@
 }
 /* Logo especial no tema NFS-e */
 [data-theme="nfse"] .logo-icon{
-[data-theme="keevo"]{
-  --bg:#0F0A1E; --bg2:#160D2B; --bg3:#1E1240; --bg4:#261855;
-  --border:#2D1B6B; --border2:#3D2590;
-  --accent:#FF6B35; --accent2:#E8561F; --accent-glow:rgba(255,107,53,.14);
-  --blue:#4D9FFF; --red:#ff6b6b; --red-dim:#e85555;
-  --yellow:#FFD166; --orange:#FF6B35; --purple:#B57BFF;
-  --muted:#2D1B6B; --muted2:#6040A8;
-  --text:#F5F0FF; --text2:#C4B0F0; --text3:#8B70D0;
-  --mono:'JetBrains Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
-  --r:6px; --r2:10px;
-  --err-line:rgba(255,107,53,.15); --err-gutter:rgba(255,107,53,.5);
-}
+
 /* Logo especial tema Keevo */
-[data-theme="keevo"] .logo-check{background:linear-gradient(135deg,#B57BFF,#4D9FFF);}
-[data-theme="keevo"] .logo-ver{color:#FF6B35;border-color:rgba(255,107,53,.3);background:rgba(255,107,53,.1);}
-[data-theme="keevo"] .doc-tab.active{border-bottom-color:#FF6B35;color:#FF6B35;}
-[data-theme="keevo"] .btn-primary{background:#FF6B35;color:#fff;}
-[data-theme="keevo"] .btn-primary:hover{background:#E8561F;}
+
+
+
+
+
+/* Keevo — forçar cores nos componentes principais */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   background:linear-gradient(135deg,#1B3A6B,#2E9B6A);
 }
@@ -1035,6 +1043,39 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
   from { opacity:0; transform:translateX(20px); }
   to   { opacity:1; transform:translateX(0); }
 }
+
+/* === TEMA KEEVO — deve ficar no final para ter prioridade === */
+[data-theme="keevo"]{
+  --bg:#0F0A1E; --bg2:#160D2B; --bg3:#1E1240; --bg4:#261855;
+  --border:#2D1B6B; --border2:#3D2590;
+  --accent:#FF6B35; --accent2:#E8561F; --accent-glow:rgba(255,107,53,.14);
+  --blue:#4D9FFF; --red:#ff6b6b; --red-dim:#e85555;
+  --yellow:#FFD166; --orange:#FF6B35; --purple:#B57BFF;
+  --muted:#2D1B6B; --muted2:#6040A8;
+  --text:#F5F0FF; --text2:#C4B0F0; --text3:#8B70D0;
+  --mono:'JetBrains Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  --r:6px; --r2:10px;
+  --err-line:rgba(255,107,53,.15); --err-gutter:rgba(255,107,53,.5);
+}
+[data-theme="keevo"] .logo-check{background:linear-gradient(135deg,#B57BFF,#4D9FFF);}
+[data-theme="keevo"] .logo-ver{color:#FF6B35;border-color:rgba(255,107,53,.3);background:rgba(255,107,53,.1);}
+[data-theme="keevo"] .doc-tab.active{border-bottom-color:#FF6B35;color:#FF6B35;}
+[data-theme="keevo"] .btn-primary{background:#FF6B35;color:#fff;}
+[data-theme="keevo"] .btn-primary:hover{background:#E8561F;}
+[data-theme="keevo"] .CodeMirror{background:#160D2B !important;color:#F5F0FF !important;}
+[data-theme="keevo"] .CodeMirror-gutters{background:#0F0A1E !important;border-color:#2D1B6B !important;}
+[data-theme="keevo"] .CodeMirror-gutter-elt{color:#6040A8 !important}
+[data-theme="keevo"] .CodeMirror-cursor{border-color:#FF6B35 !important}
+[data-theme="keevo"] .topbar{background:#160D2B !important;border-color:#2D1B6B !important;}
+[data-theme="keevo"] .doc-tabs{background:#0F0A1E !important;border-color:#2D1B6B !important;}
+[data-theme="keevo"] .workspace{background:#0F0A1E !important;}
+[data-theme="keevo"] .pane-left{background:#160D2B !important;}
+[data-theme="keevo"] .pane-right{background:#0F0A1E !important;}
+[data-theme="keevo"] .resultado-header{background:#160D2B !important;border-color:#2D1B6B !important;}
+[data-theme="keevo"] .btn-valida{background:#FF6B35 !important;color:#fff !important;}
+[data-theme="keevo"] .btn-valida:hover{background:#E8561F !important;}
+[data-theme="keevo"] .upload-zone{background:#1E1240 !important;border-color:#3D2590 !important;}
+[data-theme="keevo"] .editor-actions{background:#160D2B !important;border-color:#2D1B6B !important;}
 </style>
 </head>
 <body>
@@ -1047,7 +1088,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <span class="logo-name">NFS-e Validador</span>
-    <span class="logo-ver">v3.3</span>
+    <span class="logo-ver">v3.4</span>
   </div>
 
   <!-- Dropdown Modelo de XML -->
@@ -1135,6 +1176,16 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
         <span class="tema-opt-info">
           <span class="tema-opt-nome">NFS-e Gov</span>
           <span class="tema-opt-desc">Azul marinho · verde gov.br</span>
+        </span>
+      </div>
+      <!-- Keevo -->
+      <div class="tema-opt" id="topt-keevo" onclick="aplicarTema('keevo')">
+        <span class="tema-opt-swatch" style="background:linear-gradient(135deg,#B57BFF,#0F0A1E);border:1.5px solid #3D2590;position:relative">
+          <span style="position:absolute;bottom:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#FF6B35"></span>
+        </span>
+        <span class="tema-opt-info">
+          <span class="tema-opt-nome">Keevo</span>
+          <span class="tema-opt-desc">Roxo escuro · laranja</span>
         </span>
       </div>
     </div>
@@ -1468,7 +1519,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
       <div>
         <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
-        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.3 · Suporte Interno · XMLVariavel</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.4 · Suporte Interno · XMLVariavel</div>
       </div>
       <div style="margin-left:auto;text-align:right">
         <div style="font-size:10px;color:var(--muted2)">Suporta</div>
@@ -1493,7 +1544,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
             🔖 Versão instalada
           </div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);
-            font-family:var(--mono)" id="ajudaVersaoAtual">v3.3</div>
+            font-family:var(--mono)" id="ajudaVersaoAtual">v3.4</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <button onclick="_verificarUpdateManual()" id="btn-check-update"
@@ -1551,7 +1602,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
     </div>
     <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.3 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.4 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
     </div>
   </div>
@@ -1894,7 +1945,7 @@ function toggleTheme() {
 
 function applyStoredTheme() {
   const t = localStorage.getItem('nfse-theme') || 'dark';
-  _isDark = t === 'dark';
+  _isDark = t !== 'light';  // dark, nfse, keevo = todos escuros
   document.documentElement.setAttribute('data-theme', t);
   // CM ainda não criado — será aplicado em initCM
 }
@@ -1950,12 +2001,14 @@ function abrirIndividual() {
   const ld = document.getElementById('loteDivider');
   if (sb) sb.classList.remove('show');
   if (ld) ld.style.display = 'none';
+  // Fechar TODOS os painéis laterais incluindo ajuda
+  document.getElementById('docPanel')?.classList.remove('show');
+  document.getElementById('layoutPanel')?.classList.remove('show');
+  document.getElementById('rejPanel')?.classList.remove('show');
+  document.getElementById('forumPanel')?.classList.remove('show');
+  document.getElementById('ajudaPanel')?.classList.remove('show');
   // Mostrar workspace
   document.getElementById('workspace').style.display = 'flex';
-  document.getElementById('docPanel').classList.remove('show');
-  document.getElementById('layoutPanel').classList.remove('show');
-  document.getElementById('rejPanel').classList.remove('show');
-  document.getElementById('forumPanel')?.classList.remove('show');
   // Reabilitar dropdown de modelo
   _modeloSetDisabled(false);
   if(typeof cm !== "undefined" && cm) cm.refresh();
@@ -2721,7 +2774,7 @@ function _hrMostrarBadge(info) {
 // ════════════════════════════════════════════════════════
 // NOTIFICAÇÃO DE ATUALIZAÇÃO DO SISTEMA
 // ════════════════════════════════════════════════════════
-const _VERSAO_ATUAL = '3.3';
+const _VERSAO_ATUAL = '3.4';
 const _UPDATE_CHECK_INTERVAL = 6 * 3600 * 1000; // 6h
 // URL do arquivo de versão remoto (ajustar quando publicado)
 const _UPDATE_URL = 'https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json';
@@ -2796,7 +2849,7 @@ function aplicarTema(tema) {
   // Aplicar data-theme
   document.documentElement.setAttribute('data-theme', tema);
   // Atualizar variável _isDark para compatibilidade
-  _isDark = tema !== 'light';
+  _isDark = tema !== 'light';  // dark, nfse, keevo = escuros
   // CodeMirror
   const cmTheme = _TEMAS[tema]?.cmTheme || 'dracula';
   if (typeof cm !== 'undefined' && cm) cm.setOption('theme', cmTheme);
@@ -2822,14 +2875,14 @@ function _atualizarTemaUI(tema) {
     // Atualizar swatch interno (primeiro span)
     const swatch = document.getElementById('temaSwatch');
     if (swatch) {
-      const cores = { dark:'#0e1116', light:'#f8f9fa', nfse:'#1B3A6B' };
-      const accents = { dark:'#4ade80', light:'#16a34a', nfse:'#4CAF82' };
+      const cores = { dark:'#0e1116', light:'#f8f9fa', nfse:'#1B3A6B', keevo:'#0F0A1E' };
+      const accents = { dark:'#4ade80', light:'#16a34a', nfse:'#4CAF82', keevo:'#FF6B35' };
       swatch.style.background = cores[tema] || 'var(--bg)';
       swatch.style.boxShadow = `inset -3px -3px 0 ${accents[tema] || 'var(--accent)'}`;
     }
   }
   // Marcar opção ativa no dropdown
-  ['dark','light','nfse'].forEach(k => {
+  ['dark','light','nfse','keevo'].forEach(k => {
     document.getElementById('topt-'+k)?.classList.toggle('ativo', k === tema);
   });
 }
@@ -2837,12 +2890,15 @@ function _atualizarTemaUI(tema) {
 function _iniciarTema() {
   const saved = localStorage.getItem('nfse-theme') || 'dark';
   // Compatibilidade com valor antigo 'dark'/'light' direto
-  const tema = ['dark','light','nfse'].includes(saved) ? saved : 'dark';
-  if (tema !== 'dark') {
-    document.documentElement.setAttribute('data-theme', tema);
-    _isDark = tema !== 'light';
-  }
+  const tema = ['dark','light','nfse','keevo'].includes(saved) ? saved : 'dark';
+  document.documentElement.setAttribute('data-theme', tema);
+  _isDark = tema !== 'light';
   _temaAtual = tema;
+  // Atualizar CodeMirror se já inicializado
+  if (typeof cm !== 'undefined' && cm) {
+    const cmTheme = _TEMAS[tema]?.cmTheme || 'dracula';
+    cm.setOption('theme', cmTheme);
+  }
   _atualizarTemaUI(tema);
 }
 
@@ -4346,6 +4402,7 @@ function exportarTXT(){
 
 // ── Abrir / fechar modo lote ──────────────────────────────────────────────
 function abrirLote() {
+  document.getElementById('ajudaPanel')?.classList.remove('show');
   // Ativar aba
   document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-lote').classList.add('active');
