@@ -4,12 +4,22 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  getVersion:      () => ipcRenderer.invoke('app-version'),
-  getAppPath:      () => ipcRenderer.invoke('app-path'),
-  downloadUpdate:  () => ipcRenderer.invoke('download-update'),
-  installUpdate:   () => ipcRenderer.invoke('install-update'),
-  checkUpdateNow:  () => ipcRenderer.invoke('check-update-now'),
-  isElectron:      true,
+  getVersion:        () => ipcRenderer.invoke('app-version'),
+  getAppPath:        () => ipcRenderer.invoke('app-path'),
+  downloadUpdate:    () => ipcRenderer.invoke('download-update'),
+  installUpdate:     () => ipcRenderer.invoke('install-update'),
+  checkUpdateNow:    () => ipcRenderer.invoke('check-update-now'),
+  isElectron:        true,
+
+  // Notificações
+  getNotifConfig:    ()       => ipcRenderer.invoke('get-notif-config'),
+  setNotifConfig:    (config) => ipcRenderer.invoke('set-notif-config', config),
+
+  // Forum: notificar Windows quando há tópicos novos
+  notificarForum:    (titulo, qtd) => ipcRenderer.invoke('notificar-forum', titulo, qtd),
+
+  // Documentos: disparar monitoramento manual
+  monitorarDocsAgora: () => ipcRenderer.invoke('monitorar-docs-agora'),
 })
 
 // Funções globais para os botões do banner de update

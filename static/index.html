@@ -534,22 +534,6 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 .tema-opt-nome{font-weight:500;font-size:12px}
 .tema-opt-desc{font-size:10px;color:var(--muted2)}
 
-/* ── Painel Reforma Tributária ── */
-.reforma-panel{display:none;flex:1;overflow-y:auto;flex-direction:column;padding:0}
-.reforma-panel.show{display:flex}
-.reforma-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;margin-bottom:10px;transition:border-color .15s}
-.reforma-card:hover{border-color:var(--accent)}
-.reforma-card-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.reforma-card-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px}
-.reforma-card-link{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--blue);text-decoration:none;padding:4px 10px;border:1px solid var(--blue);border-radius:4px;transition:all .15s;font-family:var(--mono)}
-.reforma-card-link:hover{background:var(--blue);color:#fff}
-.reforma-tag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;margin-right:4px;font-family:var(--mono)}
-.reforma-tag-gov{background:rgba(96,165,250,.12);color:var(--blue);border:1px solid rgba(96,165,250,.3)}
-.reforma-tag-calc{background:rgba(74,222,128,.12);color:var(--accent);border:1px solid rgba(74,222,128,.3)}
-.reforma-tag-nfse{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
-.reforma-tag-lc{background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3)}
-.reforma-section-title{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;padding:14px 0 8px;border-bottom:1px solid var(--border);margin-bottom:12px}
-
 /* ── Painel Fórum NFS-e ── */
 .forum-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
 .forum-panel.show{display:flex}
@@ -1303,11 +1287,6 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
     Fórum
     <span id="forum-badge" style="display:none;min-width:16px;height:14px;background:var(--blue);color:#fff;border-radius:7px;font-size:9px;font-weight:700;line-height:14px;text-align:center;padding:0 4px;font-family:var(--mono);margin-left:2px"></span>
   </div>
-  <!-- Aba Reforma Tributária -->
-  <div class="doc-tab" id="tab-reforma" onclick="abrirReforma()" title="Reforma Tributária — IBS/CBS/NFS-e">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    Reforma Trib.
-  </div>
    <!-- Aba Sobre o Sistema -->
   <div class="doc-tab" id="tab-sobre" onclick="abrirSobre()" title="Sobre o Sistema" style="border-left:1px solid var(--border)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -1405,193 +1384,6 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 </div>
 <!-- divisória sidebar / workspace -->
 <div class="divider" id="loteDivider" style="display:none"></div>
-
-<!-- ── Painel Reforma Tributária ── -->
-<div class="reforma-panel" id="painel-reforma">
-  <div style="padding:14px 18px 0">
-    <!-- Cabeçalho -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span style="font-size:14px;font-weight:700;color:var(--text)">Reforma Tributária</span>
-      <span class="reforma-tag reforma-tag-lc">LC 214/2025</span>
-    </div>
-    <p style="font-size:11px;color:var(--text2);margin:0 0 16px;line-height:1.5">
-      Portal de links oficiais e ferramentas da Reforma Tributária sobre consumo — IBS, CBS e impactos na NFS-e Nacional.
-    </p>
-
-    <!-- SEÇÃO 1: Portal Gov.br -->
-    <div class="reforma-section-title">🏛️ Portais Oficiais — Governo Federal</div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
-        Entenda a Reforma Tributária sobre o Consumo
-      </div>
-      <div class="reforma-card-desc">
-        Página oficial da Receita Federal explicando a Reforma, substituição do PIS/COFINS pela CBS, e criação do IBS e IS.
-        Inclui cronograma de implantação 2026–2033.
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-consumo/entenda" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir portal
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
-        Portal NFS-e — Biblioteca de Documentação Técnica
-      </div>
-      <div class="reforma-card-desc">
-        Notas Técnicas, Leiautes, Esquemas XSD e Manuais oficiais do Sistema Nacional NFS-e. Base para implementação IBS/CBS na NFS-e.
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir portal
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
-        Reforma Tributária — Ministério da Fazenda
-      </div>
-      <div class="reforma-card-desc">
-        Publicações, decretos regulamentadores e notícias oficiais do Ministério da Fazenda sobre a implementação da Reforma.
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir portal
-      </a>
-    </div>
-
-    <!-- SEÇÃO 2: Calculadoras e Simuladores -->
-    <div class="reforma-section-title">🧮 Calculadoras e Simuladores Oficiais</div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-calc">CALCULADORA</span>
-        Calculadora de Tributos sobre o Consumo — RFB
-      </div>
-      <div class="reforma-card-desc">
-        Ferramenta oficial da Receita Federal para calcular IBS, CBS e IS sobre operações de consumo a partir de 2026.
-        Permite simular o impacto da transição.
-      </div>
-      <a class="reforma-card-link" href="https://consumo.tributos.gov.br/servico/calcular-tributos-consumo/calculadora" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir calculadora
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-calc">SIMULADOR</span>
-        Portal Tributos sobre Consumo — gov.br
-      </div>
-      <div class="reforma-card-desc">
-        Página central do novo sistema de tributos sobre consumo. Contém orientações sobre CBS (federal), IBS (estadual/municipal) e IS (Imposto Seletivo).
-      </div>
-      <a class="reforma-card-link" href="https://consumo.tributos.gov.br" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir portal
-      </a>
-    </div>
-
-    <!-- SEÇÃO 3: NFS-e e IBS/CBS -->
-    <div class="reforma-section-title">📄 NFS-e Nacional — IBS / CBS</div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
-        NT-007 — Leiaute com IBS e CBS na NFS-e
-      </div>
-      <div class="reforma-card-desc">
-        Nota Técnica SE/CGNFS-e nº 007 com o novo leiaute da NFS-e Nacional incluindo os campos IBS, CBS e indOp obrigatórios a partir de 2026.
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Baixar PDF
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
-        Esquemas XSD v1.01 — Fevereiro 2026
-      </div>
-      <div class="reforma-card-desc">
-        Pacote oficial com os XSDs da NFS-e Nacional v1.01 atualizados para a Reforma Tributária (DPS, NFSe, CNC, eventos, tipos complexos/simples).
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/nfse-esquemas_xsd-v1-01-20260209.zip" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Baixar ZIP
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
-        Anexo VIII — Correlação NBS / indOp / ClassTrib IBS/CBS
-      </div>
-      <div class="reforma-card-desc">
-        Planilha oficial com a correlação entre código do serviço (NBS), indicador de operação (indOp) e classificação tributária do IBS/CBS. Versão 1.01.00.
-      </div>
-      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexoviii-correlacaoitemnbsindopcclasstrib_ibscbs_v1-01-00.xlsx" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Baixar XLSX
-      </a>
-    </div>
-
-    <!-- SEÇÃO 4: Legislação -->
-    <div class="reforma-section-title">📜 Legislação Base</div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-lc">LEGISLAÇÃO</span>
-        LC 214/2025 — Lei Complementar do IBS, CBS e IS
-      </div>
-      <div class="reforma-card-desc">
-        Texto completo da Lei Complementar nº 214/2025 que institui o IBS, CBS e Imposto Seletivo. Base legal de toda a Reforma Tributária sobre consumo.
-      </div>
-      <a class="reforma-card-link" href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir lei
-      </a>
-    </div>
-
-    <div class="reforma-card">
-      <div class="reforma-card-title">
-        <span class="reforma-tag reforma-tag-lc">LEGISLAÇÃO</span>
-        EC 132/2023 — Emenda Constitucional da Reforma
-      </div>
-      <div class="reforma-card-desc">
-        Emenda Constitucional nº 132/2023 que aprovou a Reforma Tributária, extinguindo ICMS parcial, ISS e PIS/COFINS progressivamente até 2033.
-      </div>
-      <a class="reforma-card-link" href="https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm" target="_blank" rel="noopener">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir EC
-      </a>
-    </div>
-
-    <!-- SEÇÃO 5: Cronograma -->
-    <div class="reforma-section-title">📅 Cronograma de Implantação</div>
-
-    <div class="reforma-card" style="padding:14px 18px">
-      <div style="display:grid;grid-template-columns:80px 1fr;gap:6px 12px;font-size:11px">
-        <span style="color:var(--accent);font-weight:700;font-family:var(--mono)">2026</span>
-        <span style="color:var(--text2)">Início: IBS e CBS com alíquota reduzida (0,1%). Campos obrigatórios na NFS-e (indOp, cClassTrib). Imposto Seletivo em vigor.</span>
-        <span style="color:var(--yellow);font-weight:700;font-family:var(--mono)">2027–2028</span>
-        <span style="color:var(--text2)">Extinção gradual do PIS/COFINS. IBS e CBS começam a substituir progressivamente.</span>
-        <span style="color:var(--orange);font-weight:700;font-family:var(--mono)">2029–2032</span>
-        <span style="color:var(--text2)">Redução progressiva do ICMS e ISS. IBS e CBS assumem parcela crescente da tributação.</span>
-        <span style="color:var(--red);font-weight:700;font-family:var(--mono)">2033</span>
-        <span style="color:var(--text2)">Extinção total do ICMS e ISS. IBS e CBS em plena vigência. Reforma concluída.</span>
-      </div>
-    </div>
-
-    <div style="height:16px"></div>
-  </div>
-</div>
 
 <!-- ── Painel Fórum NFS-e ── -->
 <div class="forum-panel" id="forumPanel">
@@ -3951,26 +3743,10 @@ function _esconderWorkspace() {
   document.getElementById('sobrePanel')?.classList.remove('show');
   const _cfgP = document.getElementById('configPanel');
   if (_cfgP) { _cfgP.style.display = 'none'; _cfgP.classList.remove('show'); }
-  const _refP = document.getElementById('painel-reforma');
-  if (_refP) { _refP.classList.remove('show'); _refP.style.display = 'none'; }
   if(document.getElementById('loteSidebar')){document.getElementById('loteSidebar').classList.remove('show');document.getElementById('loteDivider').style.display='none';}
 }
 
 // ════════════════════════════════════════════════════════
-// REFORMA TRIBUTÁRIA
-// ════════════════════════════════════════════════════════
-function abrirReforma() {
-  _esconderWorkspace();
-  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-reforma').classList.add('active');
-  // Ocultar todos os painéis e mostrar o de reforma
-  document.querySelectorAll('.forum-panel,.sobre-panel,.ajuda-panel,.config-panel,.docs-panel,.rejeicoes-panel,.leiaute-panel,.reforma-panel').forEach(p => {
-    p.classList.remove('show');
-  });
-  const p = document.getElementById('painel-reforma');
-  if (p) { p.classList.add('show'); p.style.display = 'flex'; }
-}
-
 // SOBRE O SISTEMA
 // ════════════════════════════════════════════════════════
 function abrirSobre() {
@@ -5934,7 +5710,6 @@ const _ATALHOS = [
   { tecla: 'Alt + R',      acao: 'Abrir Rejeições' },
   { tecla: 'Alt + D',      acao: 'Abrir Documentação' },
   { tecla: 'Alt + F',      acao: 'Abrir Fórum' },
-  { tecla: 'Alt + R',      acao: 'Abrir Reforma Tributária' },
   { tecla: 'Alt + H',      acao: 'Abrir Ajuda' },
   { tecla: 'Escape',        acao: 'Fechar painel lateral' },
   { tecla: 'Ctrl + +',     acao: 'Aumentar fonte editor' },
@@ -6034,7 +5809,6 @@ document.addEventListener('keydown', e => {
       case 'r': case 'R': e.preventDefault(); abrirRejeicoes();  break;
       case 'd': case 'D': e.preventDefault(); abrirDocs();       break;
       case 'f': case 'F': e.preventDefault(); abrirForum();      break;
-      case 'r': case 'R': e.preventDefault(); abrirReforma();    break;
       case 'h': case 'H': e.preventDefault(); abrirAjuda();      break;
     }
     return;
@@ -6146,6 +5920,17 @@ async function forumAtualizar(forcado) {
 
     const topics = data.topics || [];
 
+    // ── Marcar tópicos NOVOS ─────────────────────────────────────────
+    // Compara IDs do cache anterior com os IDs atuais
+    const _cachedStr = localStorage.getItem(FORUM_KEY);
+    const _idsAntigos = new Set();
+    if (_cachedStr) {
+      try { JSON.parse(_cachedStr).forEach(t => _idsAntigos.add(t.id)); } catch {}
+    }
+    // Na primeira carga (sem cache) não marca nada como novo
+    const _primeiraVez = _idsAntigos.size === 0;
+    topics.forEach(t => { t.novo = !_primeiraVez && !_idsAntigos.has(t.id); });
+
     // Salvar cache local
     localStorage.setItem(FORUM_KEY, JSON.stringify(topics));
     localStorage.setItem(FORUM_TS_KEY, String(Date.now()));
@@ -6158,6 +5943,18 @@ async function forumAtualizar(forcado) {
       (data.ok ? 'Atualizado' : '⚠ Cache') + ts + from + ' · próxima em 2h';
 
     _forumAtualizarBadge(topics);
+
+    // ── Notificação Windows para novos tópicos ───────────────────────
+    const _topicosNovos = topics.filter(t => t.novo);
+    if (_topicosNovos.length > 0 && window.electronAPI?.isElectron) {
+      // Notificar via IPC para o main.js disparar notificação Windows
+      try {
+        const _titulo = _topicosNovos.length === 1
+          ? _topicosNovos[0].titulo
+          : `${_topicosNovos.length} novos tópicos no fórum`;
+        window.electronAPI?.notificarForum?.(_titulo, _topicosNovos.length);
+      } catch {}
+    }
 
   } catch (err) {
     document.getElementById('forumLoading').style.display = 'none';
@@ -6306,7 +6103,7 @@ function _renderNotifPanel(data) {
   if (!lista) return;
   const todos = [...(data.schemas || []), ...(data.docs || [])];
   if (!todos.length) {
-    lista.innerHTML = '<div class="notif-vazia">Nenhuma novidade detectada ainda.<br>Execute <code>monitorar_docs.py</code> para verificar.</div>';
+    lista.innerHTML = '<div class="notif-vazia">Nenhuma novidade detectada ainda.<br><br><button class="btn" onclick="_dispararMonitoramento()" style="font-size:11px;padding:5px 14px">🔍 Verificar gov.br agora</button></div>';
     return;
   }
   lista.innerHTML = todos.map(n => {
@@ -6366,6 +6163,30 @@ function fecharToast(el) {
   if (!el.parentNode) return;
   el.classList.add('saindo');
   setTimeout(() => el.remove(), 250);
+}
+
+// Disparar monitoramento de documentos manualmente
+async function _dispararMonitoramento() {
+  const btn = document.querySelector('.notif-vazia .btn');
+  if (btn) { btn.textContent = '⏳ Verificando...'; btn.disabled = true; }
+
+  try {
+    if (window.electronAPI?.monitorarDocsAgora) {
+      // Electron: delega ao main.js que já tem a lógica completa
+      await window.electronAPI.monitorarDocsAgora();
+    } else {
+      // Web: chama diretamente a API
+      await fetch('/api/monitorar-docs');
+      await new Promise(r => setTimeout(r, 45000));
+    }
+    // Atualizar painel após verificação
+    await _verificarNotificacoes();
+    toast('✔ Verificação concluída!', 3000);
+  } catch (e) {
+    toast('Erro ao verificar: ' + e.message, 3000);
+  } finally {
+    if (btn) { btn.textContent = '🔍 Verificar gov.br agora'; btn.disabled = false; }
+  }
 }
 
 function marcarTodasLidas() {

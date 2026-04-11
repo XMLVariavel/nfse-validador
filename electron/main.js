@@ -92,13 +92,16 @@ if (!gotLock) {
   app.on('second-instance', () => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.show()
       mainWindow.focus()
+    } else {
+      criarJanela()
     }
   })
 }
 
 // ── Iniciar servidor Python ───────────────────────────────────────────────────
-function iniciarServidor() {
+async function iniciarServidor() {
   // Encontrar Python
   const pythonCandidates = [
     path.join(RESOURCES, '_internal', 'python.exe'), // empacotado com PyInstaller
@@ -125,15 +128,92 @@ function iniciarServidor() {
     // Dev: usar Python diretamente
     log(`Iniciando via Python: ${serverScript}`)
     // Tentar python, python3, ou py
-    const pythonCmds = ['python', 'python3', 'py']
+    // 1. Verificar python embarcado (incluído no pacote)
+    const pythonEmbed = path.join(RESOURCES, 'python', 'python.exe')
     let pythonCmd = 'python'
-    for (const cmd of pythonCmds) {
-      try {
-        const test = require('child_process').spawnSync(cmd, ['--version'])
-        if (test.status === 0) { pythonCmd = cmd; break }
-      } catch {}
+
+    if (fs.existsSync(pythonEmbed)) {
+      pythonCmd = pythonEmbed
+      log(`Usando Python embarcado: ${pythonEmbed}`)
+    } else {
+      // 2. Tentar python do sistema
+      const pythonCmds = ['python', 'python3', 'py']
+      let encontrado = false
+      for (const cmd of pythonCmds) {
+        try {
+          const test = require('child_process').spawnSync(cmd, ['--version'],
+            { timeout: 3000 })
+          if (test.status === 0) {
+            pythonCmd = cmd
+            encontrado = true
+            log(`Usando Python do sistema: ${cmd}`)
+            break
+          }
+        } catch {}
+      }
+
+      if (!encontrado) {
+        // 3. Python não encontrado — baixar python-embed automaticamente
+        log('Python não encontrado — baixando Python Embarcado...')
+        if (splashWindow && !splashWindow.isDestroyed()) {
+          splashWindow.webContents.executeJavaScript(
+            "document.querySelector('p') && (document.querySelector('p').textContent = 'Instalando Python...')"
+          ).catch(() => {})
+        }
+
+        const pythonDir  = path.join(RESOURCES, 'python')
+        const pythonExe  = path.join(pythonDir, 'python.exe')
+        const pythonUrl  = 'https://www.python.org/ftp/python/3.13.0/python-3.13.0-embed-amd64.zip'
+        const zipPath    = path.join(app.getPath('temp'), 'python-embed.zip')
+
+        try {
+          // Baixar zip
+          const https = require('https')
+          await new Promise((resolve, reject) => {
+            const file = require('fs').createWriteStream(zipPath)
+            https.get(pythonUrl, res => {
+              res.pipe(file)
+              file.on('finish', () => { file.close(); resolve() })
+            }).on('error', reject)
+          })
+
+          // Extrair zip
+          fs.mkdirSync(pythonDir, { recursive: true })
+          const { execSync } = require('child_process')
+          execSync(`powershell -command "Expand-Archive -Path '${zipPath}' -DestinationPath '${pythonDir}' -Force"`,
+            { windowsHide: true })
+          fs.unlinkSync(zipPath)
+
+          // Instalar pip
+          const getPip = path.join(app.getPath('temp'), 'get-pip.py')
+          await new Promise((resolve, reject) => {
+            https.get('https://bootstrap.pypa.io/get-pip.py', res => {
+              const file = require('fs').createWriteStream(getPip)
+              res.pipe(file)
+              file.on('finish', () => { file.close(); resolve() })
+            }).on('error', reject)
+          })
+          require('child_process').spawnSync(pythonExe, [getPip],
+            { windowsHide: true, timeout: 60000 })
+          fs.unlinkSync(getPip)
+
+          pythonCmd = pythonExe
+          log(`Python embarcado instalado em: ${pythonDir}`)
+        } catch (e) {
+          log(`Erro ao baixar Python: ${e.message}`)
+          // Mostrar erro e sair
+          dialog.showErrorBox('Python não encontrado',
+            'O Python não está instalado e não foi possível baixá-lo automaticamente.\n\n' +
+            'Instale o Python em: https://www.python.org/downloads/\n' +
+            'Marque "Add Python to PATH" durante a instalação.\n\n' +
+            'Após instalar, reinicie o NFS-e Validador.'
+          )
+          app.quit()
+          return
+        }
+      }
     }
-    log(`Usando Python: ${pythonCmd}`)
+    log(`Python: ${pythonCmd}`)
 
     const pythonEnv = {
       ...process.env,
@@ -142,7 +222,9 @@ function iniciarServidor() {
       PYTHONUNBUFFERED: '1',
     }
 
-    // Instalar dependências se necessário (lxml, etc.)
+    // Python já verificado acima
+
+    // Instalar dependências se necessário (lxml)
     try {
       log('Verificando dependencias Python...')
       const check = require('child_process').spawnSync(
@@ -151,9 +233,15 @@ function iniciarServidor() {
       )
       if (check.status !== 0) {
         log('lxml nao encontrado — instalando...')
+        // Atualizar splash com mensagem
+        if (splashWindow && !splashWindow.isDestroyed()) {
+          splashWindow.webContents.executeJavaScript(
+            "document.querySelector('p') && (document.querySelector('p').textContent = 'Instalando dependências...')"
+          ).catch(() => {})
+        }
         require('child_process').spawnSync(
           pythonCmd, ['-m', 'pip', 'install', 'lxml', '--quiet'],
-          { env: pythonEnv, timeout: 60000, windowsHide: true }
+          { env: pythonEnv, timeout: 120000, windowsHide: true }
         )
         log('lxml instalado.')
       } else {
@@ -359,6 +447,15 @@ function criarJanela() {
     }
   })
 
+  // Se há tray, minimizar para background em vez de fechar
+  mainWindow.on('close', (e) => {
+    if (!app.isQuitting && tray) {
+      e.preventDefault()
+      mainWindow.hide()
+      log('Janela ocultada — app no tray')
+    }
+  })
+
   mainWindow.on('closed', () => { mainWindow = null })
 
   // Carregar app
@@ -368,19 +465,34 @@ function criarJanela() {
 
 // ── Tray (ícone na bandeja do sistema) ───────────────────────────────────────
 function criarTray() {
-  if (!fs.existsSync(ICON_PATH)) return
-
   try {
-    tray = new Tray(ICON_PATH)
+    // Usar o mesmo ícone já carregado pela janela principal (nunca é nulo)
+    const trayIcon = icon || nativeImage.createFromPath(
+      ICON_CANDIDATES.find(p => fs.existsSync(p)) || ''
+    )
+    if (!trayIcon || trayIcon.isEmpty()) {
+      log('Tray: ícone não disponível — usando tray sem ícone')
+    }
+    tray = new Tray(trayIcon && !trayIcon.isEmpty() ? trayIcon : nativeImage.createEmpty())
     tray.setToolTip(APP_NAME)
 
     const menu = Menu.buildFromTemplate([
       { label: 'Abrir NFS-e Validador', click: () => {
-        if (mainWindow) mainWindow.focus()
+        if (mainWindow) { mainWindow.show(); mainWindow.focus() }
         else criarJanela()
       }},
       { type: 'separator' },
-      { label: 'Encerrar', click: () => app.quit() }
+      { label: 'Verificar documentos agora', click: () => {
+        _verificarDocsBackground()
+      }},
+      { label: 'Verificar schemas agora', click: () => {
+        _verificarSchemasBackground()
+      }},
+      { type: 'separator' },
+      { label: 'Encerrar completamente', click: () => {
+        app.isQuitting = true
+        app.quit()
+      }}
     ])
 
     tray.setContextMenu(menu)
@@ -402,11 +514,33 @@ ipcMain.handle('app-path',    () => RESOURCES)
 
 // ════════════════════════════════════════════════════════
 // CONTROLE DE INSTALAÇÕES — Google Sheets
-// Registra cada máquina que abre o app
+// Credenciais lidas do arquivo sheets_config.json (não vai pro git)
 // ════════════════════════════════════════════════════════
-const _SHEET_ID      = '1uScn0Zbt_5I3xq04t5_rQRtNRDwTr_ClDGcjCSRvajM'
-const _CLIENT_EMAIL  = 'nfs-e-validador-control@nfs-e-validador-controle.iam.gserviceaccount.com'
-const _PRIVATE_KEY   = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJvYqhFlVKO0W1\neiypt+AmDnrQQN2dgBwYMr/xMH+5drTFkj+porUvtRyCewH8Y/P4dQJ2QR+6x2eQ\n1l7ZmC3GWZSolB58t7BwnEjdwHDVGTakjtn6fo485kbeCLMRzvLT0eBOKUqrbHH2\nUZt7JfjwE5aJQcSsBtlWRXSnQ6Zv/MOr7JMaUFX4CUQImV6F/7nEEifSCtNMzZ/2\n/UzD8w79GaOyDRDWq1p1bt1Hx9PSFqgAmFwnkDzZvX13Q8RRqJ3vGY3kqHLtZENa\nqKPDbYlyKDD58jziRnEQQrNJS2q+YN0WNefXpnVVp/uIV+vzau6c2L/W46myiAed\nZ4r7yKp7AgMBAAECggEADSWI22XO0uvG54RHedJ2zQZfiX6PgE6KRidrWWtIv4MV\nVWb8W4LYi7L9PNhk1ao706cxiGDZEY+PxWpNKVfp6yotJTbsrWZiL3ouo21c8ZBp\nkNK3MMQ+9WNxHvaW4e1swlH6x2iYc1BeNR7/UH9/DtRdqscoD4RkK9FJUr32feLv\nlCm61dD7EvmAvI9qphEpuczgdacw/dv2oRmrul1JFWmkpjR9kVs9T/rictoQhsfV\nnEwRPFEyakELVRPTaGFW0fq9fr2Tu84B+CBQvsRl98wCOzXLB1GJlLJsrLKotuRh\n4hcbOg7b3k205XQ4FowHj2W2Ytn5ZpfAdj6N6XqqyQKBgQD0bzrYHzpLmbVYelp6\nTX2n03WhJ9NHiZ3efrZloR7R2y/ZP6UfOIhCLMMq5e7MmF0OuQx9ALLALNIGjcsi\nE0TfDXvjt+fU0mOgdgyKTFrBvEUZtuZ6GOj2iplYVLGfQxS0Y8De+NtRIGU9rY5j\nQ5sl3aoG7LWE94R2KIeGiEcq4wKBgQDTSStexjGkULzco51Kx0admUPrlqqy7n0m\neQiwX12S2K4qhH3aew1yFMZR1eUa9KrKfzagsvQ4nB30zxHw4TUnf/DaZSdUeloH\nIS+FomLDWUTx2Eq1DIJcpN+7AnqQ47CBy03GY45RQw9eJ+0EZDEfrzVug6HFAwMt\n+E9gT30diQKBgQCFqHzIyOqbhEVBSEZJMi5PorVjld9V8s48Z5VdJSkxH2Weqcqk\ns8juRoPB5VEa1wWrk0xc3hDgPKHrq4Uz8M1sGndwIZPHL/QCPgrFZNMLtOMkGHsW\nsKBSj58iSc2GhKvBp/pC8lkal1hEza5aYRFpNzhN6Qmo15+67JaO3d3seQKBgEex\nhlPscJ/O/abopdDf+ag0f4WLZHS+1Byf6UDfu0K+36pxtrrSEmfpgLn4GHujFekM\nbZ7t2kzzPH77XJ0d7glvMm0I8eWKds4Ahr2TsmuS+QAPYpo4mmuRTpGIb8qGWDhS\noht1YK9WT/qlFZnt3XVg4IKVi+jr8sJAhb6qekvxAoGAD0vnEa/oA0Xtlci4rspm\n16XKrO9ZJbyThrqt6lVYpsdpH/7jLw/n+1yoN4Aw2mitByUwNrRVtfcsb743uXVr\nlYw/qKl1eOlgpdhMe2wruPkZEOpRE1pmNMf6TeN0+6kIhcqDc5xt3/IEppfeH/0M\nGxIsB82Tb3ck038teesvkYQ=\n-----END PRIVATE KEY-----\n"
+let _SHEET_ID     = ''
+let _CLIENT_EMAIL = ''
+let _PRIVATE_KEY  = ''
+
+// Carregar credenciais do arquivo de config (fora do código)
+function _carregarCredenciaisSheets() {
+  try {
+    const configPath = path.join(RESOURCES, 'sheets_config.json')
+    if (fs.existsSync(configPath)) {
+      const cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+      _SHEET_ID     = cfg.sheet_id     || ''
+      _CLIENT_EMAIL = cfg.client_email || ''
+      _PRIVATE_KEY  = cfg.private_key  || ''
+      log('Sheets: credenciais carregadas de sheets_config.json')
+      return true
+    } else {
+      log('Sheets: sheets_config.json não encontrado — monitoramento desativado')
+      return false
+    }
+  } catch (e) {
+    log(`Sheets: erro ao carregar credenciais: ${e.message}`)
+    return false
+  }
+}
+
 
 // Gerar JWT para autenticação Google
 async function _gerarJWT() {
@@ -456,6 +590,11 @@ function _dataBR(d = new Date()) {
 
 // Registrar/atualizar máquina na planilha
 async function _registrarMaquina() {
+  // Verificar se credenciais estão carregadas
+  if (!_SHEET_ID || !_CLIENT_EMAIL || !_PRIVATE_KEY) {
+    log('Sheets: credenciais não configuradas — pulando registro')
+    return
+  }
   try {
     const os      = require('os')
     const maquina = os.hostname()
@@ -515,6 +654,197 @@ async function _registrarMaquina() {
   }
 }
 
+
+// ── Verificação em background + Notificações Windows ─────────────────────────
+let _notifConfig = { docs: true, schemas: true, forum: false }
+
+// IDs de notificações já enviadas — evita repetir na mesma sessão
+const _notifEnviadas = new Set()
+
+function _enviarNotificacaoWindows(titulo, corpo, onClick, dedupeKey) {
+  try {
+    // Deduplicação: não enviar a mesma notificação duas vezes na sessão
+    if (dedupeKey && _notifEnviadas.has(dedupeKey)) {
+      log(`Notificação ignorada (já enviada): ${dedupeKey}`)
+      return
+    }
+
+    // Notificações do Windows funcionam sem tray a partir do Electron 13+
+    // mas exigem que o app tenha AppUserModelId definido
+    const { Notification } = require('electron')
+    if (!Notification.isSupported()) {
+      log('Notificações não suportadas neste sistema')
+      return
+    }
+
+    const notif = new Notification({
+      title:       titulo,
+      body:        corpo,
+      icon:        icon || undefined,
+      silent:      false,
+      timeoutType: 'default',
+      appName:     APP_NAME,
+    })
+
+    if (onClick) notif.on('click', onClick)
+
+    notif.on('failed', (e, err) => log(`Notificação falhou: ${err}`))
+    notif.show()
+
+    if (dedupeKey) _notifEnviadas.add(dedupeKey)
+    log(`Notificação enviada: ${titulo}`)
+
+    // Atualizar tooltip do tray para refletir novidade
+    if (tray) tray.setToolTip(`${APP_NAME} — ${titulo}`)
+
+  } catch (e) {
+    log(`Notificação erro: ${e.message}`)
+  }
+}
+
+async function _verificarDocsBackground() {
+  if (!_notifConfig.docs) return
+  if (!serverReady) return
+  log('Background: verificando documentos...')
+  try {
+    // 1. Disparar monitoramento
+    const r = await fetch(`http://localhost:${PORT}/api/monitorar-docs`)
+    const d = await r.json()
+    if (!d.ok) { log('Background docs: monitorar-docs retornou erro'); return }
+
+    // 2. Aguardar 45s para o monitorar_docs.py terminar de scraping
+    //    (era 30s mas o site do gov.br pode ser lento)
+    log('Background docs: aguardando 45s para resultado...')
+    await new Promise(resolve => setTimeout(resolve, 45000))
+
+    // 3. Buscar resultado
+    const r2 = await fetch(`http://localhost:${PORT}/api/docs`)
+    const d2 = await r2.json()
+    const novas = d2.novas?.length || 0
+
+    log(`Background docs: ${novas} documento(s) novo(s) encontrado(s)`)
+
+    if (novas > 0) {
+      const titulos = d2.novas.map(n => n.titulo || n.id).slice(0, 3).join(', ')
+      const dedupeKey = `docs-${d2.novas.map(n => n.id).sort().join('-')}`
+
+      _enviarNotificacaoWindows(
+        `📄 ${novas} novo(s) documento(s) no gov.br!`,
+        titulos + (novas > 3 ? ` e mais ${novas - 3}...` : ''),
+        () => {
+          if (mainWindow) { mainWindow.show(); mainWindow.focus() }
+          else criarJanela()
+        },
+        dedupeKey
+      )
+    } else {
+      // Sem novas NTs — resetar tooltip do tray
+      if (tray) tray.setToolTip(APP_NAME)
+    }
+
+  } catch (e) {
+    log(`Background docs erro: ${e.message}`)
+  }
+}
+
+async function _verificarSchemasBackground() {
+  if (!_notifConfig.schemas) return
+  if (!serverReady) return
+  log('Background: verificando schemas XSD...')
+  try {
+    // 1. Capturar estado ANTES da verificação
+    const rAntes = await fetch(`http://localhost:${PORT}/api/notificacoes`)
+    const dAntes = await rAntes.json()
+    const zipAntes = dAntes.schemas?.[0]?.arquivo || ''
+
+    // 2. Disparar atualização de schemas
+    const r = await fetch(`http://localhost:${PORT}/api/atualizar-schemas`)
+    const d = await r.json()
+    if (!d.ok) { log(`Background schemas: erro na API`); return }
+
+    log('Background schemas: aguardando 30s para conclusão...')
+    await new Promise(resolve => setTimeout(resolve, 30000))
+
+    // 3. Verificar estado DEPOIS — se mudou, houve atualização
+    const rDepois = await fetch(`http://localhost:${PORT}/api/notificacoes`)
+    const dDepois = await rDepois.json()
+    const zipDepois = dDepois.schemas?.[0]?.arquivo || ''
+
+    if (zipDepois && zipDepois !== zipAntes) {
+      // Schema novo detectado pela comparação
+      const schema = dDepois.schemas[0]
+      const dedupeKey = `schemas-${zipDepois}`
+      _enviarNotificacaoWindows(
+        '🔄 Schemas XSD atualizados!',
+        `${schema.titulo} — ${schema.subtitulo || ''}`,
+        () => {
+          if (mainWindow) { mainWindow.show(); mainWindow.focus() }
+          else criarJanela()
+        },
+        dedupeKey
+      )
+      log(`Schemas atualizados: ${zipAntes} → ${zipDepois}`)
+    } else {
+      log(`Background schemas: sem novidades (${zipDepois || 'nenhum zip'})`)
+    }
+  } catch (e) {
+    log(`Background schemas erro: ${e.message}`)
+  }
+}
+
+// Verificações automáticas em background (a cada 4h)
+function _iniciarVerificacoesBackground() {
+  const INTERVALO = 4 * 60 * 60 * 1000  // 4 horas
+
+  // Primeira verificação após 3 minutos (servidor precisa estar estável)
+  setTimeout(() => {
+    _verificarDocsBackground()
+    // Schemas com delay extra para não sobrecarregar no boot
+    setTimeout(() => _verificarSchemasBackground(), 60000)
+  }, 3 * 60 * 1000)
+
+  // Repetir a cada 4h com offset de 10min entre docs e schemas
+  setInterval(() => {
+    _verificarDocsBackground()
+    setTimeout(() => _verificarSchemasBackground(), 10 * 60 * 1000)
+  }, INTERVALO)
+
+  log('Verificações em background ativadas (a cada 4h, primeira em 3min)')
+}
+
+// IPC para configurações de notificação
+ipcMain.handle('get-notif-config', () => _notifConfig)
+ipcMain.handle('set-notif-config', (_, config) => {
+  _notifConfig = { ..._notifConfig, ...config }
+  log(`Config notificações: ${JSON.stringify(_notifConfig)}`)
+  return _notifConfig
+})
+
+// IPC: fórum detectou novos tópicos — disparar notificação Windows
+ipcMain.handle('notificar-forum', (_, titulo, quantidade) => {
+  if (!_notifConfig.forum) return { ok: false, motivo: 'forum desativado' }
+  const corpo = quantidade === 1
+    ? titulo
+    : `${quantidade} novos tópicos — veja na aba Fórum`
+  _enviarNotificacaoWindows(
+    '💬 Fórum NFS-e Brasil',
+    corpo,
+    () => {
+      if (mainWindow) { mainWindow.show(); mainWindow.focus() }
+      else criarJanela()
+    },
+    `forum-${titulo}`
+  )
+  return { ok: true }
+})
+
+// IPC: disparar monitoramento de documentos manualmente pelo frontend
+ipcMain.handle('monitorar-docs-agora', async () => {
+  log('Monitoramento manual solicitado pelo usuário')
+  await _verificarDocsBackground()
+  return { ok: true }
+})
+
 // ── App ready ─────────────────────────────────────────────────────────────────
 app.whenReady().then(async () => {
   log('='.repeat(50))
@@ -534,7 +864,7 @@ app.whenReady().then(async () => {
   criarSplash()
 
   // Iniciar servidor Python
-  iniciarServidor()
+  await iniciarServidor()
 
   // Aguardar servidor
   try {
@@ -558,7 +888,11 @@ app.whenReady().then(async () => {
     criarTray()
   }, _espera)
 
+  // Iniciar verificações em background
+  _iniciarVerificacoesBackground()
+
   // Registrar máquina no Google Sheets (controle de instalações)
+  _carregarCredenciaisSheets()
   setTimeout(() => _registrarMaquina(), 5000)
   // Atualizar a cada 4 horas
   setInterval(() => _registrarMaquina(), 4 * 60 * 60 * 1000)
@@ -706,17 +1040,33 @@ ipcMain.handle('open-resources', () => {
 })
 
 // ── Encerrar servidor ao fechar ───────────────────────────────────────────────
+// Ao fechar janela: minimizar para tray se tray existir, senão encerrar
 app.on('window-all-closed', () => {
-  // No macOS manter rodando; no Windows/Linux encerrar
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform === 'darwin') return
+  if (tray) {
+    // Tray ativo — manter rodando em background
+    log('Janela fechada — app continua em background no tray')
+  } else {
+    // Sem tray — encerrar completamente para não ficar processo zumbi
+    log('Janela fechada — sem tray, encerrando app')
+    app.isQuitting = true
+    app.quit()
+  }
 })
 
 app.on('before-quit', () => {
   log('Encerrando servidor Python...')
+  app.isQuitting = true
   if (serverProc && !serverProc.killed) {
     try { serverProc.kill('SIGTERM') } catch {}
+    // Forçar SIGKILL após 2s se ainda não morreu
+    setTimeout(() => {
+      try {
+        if (serverProc && !serverProc.killed) serverProc.kill('SIGKILL')
+      } catch {}
+    }, 2000)
   }
-  if (tray) { tray.destroy() }
+  if (tray) { try { tray.destroy() } catch {} tray = null }
 })
 
 app.on('activate', () => {
