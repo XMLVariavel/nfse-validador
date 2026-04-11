@@ -1,6 +1,6 @@
 {
   "name": "nfse-validador",
-  "version": "3.6.0",
+  "version": "3.8.0",
   "description": "NFS-e Validador Nacional",
   "main": "main.js",
   "author": "XMLVariavel",
@@ -24,6 +24,7 @@
     "productName": "NFS-e Validador",
     "copyright": "Uso interno XMLVariavel",
     "icon": "build/nfse.ico",
+    "artifactName": "NFS-e-Validador-Setup-${version}.${ext}",
     "publish": {
       "provider": "github",
       "owner": "XMLVariavel",
@@ -41,7 +42,8 @@
         }
       ],
       "icon": "build/nfse.ico",
-      "requestedExecutionLevel": "asInvoker"
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "NFS-e-Validador-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -53,7 +55,11 @@
       "uninstallerIcon": "build/nfse.ico",
       "installerHeaderIcon": "build/nfse.ico",
       "license": null,
-      "language": "1046"
+      "language": "1046",
+      "warningsAsErrors": false,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh"
     },
     "extraResources": [
       {
@@ -74,6 +80,13 @@
       {
         "from": "../sheets_config.json",
         "to": "app/sheets_config.json"
+      },
+      {
+        "from": "python-embed/",
+        "to": "app/python/",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "extraFiles": [

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador NFS-e Nacional v3.6</title>
+<title>Validador NFS-e Nacional v3.8</title>
 
 <!-- CodeMirror 5 via CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -313,6 +313,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
 /* ── Resultado header ── */
 .rp-header{display:flex;align-items:center;justify-content:space-between;padding:0 12px;height:36px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.sem-resultado .rp-header{display:none !important}
+.sem-resultado .filter-bar{display:none !important}
+.sem-resultado #statusBanner{display:none !important}
+.sem-resultado #ocList{display:none !important}
+.sem-resultado #emptyState{display:flex !important}
 .rp-title{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase}
 .rp-actions{display:flex;gap:4px}
 
@@ -528,6 +533,22 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 .tema-opt-info{display:flex;flex-direction:column;flex:1}
 .tema-opt-nome{font-weight:500;font-size:12px}
 .tema-opt-desc{font-size:10px;color:var(--muted2)}
+
+/* ── Painel Reforma Tributária ── */
+.reforma-panel{display:none;flex:1;overflow-y:auto;flex-direction:column;padding:0}
+.reforma-panel.show{display:flex}
+.reforma-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;margin-bottom:10px;transition:border-color .15s}
+.reforma-card:hover{border-color:var(--accent)}
+.reforma-card-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.reforma-card-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.reforma-card-link{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--blue);text-decoration:none;padding:4px 10px;border:1px solid var(--blue);border-radius:4px;transition:all .15s;font-family:var(--mono)}
+.reforma-card-link:hover{background:var(--blue);color:#fff}
+.reforma-tag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;margin-right:4px;font-family:var(--mono)}
+.reforma-tag-gov{background:rgba(96,165,250,.12);color:var(--blue);border:1px solid rgba(96,165,250,.3)}
+.reforma-tag-calc{background:rgba(74,222,128,.12);color:var(--accent);border:1px solid rgba(74,222,128,.3)}
+.reforma-tag-nfse{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+.reforma-tag-lc{background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3)}
+.reforma-section-title{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;padding:14px 0 8px;border-bottom:1px solid var(--border);margin-bottom:12px}
 
 /* ── Painel Fórum NFS-e ── */
 .forum-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
@@ -1076,6 +1097,35 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 [data-theme="keevo"] .btn-valida:hover{background:#E8561F !important;}
 [data-theme="keevo"] .upload-zone{background:#1E1240 !important;border-color:#3D2590 !important;}
 [data-theme="keevo"] .editor-actions{background:#160D2B !important;border-color:#2D1B6B !important;}
+
+/* ── Painel Sobre o Sistema ── */
+.sobre-panel{display:none;flex:1;overflow-y:auto;background:var(--bg);padding:24px 20px}
+.sobre-panel.show{display:flex;flex-direction:column;height:calc(100vh - 42px);overflow-y:auto;padding-bottom:32px}
+.sobre-hero{text-align:center;padding:32px 20px 24px;border-bottom:0.5px solid var(--border);margin-bottom:28px}
+.sobre-hero-logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#16a34a,#4ade80);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(74,222,128,.2)}
+.sobre-hero-logo svg{width:28px;height:28px;stroke:#fff;stroke-width:2.5;fill:none}
+.sobre-hero h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--sans)}
+.sobre-hero .sobre-ver{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-glow);border:1px solid rgba(74,222,128,.25);padding:3px 12px;border-radius:20px;display:inline-block;margin-bottom:12px}
+.sobre-hero p{font-size:13px;color:var(--text2);max-width:540px;margin:0 auto;line-height:1.7}
+.sobre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:28px}
+.sobre-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:18px 20px;transition:border-color .15s,transform .15s}
+.sobre-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.sobre-card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sobre-card-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sobre-card-ico svg{width:18px;height:18px}
+.sobre-card h3{font-size:13px;font-weight:600;color:var(--text);margin:0}
+.sobre-card p{font-size:11px;color:var(--text2);line-height:1.65;margin:0}
+.sobre-card ul{margin:6px 0 0;padding-left:16px;font-size:11px;color:var(--text2);line-height:1.7}
+.sobre-card ul li{margin-bottom:3px}
+.sobre-card ul li strong{color:var(--text);font-weight:500}
+.sobre-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sobre-section-title::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.sobre-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.sobre-stat{flex:1;min-width:120px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;text-align:center}
+.sobre-stat-num{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;margin-bottom:4px}
+.sobre-stat-label{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.4px}
+.sobre-footer{padding-top:20px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
 </style>
 </head>
 <body>
@@ -1088,7 +1138,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <span class="logo-name">NFS-e Validador</span>
-    <span class="logo-ver">v3.6</span>
+    <span class="logo-ver">v3.8</span>
   </div>
 
   <!-- Dropdown Modelo de XML -->
@@ -1253,11 +1303,27 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
     Fórum
     <span id="forum-badge" style="display:none;min-width:16px;height:14px;background:var(--blue);color:#fff;border-radius:7px;font-size:9px;font-weight:700;line-height:14px;text-align:center;padding:0 4px;font-family:var(--mono);margin-left:2px"></span>
   </div>
+  <!-- Aba Reforma Tributária -->
+  <div class="doc-tab" id="tab-reforma" onclick="abrirReforma()" title="Reforma Tributária — IBS/CBS/NFS-e">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Reforma Trib.
+  </div>
+   <!-- Aba Sobre o Sistema -->
+  <div class="doc-tab" id="tab-sobre" onclick="abrirSobre()" title="Sobre o Sistema" style="border-left:1px solid var(--border)">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    Sobre
+  </div>
   <!-- Aba Ajuda -->
   <div class="doc-tab" id="tab-ajuda" onclick="abrirAjuda()" title="Ajuda e atalhos de teclado" style="border-left:1px solid var(--border)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     Ajuda
   </div>
+  <!-- Aba Configurações -->
+  <div class="doc-tab" id="tab-config" onclick="abrirConfig()" title="Configurações">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Config
+  </div>
+
   <!-- Botão sino de notificações -->
   <div class="doc-tab" id="btn-notif" onclick="toggleNotifPanel()" title="Notificações" style="border-left:1px solid var(--border);padding:0 12px;position:relative">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -1339,6 +1405,193 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 </div>
 <!-- divisória sidebar / workspace -->
 <div class="divider" id="loteDivider" style="display:none"></div>
+
+<!-- ── Painel Reforma Tributária ── -->
+<div class="reforma-panel" id="painel-reforma">
+  <div style="padding:14px 18px 0">
+    <!-- Cabeçalho -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span style="font-size:14px;font-weight:700;color:var(--text)">Reforma Tributária</span>
+      <span class="reforma-tag reforma-tag-lc">LC 214/2025</span>
+    </div>
+    <p style="font-size:11px;color:var(--text2);margin:0 0 16px;line-height:1.5">
+      Portal de links oficiais e ferramentas da Reforma Tributária sobre consumo — IBS, CBS e impactos na NFS-e Nacional.
+    </p>
+
+    <!-- SEÇÃO 1: Portal Gov.br -->
+    <div class="reforma-section-title">🏛️ Portais Oficiais — Governo Federal</div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
+        Entenda a Reforma Tributária sobre o Consumo
+      </div>
+      <div class="reforma-card-desc">
+        Página oficial da Receita Federal explicando a Reforma, substituição do PIS/COFINS pela CBS, e criação do IBS e IS.
+        Inclui cronograma de implantação 2026–2033.
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-consumo/entenda" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir portal
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
+        Portal NFS-e — Biblioteca de Documentação Técnica
+      </div>
+      <div class="reforma-card-desc">
+        Notas Técnicas, Leiautes, Esquemas XSD e Manuais oficiais do Sistema Nacional NFS-e. Base para implementação IBS/CBS na NFS-e.
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir portal
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-gov">GOV.BR</span>
+        Reforma Tributária — Ministério da Fazenda
+      </div>
+      <div class="reforma-card-desc">
+        Publicações, decretos regulamentadores e notícias oficiais do Ministério da Fazenda sobre a implementação da Reforma.
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir portal
+      </a>
+    </div>
+
+    <!-- SEÇÃO 2: Calculadoras e Simuladores -->
+    <div class="reforma-section-title">🧮 Calculadoras e Simuladores Oficiais</div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-calc">CALCULADORA</span>
+        Calculadora de Tributos sobre o Consumo — RFB
+      </div>
+      <div class="reforma-card-desc">
+        Ferramenta oficial da Receita Federal para calcular IBS, CBS e IS sobre operações de consumo a partir de 2026.
+        Permite simular o impacto da transição.
+      </div>
+      <a class="reforma-card-link" href="https://consumo.tributos.gov.br/servico/calcular-tributos-consumo/calculadora" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir calculadora
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-calc">SIMULADOR</span>
+        Portal Tributos sobre Consumo — gov.br
+      </div>
+      <div class="reforma-card-desc">
+        Página central do novo sistema de tributos sobre consumo. Contém orientações sobre CBS (federal), IBS (estadual/municipal) e IS (Imposto Seletivo).
+      </div>
+      <a class="reforma-card-link" href="https://consumo.tributos.gov.br" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir portal
+      </a>
+    </div>
+
+    <!-- SEÇÃO 3: NFS-e e IBS/CBS -->
+    <div class="reforma-section-title">📄 NFS-e Nacional — IBS / CBS</div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
+        NT-007 — Leiaute com IBS e CBS na NFS-e
+      </div>
+      <div class="reforma-card-desc">
+        Nota Técnica SE/CGNFS-e nº 007 com o novo leiaute da NFS-e Nacional incluindo os campos IBS, CBS e indOp obrigatórios a partir de 2026.
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Baixar PDF
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
+        Esquemas XSD v1.01 — Fevereiro 2026
+      </div>
+      <div class="reforma-card-desc">
+        Pacote oficial com os XSDs da NFS-e Nacional v1.01 atualizados para a Reforma Tributária (DPS, NFSe, CNC, eventos, tipos complexos/simples).
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/nfse-esquemas_xsd-v1-01-20260209.zip" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Baixar ZIP
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-nfse">NFS-e</span>
+        Anexo VIII — Correlação NBS / indOp / ClassTrib IBS/CBS
+      </div>
+      <div class="reforma-card-desc">
+        Planilha oficial com a correlação entre código do serviço (NBS), indicador de operação (indOp) e classificação tributária do IBS/CBS. Versão 1.01.00.
+      </div>
+      <a class="reforma-card-link" href="https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexoviii-correlacaoitemnbsindopcclasstrib_ibscbs_v1-01-00.xlsx" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Baixar XLSX
+      </a>
+    </div>
+
+    <!-- SEÇÃO 4: Legislação -->
+    <div class="reforma-section-title">📜 Legislação Base</div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-lc">LEGISLAÇÃO</span>
+        LC 214/2025 — Lei Complementar do IBS, CBS e IS
+      </div>
+      <div class="reforma-card-desc">
+        Texto completo da Lei Complementar nº 214/2025 que institui o IBS, CBS e Imposto Seletivo. Base legal de toda a Reforma Tributária sobre consumo.
+      </div>
+      <a class="reforma-card-link" href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir lei
+      </a>
+    </div>
+
+    <div class="reforma-card">
+      <div class="reforma-card-title">
+        <span class="reforma-tag reforma-tag-lc">LEGISLAÇÃO</span>
+        EC 132/2023 — Emenda Constitucional da Reforma
+      </div>
+      <div class="reforma-card-desc">
+        Emenda Constitucional nº 132/2023 que aprovou a Reforma Tributária, extinguindo ICMS parcial, ISS e PIS/COFINS progressivamente até 2033.
+      </div>
+      <a class="reforma-card-link" href="https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm" target="_blank" rel="noopener">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir EC
+      </a>
+    </div>
+
+    <!-- SEÇÃO 5: Cronograma -->
+    <div class="reforma-section-title">📅 Cronograma de Implantação</div>
+
+    <div class="reforma-card" style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:80px 1fr;gap:6px 12px;font-size:11px">
+        <span style="color:var(--accent);font-weight:700;font-family:var(--mono)">2026</span>
+        <span style="color:var(--text2)">Início: IBS e CBS com alíquota reduzida (0,1%). Campos obrigatórios na NFS-e (indOp, cClassTrib). Imposto Seletivo em vigor.</span>
+        <span style="color:var(--yellow);font-weight:700;font-family:var(--mono)">2027–2028</span>
+        <span style="color:var(--text2)">Extinção gradual do PIS/COFINS. IBS e CBS começam a substituir progressivamente.</span>
+        <span style="color:var(--orange);font-weight:700;font-family:var(--mono)">2029–2032</span>
+        <span style="color:var(--text2)">Redução progressiva do ICMS e ISS. IBS e CBS assumem parcela crescente da tributação.</span>
+        <span style="color:var(--red);font-weight:700;font-family:var(--mono)">2033</span>
+        <span style="color:var(--text2)">Extinção total do ICMS e ISS. IBS e CBS em plena vigência. Reforma concluída.</span>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+</div>
 
 <!-- ── Painel Fórum NFS-e ── -->
 <div class="forum-panel" id="forumPanel">
@@ -1423,6 +1676,84 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 
 <!-- ── Painel Rejeições ── -->
 <div class="rej-panel" id="rejPanel">
+  <!-- Abas Rejeições -->
+  <div style="display:flex;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0">
+    <button id="rej-tab-todas" onclick="_rejAba('todas')"
+      style="padding:8px 16px;font-size:11px;font-weight:600;border:none;cursor:pointer;
+        background:transparent;color:var(--accent);border-bottom:2px solid var(--accent)">
+      Todas ({total})
+    </button>
+    <button id="rej-tab-nao-valida" onclick="_rejAba('nao-valida')"
+      style="padding:8px 16px;font-size:11px;font-weight:500;border:none;cursor:pointer;
+        background:transparent;color:var(--muted2);border-bottom:2px solid transparent">
+      Não Validáveis pelo Sistema
+    </button>
+  </div>
+
+  <!-- Painel: Não Validáveis -->
+  <div id="rej-nao-valida-panel" style="display:none;overflow-y:auto;flex:1;padding:16px">
+    <div style="margin-bottom:12px;padding:10px 14px;border-radius:var(--r);
+      background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2)">
+      <div style="font-size:11px;font-weight:600;color:var(--yellow);margin-bottom:4px">
+        ⚠️ Rejeições não validáveis automaticamente
+      </div>
+      <div style="font-size:11px;color:var(--text2)">
+        As rejeições abaixo dependem de dados externos (SEFAZ, cadastros municipais,
+        certificados digitais) que o validador local não tem acesso. Elas só podem
+        ser detectadas pelo próprio SEFAZ Nacional ao receber o XML.
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      
+      <div style="padding:10px 14px;border-radius:var(--r);background:var(--bg2);
+        border:0.5px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;
+            color:var(--yellow)">E0001–E0005</span>
+          <span style="font-size:11px;color:var(--text)">Assinatura digital inválida</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted2)">Requer certificado digital A1/A3 — validado pelo SEFAZ</div>
+      </div>
+      <div style="padding:10px 14px;border-radius:var(--r);background:var(--bg2);
+        border:0.5px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;
+            color:var(--yellow)">E0040–E0060</span>
+          <span style="font-size:11px;color:var(--text)">Município não conveniado ao SEFAZ Nacional</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted2)">Requer consulta ao cadastro de municípios conveniados</div>
+      </div>
+      <div style="padding:10px 14px;border-radius:var(--r);background:var(--bg2);
+        border:0.5px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;
+            color:var(--yellow)">E0100–E0120</span>
+          <span style="font-size:11px;color:var(--text)">Prestador/Tomador não cadastrado no SEFAZ</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted2)">Requer consulta ao cadastro de contribuintes</div>
+      </div>
+      <div style="padding:10px 14px;border-radius:var(--r);background:var(--bg2);
+        border:0.5px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;
+            color:var(--yellow)">E1000–E1050</span>
+          <span style="font-size:11px;color:var(--text)">Duplicidade de NFS-e (número já emitido)</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted2)">Requer acesso ao banco de dados do SEFAZ Nacional</div>
+      </div>
+      <div style="padding:10px 14px;border-radius:var(--r);background:var(--bg2);
+        border:0.5px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;
+            color:var(--yellow)">E1200–E1220</span>
+          <span style="font-size:11px;color:var(--text)">Alíquota fora do padrão municipal</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted2)">Requer tabela de alíquotas por município (não pública)</div>
+      </div>
+    
+    </div>
+  </div>
+
   <div class="panel-toolbar">
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1519,7 +1850,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
       <div>
         <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
-        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.6 · Suporte Interno · XMLVariavel</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">v3.7 · Suporte Interno · XMLVariavel</div>
       </div>
       <div style="margin-left:auto;text-align:right">
         <div style="font-size:10px;color:var(--muted2)">Suporta</div>
@@ -1544,7 +1875,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
             🔖 Versão instalada
           </div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);
-            font-family:var(--mono)" id="ajudaVersaoAtual">v3.6</div>
+            font-family:var(--mono)" id="ajudaVersaoAtual">v3.8</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <button onclick="_verificarUpdateManual()" id="btn-check-update"
@@ -1625,9 +1956,445 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
     </div>
     <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.6 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.8 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
     </div>
+  </div>
+</div>
+
+<!-- ── Painel Sobre o Sistema ── -->
+<div class="sobre-panel" id="sobrePanel">
+  <div style="max-width:820px;margin:0 auto;width:100%">
+    
+    <!-- Hero -->
+    <div class="sobre-hero">
+      <div class="sobre-hero-logo">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>NFS-e Validador Nacional</h1>
+      <span class="sobre-ver">v3.8</span>
+      <p>
+        Ferramenta profissional para validação de XML de documentos fiscais eletrônicos
+        de serviço no padrão nacional (NFS-e). Valida estrutura, regras de negócio e
+        conformidade com os schemas XSD oficiais do SEFAZ.
+      </p>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="sobre-section-title">Números do Sistema</div>
+    <div class="sobre-stats">
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--accent)">4</div>
+        <div class="sobre-stat-label">Formatos XML</div>
+      </div>
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--red)">448</div>
+        <div class="sobre-stat-label">Rejeições oficiais</div>
+      </div>
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--blue)">416</div>
+        <div class="sobre-stat-label">Campos do leiaute</div>
+      </div>
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--yellow)">337</div>
+        <div class="sobre-stat-label">Códigos cTribNac</div>
+      </div>
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--purple)">5.571</div>
+        <div class="sobre-stat-label">Municípios IBGE</div>
+      </div>
+      <div class="sobre-stat">
+        <div class="sobre-stat-num" style="color:var(--orange)">189</div>
+        <div class="sobre-stat-label">Países ISO</div>
+      </div>
+    </div>
+
+    <!-- Formatos Suportados -->
+    <div class="sobre-section-title">Formatos Suportados</div>
+    <div class="sobre-grid">
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <h3>DPS Nacional</h3>
+        </div>
+        <p>Declaração de Prestação de Serviços — documento principal enviado ao SEFAZ Nacional.</p>
+        <ul>
+          <li><strong>Elemento raiz:</strong> <code>&lt;DPS&gt;</code></li>
+          <li><strong>Schema:</strong> DPS_v1.01.xsd</li>
+          <li><strong>Versões:</strong> 1.00, 1.01</li>
+          <li><strong>Namespace:</strong> http://www.sped.fazenda.gov.br/nfse</li>
+        </ul>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(74,222,128,.12);color:var(--accent)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <h3>NFS-e Nacional</h3>
+        </div>
+        <p>Nota Fiscal de Serviço Eletrônica completa emitida pelo sistema nacional.</p>
+        <ul>
+          <li><strong>Elemento raiz:</strong> <code>&lt;NFSe&gt;</code></li>
+          <li><strong>Schema:</strong> NFSe_v1.01.xsd</li>
+          <li><strong>Versões:</strong> 1.00, 1.01</li>
+          <li><strong>Namespace:</strong> http://www.sped.fazenda.gov.br/nfse</li>
+        </ul>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(251,191,36,.12);color:var(--yellow)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          </div>
+          <h3>CNC</h3>
+        </div>
+        <p>Cancelamento de NFS-e — documento para solicitar cancelamento de notas emitidas.</p>
+        <ul>
+          <li><strong>Elemento raiz:</strong> <code>&lt;CNC&gt;</code></li>
+          <li><strong>Schema:</strong> CNC_v1.00.xsd</li>
+          <li><strong>Versão:</strong> 1.00</li>
+        </ul>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(167,139,250,.12);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>TecnoNFSeNacional (TX2)</h3>
+        </div>
+        <p>Formato proprietário da Tecnospeed para emissão via software de terceiros.</p>
+        <ul>
+          <li><strong>Elemento raiz:</strong> <code>&lt;TecnoNFSeNacional&gt;</code></li>
+          <li><strong>Schema:</strong> TecnoNFSeNacional_v1.xsd</li>
+          <li><strong>Namespace:</strong> não obrigatório</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Funcionalidades do Sistema -->
+    <div class="sobre-section-title">O que o Sistema Faz</div>
+    <div class="sobre-grid">
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(74,222,128,.12);color:var(--accent)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Validação XSD Completa</h3>
+        </div>
+        <p>Validação contra os schemas XSD oficiais usando lxml/libxml2 no backend, garantindo conformidade total com a estrutura esperada pelo SEFAZ.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(248,113,113,.12);color:var(--red)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h3>448 Rejeições Oficiais (Anexo VI NT007)</h3>
+        </div>
+        <p>Cada campo do XML é verificado contra as regras de rejeição oficiais do SEFAZ. O sistema identifica erros antes de enviar ao ambiente de produção.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Validação de CNPJ/CPF</h3>
+        </div>
+        <p>Verificação do dígito verificador de CNPJ e CPF usando algoritmo módulo 11 para prestador, tomador e intermediário.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(251,191,36,.12);color:var(--yellow)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3>Código IBGE de Município</h3>
+        </div>
+        <p>Validação de 5.571 municípios brasileiros na base IBGE. Verifica cLocEmi, cLocPrestacao e endereços de prestador/tomador.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(167,139,250,.12);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <h3>Alíquota ISSQN</h3>
+        </div>
+        <p>Verifica se a alíquota está dentro dos limites legais: máximo 5% e mínimo 2% conforme legislação vigente.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(74,222,128,.12);color:var(--accent)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>Tabela de Serviços LC 116/2003</h3>
+        </div>
+        <p>337 códigos de tributação nacional (cTribNac) validados conforme a Lei Complementar 116/2003 e Anexo I do leiaute.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(248,113,113,.12);color:var(--red)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>IBS/CBS — Reforma Tributária (LC 214/2025)</h3>
+        </div>
+        <p>Validação dos novos campos IBS e CBS introduzidos pela Reforma Tributária. Verifica vigência (a partir de 01/2026), alíquotas e códigos indicadores de operação.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+          <h3>Código NBS (Nomenclatura Brasileira de Serviços)</h3>
+        </div>
+        <p>Valida o formato do código NBS (9 dígitos sem pontos) conforme a versão 2.0 da nomenclatura oficial.</p>
+      </div>
+    </div>
+
+    <!-- Funcionalidades da Interface -->
+    <div class="sobre-section-title">Funcionalidades da Interface</div>
+    <div class="sobre-grid">
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(74,222,128,.12);color:var(--accent)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          </div>
+          <h3>Validação Individual</h3>
+        </div>
+        <p>Cole ou carregue um XML e valide instantaneamente. Editor com CodeMirror (syntax highlighting, fold, busca), resultado com erros, alertas e informações detalhadas.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Validação em Lote</h3>
+        </div>
+        <p>Arraste múltiplos arquivos .xml e valide todos de uma vez. Sidebar com lista de arquivos, progresso, resumo (OK/Erro/Alerta) e exportação de relatório .txt.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(167,139,250,.12);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3>Visualização do Leiaute</h3>
+        </div>
+        <p>Árvore hierárquica completa com os 416 campos do leiaute DPS/NFS-e. Filtros por grupos, obrigatórios, opcionais. Diff entre versões v1.00 e v1.01.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(248,113,113,.12);color:var(--red)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Consulta de Rejeições</h3>
+        </div>
+        <p>Tabela pesquisável com 448 rejeições oficiais do Anexo VI NT007. Inclui código, campo, mensagem, regra e efeito. Suporte a notas internas da equipe.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <h3>Documentação Oficial gov.br</h3>
+        </div>
+        <p>Acesso direto às Notas Técnicas (NT-001 a NT-007), schemas XSD, changelog e links para o portal gov.br/nfse. Monitor de novos documentos com notificações.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(251,191,36,.12);color:var(--yellow)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3>Fórum NFS-e Brasil</h3>
+        </div>
+        <p>Integração com o Fórum NFS-e Brasil para acompanhar tópicos relevantes da comunidade técnica diretamente no sistema.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(167,139,250,.12);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </div>
+          <h3>4 Temas Visuais</h3>
+        </div>
+        <p>Escuro, Claro, NFS-e Gov (azul marinho gov.br) e Keevo (roxo/laranja). Configurável e persistente entre sessões.</p>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(74,222,128,.12);color:var(--accent)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3>Exportação de Resultados</h3>
+        </div>
+        <p>Exporte resultados da validação em JSON ou TXT. Na validação em lote, gera relatório consolidado com todos os arquivos.</p>
+      </div>
+
+    </div>
+
+    <!-- Validações Específicas por Formato -->
+    <div class="sobre-section-title">Validações Específicas por Formato</div>
+    <div class="sobre-grid">
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(96,165,250,.12);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <h3>DPS / NFS-e Nacional</h3>
+        </div>
+        <ul>
+          <li>Schema XSD completo via lxml/libxml2</li>
+          <li>448 rejeições oficiais (Anexo VI NT007)</li>
+          <li>337 serviços cTribNac (LC 116/2003)</li>
+          <li>Código NBS (9 dígitos sem pontos)</li>
+          <li>Regras: tpAmb, dCompet, serie, nDPS, tpEmit</li>
+          <li>Regras: cLocEmi, opSimpNac, regEspTrib</li>
+          <li>Regras: tpRetISSQN, tribISSQN, indOp</li>
+          <li>Retenção incompatível com imunidade/exportação</li>
+          <li>Desconto incondicionado ≥ valor do serviço</li>
+          <li>IBS/CBS antes de 01/2026 (LC 214/2025)</li>
+        </ul>
+      </div>
+
+      <div class="sobre-card">
+        <div class="sobre-card-head">
+          <div class="sobre-card-ico" style="background:rgba(167,139,250,.12);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>TecnoNFSeNacional / TX2</h3>
+        </div>
+        <ul>
+          <li>Schema XSD Tecnospeed (TecnoNFSeNacional_v1.xsd)</li>
+          <li>CpfCnpjPrestador, CpfCnpjTomador, CpfCnpjIntermediário</li>
+          <li>CodigoCidadeEmitente, CodigoCidadePrestacao (IBGE)</li>
+          <li>AliquotaISS, TipoTributacaoIss, TipoRetIss</li>
+          <li>OptanteSimplesNacional, RegimeEspecialTributacao</li>
+          <li>ValorServicos, DescontoIncondicionado</li>
+          <li>CodigoNbs (formato 9 dígitos)</li>
+          <li>PaisPrestador / PaisTomador (tabela ISO)</li>
+          <li>SituacaoTributariaIbsCbs (vigência 2026)</li>
+          <li>ClassificacaoTributariaIbsCbs</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Validações Comuns -->
+    <div class="sobre-section-title">Validações Comuns (Todos os Formatos)</div>
+    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px 20px;margin-bottom:28px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> XML bem-formado (well-formedness)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> Namespace correto (Nacional)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> CNPJ/CPF com dígito verificador (módulo 11)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> Código IBGE de município (5.571 municípios)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> Alíquota ISSQN (máx 5%, mín 2%)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> Retenção incompatível com imunidade/exportação
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> Desconto incondicionado ≥ valor do serviço
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);padding:5px 0">
+          <span style="color:var(--accent);font-size:14px">✓</span> IBS/CBS antes de 01/2026 (LC 214/2025)
+        </div>
+      </div>
+    </div>
+
+    <!-- API -->
+    <div class="sobre-section-title">API do Backend</div>
+    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px 20px;margin-bottom:28px;font-family:var(--mono);font-size:11px">
+      <div style="display:grid;gap:6px">
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)">
+          <span style="color:var(--accent);font-weight:700;min-width:40px">POST</span>
+          <span style="color:var(--blue)">/api/validar</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">Body: XML bruto → JSON com ocorrências</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)">
+          <span style="color:var(--blue);font-weight:700;min-width:40px">GET</span>
+          <span style="color:var(--blue)">/api/tabelas</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">JSON com rejeições + serviços + indOp</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)">
+          <span style="color:var(--blue);font-weight:700;min-width:40px">GET</span>
+          <span style="color:var(--blue)">/api/cidades</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">JSON com 5.571 municípios IBGE</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)">
+          <span style="color:var(--blue);font-weight:700;min-width:40px">GET</span>
+          <span style="color:var(--blue)">/api/paises</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">JSON com 189 países ISO</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)">
+          <span style="color:var(--blue);font-weight:700;min-width:40px">GET</span>
+          <span style="color:var(--blue)">/api/health</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">Status do servidor</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:5px 0">
+          <span style="color:var(--blue);font-weight:700;min-width:40px">GET</span>
+          <span style="color:var(--blue)">/standalone</span>
+          <span style="color:var(--muted2);font-family:var(--sans);font-size:10px;margin-left:auto">Versão offline em HTML único</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notas Técnicas -->
+    <div class="sobre-section-title">Notas Técnicas Suportadas</div>
+    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px 20px;margin-bottom:28px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);background:rgba(74,222,128,.12);padding:2px 8px;border-radius:6px;min-width:56px;text-align:center">NT-007</span>
+          <span style="font-size:11px;color:var(--text);flex:1">IBS/CBS + Esclarecimentos — Fev/2026</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(74,222,128,.12);color:var(--accent);font-weight:600">Produção</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue);background:rgba(96,165,250,.12);padding:2px 8px;border-radius:6px;min-width:56px;text-align:center">NT-006</span>
+          <span style="font-size:11px;color:var(--text);flex:1">NFS-e Via (Rodovias) — Ago/2025</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(96,165,250,.12);color:var(--blue);font-weight:600">Restrita</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--yellow);background:rgba(251,191,36,.12);padding:2px 8px;border-radius:6px;min-width:56px;text-align:center">NT-005</span>
+          <span style="font-size:11px;color:var(--text);flex:1">Reforma Tributária v2 (Fase Futura) — Nov/2025</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(251,191,36,.12);color:var(--yellow);font-weight:600">Sem vigência</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);background:rgba(74,222,128,.12);padding:2px 8px;border-radius:6px;min-width:56px;text-align:center">NT-004</span>
+          <span style="font-size:11px;color:var(--text);flex:1">Ajustes de Layout (Base de Jan/2026) — Jun/2025</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(74,222,128,.12);color:var(--accent);font-weight:600">Produção</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="sobre-footer">
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.8 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2 · IBS/CBS</span>
+      <span style="font-size:10px;color:var(--muted2)">Backend: Python 3 + lxml (http.server nativo)</span>
+    </div>
+
   </div>
 </div>
 
@@ -1690,7 +2457,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
   <div class="divider" id="divider"></div>
 
   <!-- COLUNA DIREITA: resultado da validação -->
-  <div class="pane pane-right" id="paneRight">
+  <div class="pane pane-right" id="paneRight" class="sem-resultado">
 
     <div class="rp-header">
       <span class="rp-title">Resultado da validação</span>
@@ -1735,12 +2502,101 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <div class="oc-list" id="ocList" style="display:none"></div>
     </div>
   </div>
+</div>
 
+
+<!-- ── Config Panel ─────────────────────────────────────────── -->
+    <div id="configPanel" class="doc-panel" style="overflow-y:auto">
+    <div style="padding:24px;max-width:680px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <div style="font-size:20px">⚙️</div>
+        <div>
+          <div style="font-size:16px;font-weight:600;color:var(--text)">Configurações</div>
+          <div style="font-size:11px;color:var(--muted2)">Preferências do sistema</div>
+        </div>
+      </div>
+
+      <!-- Notificações -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:12px">🔔 Notificações</div>
+        <div style="background:var(--bg2);border-radius:var(--r2);border:0.5px solid var(--border);overflow:hidden">
+
+          <!-- Novos documentos -->
+          <div style="padding:12px 16px;border-bottom:0.5px solid var(--border)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Novos documentos gov.br</div>
+            <div style="font-size:10px;color:var(--muted2);margin-bottom:10px">Notificar quando houver NTs ou documentos novos</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-docs-app'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-docs-app" checked onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-docs-app-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--accent);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-docs-app-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;transform:translateX(16px)"></span></span>
+                Apenas no app
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-docs-win'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-docs-win" checked onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-docs-win-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--accent);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-docs-win-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;transform:translateX(16px)"></span></span>
+                Também no Windows
+              </label>
+            </div>
+          </div>
+
+          <!-- Novos schemas -->
+          <div style="padding:12px 16px;border-bottom:0.5px solid var(--border)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Novos schemas XSD</div>
+            <div style="font-size:10px;color:var(--muted2);margin-bottom:10px">Notificar quando houver schemas atualizados</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-schemas-app'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-schemas-app" checked onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-schemas-app-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--accent);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-schemas-app-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;transform:translateX(16px)"></span></span>
+                Apenas no app
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-schemas-win'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-schemas-win" checked onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-schemas-win-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--accent);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-schemas-win-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;transform:translateX(16px)"></span></span>
+                Também no Windows
+              </label>
+            </div>
+          </div>
+
+          <!-- Fórum -->
+          <div style="padding:12px 16px">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Fórum NFS-e Brasil</div>
+            <div style="font-size:10px;color:var(--muted2);margin-bottom:10px">Notificar novos tópicos no fórum</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-forum-app'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-forum-app" onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-forum-app-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--border);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-forum-app-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s"></span></span>
+                Apenas no app
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--text2)" onclick="event.preventDefault(); var cb=document.getElementById('notif-forum-win'); cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="notif-forum-win" onchange="_salvarConfigNotif()" style="opacity:0;width:0;height:0;position:absolute;pointer-events:none">
+                <span id="notif-forum-win-track" style="position:relative;display:inline-block;width:36px;height:20px;background:var(--border);border-radius:20px;transition:.2s;flex-shrink:0;cursor:pointer"><span id="notif-forum-win-thumb" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s"></span></span>
+                Também no Windows
+              </label>
+            </div>
+          </div>
+
+        </div>
+        <div style="font-size:10px;color:var(--muted2);margin-top:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);border-left:3px solid var(--blue)">
+          💡 O sistema continua rodando em segundo plano quando você fecha a janela. Ative "Também no Windows" para receber notificações mesmo com o app minimizado.
+        </div>
+      </div>
+      <!-- Tema -->
+      <div>
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:12px">🎨 Tema</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="aplicarTema('dark')" style="padding:8px 16px;border-radius:var(--r);border:1px solid var(--border);cursor:pointer;background:#0e1116;color:#e2e8f0;font-size:11px">🌑 Escuro</button>
+          <button onclick="aplicarTema('light')" style="padding:8px 16px;border-radius:var(--r);border:1px solid #dee2e6;cursor:pointer;background:#f8f9fa;color:#111;font-size:11px">☀️ Claro</button>
+          <button onclick="aplicarTema('nfse')" style="padding:8px 16px;border-radius:var(--r);border:1px solid #1E3A54;cursor:pointer;background:#0D1B2A;color:#E8F4FD;font-size:11px">🏛️ NFS-e Gov</button>
+          <button onclick="aplicarTema('keevo')" style="padding:8px 16px;border-radius:var(--r);border:1px solid #3D2590;cursor:pointer;background:#0F0A1E;color:#F5F0FF;font-size:11px">🟣 Keevo</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
+
 </div><!-- #main-content -->
+</div>
 <div id="toast"></div>
-
 <!-- ── CodeMirror 5 scripts ── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/xml/xml.min.js"></script>
@@ -1758,6 +2614,8 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/fold/foldgutter.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/fold/xml-fold.min.js"></script>
 <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/fold/foldgutter.min.css">
+
+
 
 <script>
 // ════════════════════════════════════════════════════════
@@ -2030,6 +2888,9 @@ function abrirIndividual() {
   document.getElementById('rejPanel')?.classList.remove('show');
   document.getElementById('forumPanel')?.classList.remove('show');
   document.getElementById('ajudaPanel')?.classList.remove('show');
+  document.getElementById('sobrePanel')?.classList.remove('show');
+  const _cfgP = document.getElementById('configPanel');
+  if (_cfgP) { _cfgP.style.display = 'none'; _cfgP.classList.remove('show'); }
   // Mostrar workspace
   document.getElementById('workspace').style.display = 'flex';
   // Reabilitar dropdown de modelo
@@ -2075,7 +2936,7 @@ function abrirIndividual() {
 // ════════════════════════════════════════════════════════
 // CHANGELOG DAS NTs
 // ════════════════════════════════════════════════════════
-const _CHANGELOG_NTS = [{"id": "NT-007", "titulo": "NT-007 — IBS/CBS e Reforma Tributária", "data": "2025-10", "versao": "v1.01", "status": "Produção", "descricao": "Novas regras para grupos IBS/CBS, código indicador de operação (cIndOp), tpOper para entes governamentais, cClassTrib e ajustes de layout para LC 214/2025.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf", "impacto": "alto"}, {"id": "NT-006", "titulo": "NT-006 — NFS-e Via", "data": "2025-08", "versao": "v1.01", "status": "Produção Restrita", "descricao": "Adequações do layout da NFS-e Via no contexto da Reforma Tributária do Consumo. Serviços de exploração de vias/rodovias (subitem 22.01).", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-006-nfse-via.pdf", "impacto": "medio"}, {"id": "NT-005", "titulo": "NT-005 — Reforma Tributária v2", "data": "2025-06", "versao": "v1.01", "status": "Não disponível em produção", "descricao": "Adequações adicionais do layout da NFS-e no contexto da Reforma Tributária. Versão NÃO disponível em produção em janeiro de 2026.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-005-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}, {"id": "NT-004", "titulo": "NT-004 — Ajustes de Layout", "data": "2024-11", "versao": "v1.00", "status": "Produção", "descricao": "Esclarecimentos e ajustes do layout da NFS-e, incluindo regras de validação de campos obrigatórios, comportamento do tpRetISSQN e regras de imunidade.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc", "impacto": "medio"}, {"id": "NT-003", "titulo": "NT-003 — Reforma Tributária v1", "data": "2024-06", "versao": "v1.00", "status": "Produção", "descricao": "Primeira adequação do layout da NFS-e para a Reforma Tributária do Consumo (LC 214/2025). Introdução dos grupos IBS/CBS.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-003-1-2-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}, {"id": "NT-002", "titulo": "NT-002 — Ajustes Iniciais", "data": "2025-02", "versao": "v1.00", "status": "Produção", "descricao": "Adequações do layout da NFS-e no contexto da Reforma Tributária do Consumo.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-se-cgnfs-e-no-002-de-28-de-fevereiro-de-2025", "impacto": "baixo"}, {"id": "NT-001", "titulo": "NT-001 — Layout Inicial RTC", "data": "2024-01", "versao": "v1.00", "status": "Produção", "descricao": "Nota Técnica inicial sobre as adequações do layout da NFS-e no contexto da Reforma Tributária do Consumo. Base para toda a estrutura atual.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-001-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}];
+const _CHANGELOG_NTS = [{"id": "NT-007", "titulo": "NT-007 — Atualizações IBS/CBS e Esclarecimentos", "data": "2026-02", "versao": "v1.0", "status": "Produção", "descricao": "Atualizações e esclarecimentos sobre o layout da NFS-e: novos campos IBS/CBS, Anexo VII com códigos indicadores de operação (cIndOp), ajustes em PIS/COFINS com regras de arredondamento e tolerância. Vigente a partir de 09/02/2026.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf", "impacto": "alto"}, {"id": "NT-006", "titulo": "NT-006 — NFS-e Via (Exploração de Rodovias)", "data": "2025-08", "versao": "v1.01", "status": "Produção Restrita", "descricao": "Adequações do layout da NFS-e Via no contexto da Reforma Tributária do Consumo. Serviços de exploração de vias/rodovias (subitem 22.01 da Lista de Serviços).", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-006-nfse-via.pdf", "impacto": "medio"}, {"id": "NT-005", "titulo": "NT-005 — Reforma Tributária v2 (Fase Futura)", "data": "2025-11", "versao": "v1.01", "status": "Sem vigência definida", "descricao": "Publicada em 19/11/2025. Adequações adicionais do layout da NFS-e para a Reforma Tributária. Não altera o cronograma de jan/2026 — apenas os campos da NT-004 entram em produção nessa data. NT-005 será implementada em data futura.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-005-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}, {"id": "NT-004", "titulo": "NT-004 — Ajustes de Layout (Base de Jan/2026)", "data": "2025-06", "versao": "v2.00", "status": "Produção", "descricao": "Publicada em junho/2025. Substitui NT-001, 002 e 003. Define o layout padrão obrigatório a partir de jan/2026. v2.0 publicada em 10/12/2025 com desligamento das regras de obrigatoriedade IBSCBS até 2026.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-004-se-cgnfse-ajustes-layout.pdf", "impacto": "alto"}, {"id": "NT-003", "titulo": "NT-003 — Reforma Tributária v1 (IBS/CBS)", "data": "2025-07", "versao": "v1.2", "status": "Substituída pela NT-004", "descricao": "Publicada em 04/07/2025, v1.2 em 09/07/2025. Introdução dos grupos IBS/CBS no layout da NFS-e. Substituída pela NT-004 que consolida todas as versões anteriores.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-003-1-2-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}, {"id": "NT-002", "titulo": "NT-002 — Adequações RTC (Fase Inicial)", "data": "2025-02", "versao": "v1.00", "status": "Substituída pela NT-004", "descricao": "Emitida em 28/02/2025. Continuação das mudanças da NT-001/2024, preparação para a Reforma Tributária do Consumo. Define a DPS (Declaração de Prestação de Serviço) e campos IBS/CBS iniciais.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-se-cgnfs-e-no-002-de-28-de-fevereiro-de-2025", "impacto": "medio"}, {"id": "NT-001", "titulo": "NT-001 — Layout Inicial RTC (Base Original)", "data": "2024-08", "versao": "v1.00", "status": "Substituída pela NT-004", "descricao": "Publicada em 01/08/2024. Primeira nota técnica sobre adequações do layout da NFS-e para a Reforma Tributária. Introduz novos agrupamentos e campos opcionais IBS, CBS e IS.", "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-001-se-cgnfse-novo-layout-rtc.pdf", "impacto": "alto"}];
 
 
 // ════════════════════════════════════════════════════════
@@ -2099,7 +2960,10 @@ function _renderDocsComChangelog() {
   // Fallback: exibir NTs do _CHANGELOG_NTS na aba Documentação
   // quando o monitor ainda não rodou e não há docs_dynamic.json
   const secDyn = document.getElementById('docSecDynamic');
-  if (!secDyn || secDyn.innerHTML.trim()) return; // já tem conteúdo
+  if (!secDyn) return;
+  // Só renderizar se não há conteúdo real (não apenas whitespace ou comments)
+  const conteudo = secDyn.innerHTML.replace(/<!--.*?-->/gs,'').trim();
+  if (conteudo.length > 10) return; // já tem conteúdo real
 
   const statusCor = { 'Produção':'var(--accent)', 'Produção Restrita':'var(--blue)',
     'Não disponível em produção':'var(--red)', 'Em desenvolvimento':'var(--yellow)' };
@@ -2114,6 +2978,13 @@ function _renderDocsComChangelog() {
   html += _CHANGELOG_NTS.map(nt => {
     const sbg  = statusBg[nt.status]  || 'var(--bg3)';
     const scor = statusCor[nt.status] || 'var(--muted2)';
+    // Formatar data: "2025-10" → "Out/2025"
+    const meses = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    let dataFmt = '';
+    if (nt.data) {
+      const [ano, mes] = nt.data.split('-');
+      dataFmt = mes ? `${meses[parseInt(mes)] || mes}/${ano}` : ano;
+    }
     return `<div style="padding:12px 16px;margin-bottom:8px;border-radius:var(--r2);
         border:0.5px solid var(--border);background:var(--bg2)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
@@ -2121,11 +2992,15 @@ function _renderDocsComChangelog() {
           color:var(--text)">${escH(nt.id)}</span>
         <span style="font-size:12px;font-weight:500;color:var(--text);flex:1">
           ${escH(nt.titulo.replace(nt.id+' — ',''))}</span>
+        ${dataFmt ? `<span style="font-size:9px;padding:2px 6px;border-radius:6px;
+          background:rgba(96,165,250,.15);color:var(--blue);font-weight:600;
+          font-family:var(--mono)">📅 ${escH(dataFmt)}</span>` : ''}
         <span style="font-size:9px;padding:2px 7px;border-radius:8px;
           background:${sbg};color:${scor};font-weight:600">${escH(nt.status)}</span>
       </div>
       <a href="${escH(nt.url)}" target="_blank" rel="noopener"
-        style="font-size:10px;color:var(--blue);font-family:var(--mono);text-decoration:none">
+        style="font-size:10px;color:var(--blue);font-family:var(--mono);text-decoration:none"
+        onclick="if(window.electronAPI?.isElectron){require('electron').shell.openExternal('${escH(nt.url)}');return false;}">
         ↗ Abrir no portal gov.br
       </a>
     </div>`;
@@ -2317,6 +3192,7 @@ function _renderDocsPainel(dados) {
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
         <span style="font-size:12px;font-weight:500;color:var(--text);flex:1">${escH(g.titulo)}${novaBdg}</span>
         <span style="font-size:9px;padding:2px 7px;border-radius:8px;background:${sbg};color:${scor};font-weight:600">${escH(g.status)}</span>
+        ${(()=>{const nt=_CHANGELOG_NTS.find(n=>n.id===g.id);return nt&&nt.data?`<span style="font-size:9px;font-family:var(--mono);color:var(--muted2)">${escH(nt.data)}</span>`:'';})()}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">${docsHtml}</div>
     </div>`;
@@ -2351,7 +3227,7 @@ function _renderChangelogComDados(nts, novas) {
       <p style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px">${escH(nt.descricao)}</p>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <a href="${escH(nt.url)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--blue);font-family:var(--mono);text-decoration:none">↗ Abrir no portal gov.br</a>
-        ${temPdf ? `<button class="btn" onclick="ntResumir('${nt.id.replace(/'/g,"\'")}','${nt.url.replace(/'/g,"\'")}',this)" style="font-size:10px;padding:3px 10px;color:var(--purple);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> Resumir com IA</button>` : ''}
+${temPdf ? `<button class="btn" onclick="abrirNoGemini('${nt.url.replace(/'/g,"\'")}')" style="font-size:10px;padding:3px 10px;color:var(--purple);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Abrir no Gemini</button>` : ''}
       </div>
       <div id="nt-resumo-${escH(nt.id)}" style="display:none;margin-top:12px"></div>
     </div>`;
@@ -2381,10 +3257,13 @@ async function atualizarDocumentos() {
   const btn    = document.getElementById('btnAtualizarDocs');
   const icon   = document.getElementById('docMonitorIcon');
   const status = document.getElementById('docMonitorStatus');
+  const fonte  = document.getElementById('docFonteInfo');
 
   if (btn) btn.disabled = true;
   if (icon) icon.style.animation = 'spin .7s linear infinite';
   if (status) status.textContent = '';
+  // Mostrar indicador de verificação em andamento
+  if (fonte) fonte.innerHTML = '<span style="color:var(--accent)">🔄 Verificando no gov.br...</span>';
   _docSetProgress(5, 'Iniciando verificação…');
 
   // Simular progresso enquanto o backend processa
@@ -2410,8 +3289,27 @@ async function atualizarDocumentos() {
     if (novas > 0) {
       if (status) status.textContent = `${novas} novo(s) documento(s) encontrado(s)!`;
       toast(`${novas} novo(s) documento(s) encontrado(s) no gov.br!`, 6000);
+      // Atualizar timestamp
+      const _verifEl2 = document.getElementById('docDataVerif');
+      if (_verifEl2) {
+        const _now2 = new Date().toLocaleString('pt-BR', {
+          day:'2-digit', month:'2-digit', year:'numeric',
+          hour:'2-digit', minute:'2-digit'
+        });
+        _verifEl2.textContent = `Última verificação gov.br: ${_now2}`;
+      }
     } else {
       if (status) status.textContent = 'Nenhum documento novo encontrado';
+      if (fonte) fonte.innerHTML = '';
+      // Atualizar timestamp da última verificação
+      const _verifEl = document.getElementById('docDataVerif');
+      if (_verifEl) {
+        const _now = new Date().toLocaleString('pt-BR', {
+          day:'2-digit', month:'2-digit', year:'numeric',
+          hour:'2-digit', minute:'2-digit'
+        });
+        _verifEl.textContent = `Última verificação gov.br: ${_now}`;
+      }
     }
   };
 
@@ -2587,15 +3485,15 @@ function _renderChangelog() {
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 Abrir no portal gov.br
               </a>
-              ${temPdf ? `<button onclick="ntResumir('${nt.id.replace(/'/g,"\\'")}','${nt.url.replace(/'/g,"\\'")}',this)"
+              ${temPdf ? `<button onclick="abrirNoGemini('${nt.url.replace(/'/g,"\\'")}')"
                 style="display:inline-flex;align-items:center;gap:5px;font-size:10px;
                   cursor:pointer;padding:3px 10px;border-radius:var(--r);
                   border:0.5px solid rgba(167,139,250,.3);background:rgba(167,139,250,.06);
                   color:var(--purple);font-family:var(--sans);transition:background .1s"
                 onmouseover="this.style.background='rgba(167,139,250,.12)'"
                 onmouseout="this.style.background='rgba(167,139,250,.06)'">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 8v4l3 3"/></svg>
-                Resumir com IA
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Abrir no Gemini
               </button>` : ''}
             </div>
 
@@ -2608,6 +3506,38 @@ function _renderChangelog() {
 }
 
 // ── Chamar /api/nt-resumo com polling (evita timeout de conexão) ──────────
+
+// ── Abrir no Gemini com link do documento ────────────────────────────────────
+function abrirNoGemini(urlPdf) {
+  // Copiar URL para clipboard — método compatível com Electron (http://localhost)
+  try {
+    // Método 1: API moderna
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(urlPdf);
+    } else {
+      // Método 2: fallback via input temporário (funciona em http://)
+      const el = document.createElement('textarea');
+      el.value = urlPdf;
+      el.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    // Abrir Gemini
+    window.open('https://gemini.google.com/app', '_blank');
+    // Toast com instrução clara
+    toast('✔ Link copiado! No Gemini: clique no campo de texto e pressione Ctrl+V para colar o link.', 7000);
+  } catch (e) {
+    // Se tudo falhar, mostrar o link para copiar manualmente
+    const msg = `Cole este link no Gemini:\n\n${urlPdf}`;
+    if (confirm(msg + '\n\nAbrir o Gemini agora?')) {
+      window.open('https://gemini.google.com/app', '_blank');
+    }
+  }
+}
+
 async function ntResumir(ntId, urlPdf, btn) {
   const areaId = 'nt-resumo-' + ntId;
   const area   = document.getElementById(areaId);
@@ -2797,7 +3727,7 @@ function _hrMostrarBadge(info) {
 // ════════════════════════════════════════════════════════
 // NOTIFICAÇÃO DE ATUALIZAÇÃO DO SISTEMA
 // ════════════════════════════════════════════════════════
-const _VERSAO_ATUAL = '3.6';
+const _VERSAO_ATUAL = '3.8';
 const _UPDATE_CHECK_INTERVAL = 6 * 3600 * 1000; // 6h
 // URL do arquivo de versão remoto (ajustar quando publicado)
 const _UPDATE_URL = 'https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json';
@@ -3018,8 +3948,37 @@ function _esconderWorkspace() {
   document.getElementById('rejPanel').classList.remove('show');
   document.getElementById('forumPanel')?.classList.remove('show');
   document.getElementById('ajudaPanel')?.classList.remove('show');
+  document.getElementById('sobrePanel')?.classList.remove('show');
+  const _cfgP = document.getElementById('configPanel');
+  if (_cfgP) { _cfgP.style.display = 'none'; _cfgP.classList.remove('show'); }
+  const _refP = document.getElementById('painel-reforma');
+  if (_refP) { _refP.classList.remove('show'); _refP.style.display = 'none'; }
   if(document.getElementById('loteSidebar')){document.getElementById('loteSidebar').classList.remove('show');document.getElementById('loteDivider').style.display='none';}
 }
+
+// ════════════════════════════════════════════════════════
+// REFORMA TRIBUTÁRIA
+// ════════════════════════════════════════════════════════
+function abrirReforma() {
+  _esconderWorkspace();
+  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-reforma').classList.add('active');
+  // Ocultar todos os painéis e mostrar o de reforma
+  document.querySelectorAll('.forum-panel,.sobre-panel,.ajuda-panel,.config-panel,.docs-panel,.rejeicoes-panel,.leiaute-panel,.reforma-panel').forEach(p => {
+    p.classList.remove('show');
+  });
+  const p = document.getElementById('painel-reforma');
+  if (p) { p.classList.add('show'); p.style.display = 'flex'; }
+}
+
+// SOBRE O SISTEMA
+// ════════════════════════════════════════════════════════
+function abrirSobre() {
+  _esconderWorkspace();
+  document.getElementById('tab-sobre').classList.add('active');
+  document.getElementById('sobrePanel').classList.add('show');
+}
+
 
 function abrirDocs() {
   _esconderWorkspace();
@@ -3677,7 +4636,7 @@ function _renderRejeicoes(busca) {
     'NT-001': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-001-se-cgnfse-novo-layout-rtc.pdf',
     'NT-002': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nota-tecnica-se-cgnfs-e-no-002-de-28-de-fevereiro-de-2025',
     'NT-003': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-003-1-2-se-cgnfse-novo-layout-rtc.pdf',
-    'NT-004': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc',
+    'NT-004': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-004-se-cgnfse-ajustes-layout.pdf',
     'NT-005': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-005-se-cgnfse-novo-layout-rtc.pdf',
     'NT-006': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-006-nfse-via.pdf',
     'NT-007': 'https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/nt-007-se-cgnfse-v1-0.pdf',
@@ -3778,6 +4737,30 @@ function _renderRejeicoes(busca) {
     `${vis} de ${REJEICOES_DATA.length} rejeições${total?' · '+total+' com nota':''}`;
 }
 
+
+// ── Abas do painel de Rejeições ──────────────────────────────────────────────
+function _rejAba(aba) {
+  const btnTodas    = document.getElementById('rej-tab-todas');
+  const btnNaoVal   = document.getElementById('rej-tab-nao-valida');
+  const panelNaoVal = document.getElementById('rej-nao-valida-panel');
+  const toolbar     = document.querySelector('#rejPanel .panel-toolbar');
+  const rejWrap     = document.querySelector('#rejPanel .rej-wrap');
+
+  if (aba === 'todas') {
+    if (btnTodas)  { btnTodas.style.color  = 'var(--accent)';  btnTodas.style.borderBottom  = '2px solid var(--accent)';  btnTodas.style.fontWeight = '600'; }
+    if (btnNaoVal) { btnNaoVal.style.color = 'var(--muted2)'; btnNaoVal.style.borderBottom = '2px solid transparent'; btnNaoVal.style.fontWeight = '500'; }
+    if (panelNaoVal) panelNaoVal.style.display = 'none';
+    if (toolbar)  toolbar.style.display  = '';
+    if (rejWrap)  rejWrap.style.display  = '';
+  } else {
+    if (btnTodas)  { btnTodas.style.color  = 'var(--muted2)'; btnTodas.style.borderBottom  = '2px solid transparent'; btnTodas.style.fontWeight = '500'; }
+    if (btnNaoVal) { btnNaoVal.style.color = 'var(--accent)';  btnNaoVal.style.borderBottom = '2px solid var(--accent)';  btnNaoVal.style.fontWeight = '600'; }
+    if (panelNaoVal) { panelNaoVal.style.display = 'flex'; panelNaoVal.style.flexDirection = 'column'; }
+    if (toolbar)  toolbar.style.display  = 'none';
+    if (rejWrap)  rejWrap.style.display  = 'none';
+  }
+}
+
 function filtrarRejeicoes(q) {
   _renderRejeicoes(q);
 }
@@ -3839,40 +4822,75 @@ function toast(msg, dur) {
 }
 
 function limpar() {
-  // Limpar editor
-  cm.setValue('');
-  cm.clearHistory();
+  // 1. Limpar editor CodeMirror
+  if (typeof cm !== 'undefined' && cm) {
+    cm.setValue('');
+    cm.clearHistory();
+  }
   _resultado = null;
-  limparDestaques();
-  // Limpar resultado
-  document.getElementById('ocList').innerHTML='';
-  document.getElementById('ocList').style.display='none';
-  document.getElementById('emptyState').style.display='flex';
+  if (typeof limparDestaques === 'function') limparDestaques();
+
+  // 2. Resetar painel de resultado
+  const pR = document.getElementById('paneRight');
+  if (pR) { pR.classList.remove('sem-resultado'); pR.classList.add('sem-resultado'); }
+
+  // 3. Esconder header de resultado
+  const rpHeader = document.querySelector('#paneRight .rp-header');
+  if (rpHeader) rpHeader.style.display = 'none';
+
+  // 4. Limpar e esconder lista de ocorrências
+  const ocList = document.getElementById('ocList');
+  if (ocList) { ocList.innerHTML = ''; ocList.style.display = 'none'; }
+
+  // 5. Mostrar estado vazio
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) {
+    emptyState.style.display = 'flex';
+    const t = emptyState.querySelector('.empty-title');
+    if (t) t.textContent = 'Aguardando validação';
+  }
+
+  // 6. Limpar status header
+  const statusIcon = document.getElementById('statusIcon');
+  const statusMsg  = document.getElementById('statusMsg');
+  const statusCounts = document.getElementById('statusCounts');
+  if (statusIcon)   statusIcon.textContent = '';
+  if (statusMsg)    { statusMsg.textContent = ''; statusMsg.style.color = 'var(--text2)'; }
+  if (statusCounts) statusCounts.innerHTML = '';
+
+  // 7. Resetar contadores dos filtros
+  const fTodos   = document.getElementById('fTodos');
+  const fErros   = document.getElementById('fErros');
+  const fAlertas = document.getElementById('fAlertas');
+  const fInfo    = document.getElementById('fInfo');
+  if (fTodos)   fTodos.textContent   = 'Todos (0)';
+  if (fErros)   fErros.textContent   = 'Erros (0)';
+  if (fAlertas) fAlertas.textContent = 'Alertas (0)';
+  if (fInfo)    fInfo.textContent    = 'Info (0)';
+
+  // 8. Esconder filter bar e status banner
+  const fb = document.getElementById('filterBar');
+  if (fb) { fb.className = 'filter-bar'; fb.style.display = 'none'; }
   const sb = document.getElementById('statusBanner');
-  if (sb) { sb.className='status-banner'; sb.style.display='none'; }
-  document.getElementById('filterBar').className='filter-bar';
-  // Limpar status no rp-header
-  const sIcon = document.getElementById('statusIcon');
-  const sMsg  = document.getElementById('statusMsg');
-  const sCnt  = document.getElementById('statusCounts');
-  if (sIcon) sIcon.textContent = '';
-  if (sMsg)  sMsg.textContent  = '';
-  if (sCnt)  sCnt.innerHTML    = '';
-  // Limpar barra de upload
-  _dropSetVazio();
-  // Limpar input de arquivo
+  if (sb) { sb.style.display = 'none'; sb.className = 'status-banner'; }
+
+  // 9. Esconder loading
+  document.getElementById('loading')?.classList.remove('show');
+
+  // 10. Limpar barra de upload
+  if (typeof _dropSetVazio === 'function') _dropSetVazio();
   const fi = document.getElementById('fileInput');
   if (fi) fi.value = '';
-  // Limpar indicadores
-  const pill = document.getElementById('tipoPill');
-  if (pill) pill.classList.remove('show');
-  document.getElementById('sbOffline').classList.remove('show');
-  document.getElementById('cmWrap').classList.remove('has-errors','ok');
-  // Limpar tipo na status bar
+
+  // 11. Limpar indicadores
+  document.getElementById('tipoPill')?.classList.remove('show');
+  document.getElementById('sbOffline')?.classList.remove('show');
+  document.getElementById('cmWrap')?.classList.remove('has-errors','ok');
   const sbTipo = document.getElementById('sbTipo');
   if (sbTipo) { sbTipo.textContent = '—'; sbTipo.style.color = 'var(--muted2)'; }
-  onEditorInput();
-  toast('Editor limpo');
+
+  if (typeof onEditorInput === 'function') onEditorInput();
+  toast('Limpo ✓');
 }
 
 function copiarXML() {
@@ -3893,7 +4911,12 @@ function baixarXML() {
 let _lineMarkers = [];
 
 function limparDestaques() {
-  _lineMarkers.forEach(m => m.clear());
+  _lineMarkers.forEach(m => {
+    try {
+      cm.removeLineClass(m, 'background', 'cm-error-line');
+      cm.removeLineClass(m, 'gutter', 'cm-error-gutter');
+    } catch(e) {}
+  });
   _lineMarkers = [];
   _erroLinhas = [];
 }
@@ -4130,6 +5153,11 @@ function renderResultado(r) {
 
   // Status banner
   // statusBanner mantido por compatibilidade (display:none no novo layout)
+  document.getElementById('paneRight')?.classList.remove('sem-resultado');
+   const rpHeader = document.querySelector('#paneRight .rp-header');
+  if (rpHeader) rpHeader.style.display = '';
+  const filterBarEl = document.getElementById('filterBar');
+  if (filterBarEl) filterBarEl.style.display = '';
   document.getElementById('statusIcon').textContent = r.valido?'✓':'✗';
   document.getElementById('statusMsg').textContent  = r.valido
     ? 'Documento aprovado — em conformidade com o schema XSD'
@@ -4528,6 +5556,8 @@ function loteLimpar() {
   _lote.arquivos = [];
   _lote.filtro   = 'todos';
   _loteItemSelecionado = null;
+  _resultado = null;
+
   // Limpar lista
   const lista = document.getElementById('loteLista');
   if (lista) lista.innerHTML = '';
@@ -4547,14 +5577,34 @@ function loteLimpar() {
   // Limpar workspace
   cm.setValue('');
   limparDestaques();
+
+  // Esconder header de resultado (rp-header)
+  const rpHeader = document.querySelector('#paneRight .rp-header');
+  if (rpHeader) rpHeader.style.display = 'none';
+
+  // Limpar status elements
+  const statusIcon   = document.getElementById('statusIcon');
+  const statusMsg    = document.getElementById('statusMsg');
+  const statusCounts = document.getElementById('statusCounts');
+  if (statusIcon)   statusIcon.textContent = '';
+  if (statusMsg)    { statusMsg.textContent = ''; statusMsg.style.color = 'var(--text2)'; }
+  if (statusCounts) statusCounts.innerHTML = '';
+
+  // Resetar painel direito
+  document.getElementById('paneRight')?.classList.add('sem-resultado');
+
   const empty = document.getElementById('emptyState');
   const ocList = document.getElementById('ocList');
   const filterBar = document.getElementById('filterBar');
   const statusBanner = document.getElementById('statusBanner');
-  if (empty) empty.style.display = '';
-  if (ocList) ocList.style.display = 'none';
-  if (filterBar) filterBar.className = 'filter-bar';
-  if (statusBanner) statusBanner.className = 'status-banner';
+  if (empty) {
+    empty.style.display = 'flex';
+    const t = empty.querySelector('.empty-title');
+    if (t) t.textContent = 'Aguardando validação';
+  }
+  if (ocList) { ocList.innerHTML = ''; ocList.style.display = 'none'; }
+  if (filterBar) { filterBar.className = 'filter-bar'; filterBar.style.display = 'none'; }
+  if (statusBanner) { statusBanner.style.display = 'none'; statusBanner.className = 'status-banner'; }
   toast('Lote limpo.');
 }
 
@@ -4884,6 +5934,7 @@ const _ATALHOS = [
   { tecla: 'Alt + R',      acao: 'Abrir Rejeições' },
   { tecla: 'Alt + D',      acao: 'Abrir Documentação' },
   { tecla: 'Alt + F',      acao: 'Abrir Fórum' },
+  { tecla: 'Alt + R',      acao: 'Abrir Reforma Tributária' },
   { tecla: 'Alt + H',      acao: 'Abrir Ajuda' },
   { tecla: 'Escape',        acao: 'Fechar painel lateral' },
   { tecla: 'Ctrl + +',     acao: 'Aumentar fonte editor' },
@@ -4983,6 +6034,7 @@ document.addEventListener('keydown', e => {
       case 'r': case 'R': e.preventDefault(); abrirRejeicoes();  break;
       case 'd': case 'D': e.preventDefault(); abrirDocs();       break;
       case 'f': case 'F': e.preventDefault(); abrirForum();      break;
+      case 'r': case 'R': e.preventDefault(); abrirReforma();    break;
       case 'h': case 'H': e.preventDefault(); abrirAjuda();      break;
     }
     return;
@@ -5000,6 +6052,15 @@ document.addEventListener('keydown', e => {
         if (ws) ws.style.display = '';
       }
     });
+// Também fechar configPanel
+    const cfgP = document.getElementById('configPanel');
+    if (cfgP && cfgP.classList.contains('show')) {
+      cfgP.style.display = 'none';
+      cfgP.classList.remove('show');
+      const ws = document.getElementById('workspace');
+      if (ws) ws.style.display = '';
+    }
+
     return;
   }
 });
@@ -5015,7 +6076,9 @@ function _zoomEditor(delta) {
   toast(`Editor: ${_editorFontSize}px`, 1000);
 }
 
-function abrirForum() {
+function abrirForum()
+ {
+  document.getElementById('configPanel')?.classList.remove('show');
   _esconderWorkspace();
   document.getElementById('tab-forum').classList.add('active');
   document.getElementById('forumPanel').classList.add('show');
@@ -5493,7 +6556,7 @@ function _mostrarBannerUpdate(info) {
           v${escH(info.versao_local)} → <strong style="color:var(--text)">v${escH(info.versao_remota)}</strong>
           ${info.data_remota ? ` · ${escH(info.data_remota)}` : ''}
         </div>
-        <div style="display:flex;gap:8px">
+        <div id="rejTableWrap" style="display:flex;gap:8px">
           <button onclick="_aplicarAtualizacao(this)"
             style="flex:1;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;
               background:var(--accent);color:#000;font-size:11px;font-weight:600;
@@ -5567,6 +6630,124 @@ async function _aplicarAtualizacao(btn) {
     btn.disabled = false;
     btn.textContent = '↓ Tentar novamente';
   }
+}
+
+
+// ════════════════════════════════════════════════════════
+// CONFIGURAÇÕES — Notificações e preferências
+// ════════════════════════════════════════════════════════
+function abrirConfig() {
+  _esconderWorkspace();
+  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-config')?.classList.add('active');
+  ['docPanel','layoutPanel','rejPanel','forumPanel','ajudaPanel'].forEach(id => {
+    document.getElementById(id)?.classList.remove('show');
+  });
+  const panel = document.getElementById('configPanel');
+  if (panel) {
+    panel.style.display = 'flex';
+    panel.style.flexDirection = 'column';
+    panel.style.flex = '1';
+    panel.style.overflow = 'hidden auto';
+    panel.classList.add('show');
+  }
+  _carregarConfigNotif();
+  _carregarGeminiKey();
+}
+
+function _carregarConfigNotif() {
+  const def = {
+    docs:    { app: true,  windows: true  },
+    schemas: { app: true,  windows: true  },
+    forum:   { app: false, windows: false }
+  };
+  const raw = localStorage.getItem('notif-config');
+  let cfg;
+  try {
+    const p = JSON.parse(raw || '{}');
+    // Migrar formato antigo (boolean) para novo (objeto)
+    cfg = {
+      docs:    typeof p.docs    === 'object' ? p.docs    : { app: p.docs    !== false, windows: p.docs    !== false },
+      schemas: typeof p.schemas === 'object' ? p.schemas : { app: p.schemas !== false, windows: p.schemas !== false },
+      forum:   typeof p.forum   === 'object' ? p.forum   : { app: p.forum   === true,  windows: p.forum   === true  }
+    };
+  } catch { cfg = def; }
+  _atualizarToggle('notif-docs-app',    cfg.docs.app);
+  _atualizarToggle('notif-docs-win',    cfg.docs.windows);
+  _atualizarToggle('notif-schemas-app', cfg.schemas.app);
+  _atualizarToggle('notif-schemas-win', cfg.schemas.windows);
+  _atualizarToggle('notif-forum-app',   cfg.forum.app);
+  _atualizarToggle('notif-forum-win',   cfg.forum.windows);
+  if (window.electronAPI?.setNotifConfig) {
+    window.electronAPI.setNotifConfig(cfg);
+  }
+}
+
+function _atualizarToggle(id, ativo) {
+  const input = document.getElementById(id);
+  const track = document.getElementById(id + '-track');
+  const thumb = document.getElementById(id + '-thumb');
+  if (input) input.checked = ativo;
+  if (track) track.style.background = ativo ? 'var(--accent)' : 'var(--border)';
+  if (thumb) thumb.style.transform = ativo ? 'translateX(16px)' : 'translateX(0)';
+}
+
+function _salvarConfigNotif() {
+  const cfg = {
+    docs:    { app: document.getElementById('notif-docs-app')?.checked    ?? true,  windows: document.getElementById('notif-docs-win')?.checked    ?? true  },
+    schemas: { app: document.getElementById('notif-schemas-app')?.checked ?? true,  windows: document.getElementById('notif-schemas-win')?.checked ?? true  },
+    forum:   { app: document.getElementById('notif-forum-app')?.checked   ?? false, windows: document.getElementById('notif-forum-win')?.checked   ?? false }
+  };
+  localStorage.setItem('notif-config', JSON.stringify(cfg));
+  _atualizarToggle('notif-docs-app',    cfg.docs.app);
+  _atualizarToggle('notif-docs-win',    cfg.docs.windows);
+  _atualizarToggle('notif-schemas-app', cfg.schemas.app);
+  _atualizarToggle('notif-schemas-win', cfg.schemas.windows);
+  _atualizarToggle('notif-forum-app',   cfg.forum.app);
+  _atualizarToggle('notif-forum-win',   cfg.forum.windows);
+  if (window.electronAPI?.setNotifConfig) {
+    window.electronAPI.setNotifConfig(cfg);
+  }
+  toast('Configurações salvas');
+}
+
+function _carregarGeminiKey() {
+  const key = localStorage.getItem('gemini-key') || '';
+  const input = document.getElementById('gemini-key-input');
+  if (input) input.value = key ? '••••••••••••••••' : '';
+  _atualizarStatusGemini();
+}
+
+function _atualizarStatusGemini() {
+  const key = localStorage.getItem('gemini-key') || '';
+  const status = document.getElementById('gemini-status');
+  if (!status) return;
+  if (key) {
+    status.textContent = '✔ Chave configurada — resumo IA ativado';
+    status.style.color = 'var(--accent)';
+  } else {
+    status.textContent = 'Sem chave configurada — resumo IA desativado';
+    status.style.color = 'var(--muted2)';
+  }
+}
+
+function _salvarGeminiKey() {
+  const input = document.getElementById('gemini-key-input');
+  const val   = input?.value?.trim();
+  if (!val || val.startsWith('•')) {
+    toast('Cole a chave da API Gemini no campo', 3000);
+    return;
+  }
+  localStorage.setItem('gemini-key', val);
+  input.value = '••••••••••••••••';
+  _atualizarStatusGemini();
+  // Enviar para o servidor via API
+  fetch('/api/set-gemini-key', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: val })
+  }).catch(() => {});
+  toast('✔ Chave Gemini salva!');
 }
 
 function _inicializar() {
