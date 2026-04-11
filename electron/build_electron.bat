@@ -36,6 +36,11 @@ set BLK_NAME=NFS-e-Validador-Setup-%APP_VER%.exe.blockmap
 
 echo   Arquivo: %EXE_NAME%
 
+:: Sincronizar versao.json com a versao do package.json
+echo [0/4] Sincronizando versao.json...
+echo {"versao": "%APP_VER%", "data": "%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%"} > ..ersao.json
+echo        OK: versao.json = %APP_VER%
+
 set CSC_IDENTITY_AUTO_DISCOVERY=false
 set WIN_CSC_LINK=
 set CSC_LINK=

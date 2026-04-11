@@ -15,28 +15,7 @@ const fs     = require('fs')
 const http   = require('http')
 const { spawn } = require('child_process')
 
-// Auto-updater via electron-updater (opcional, para releases públicos)
-let autoUpdater
-try {
-  autoUpdater = require('electron-updater').autoUpdater
-  autoUpdater.autoDownload         = false
-  autoUpdater.autoInstallOnAppQuit = true
-  autoUpdater.allowPrerelease      = false
-  autoUpdater.requestHeaders       = {}
-  autoUpdater.logger = {
-    info:  (msg) => log(`[updater] ${msg}`),
-    warn:  (msg) => log(`[updater:warn] ${msg}`),
-    error: (msg) => log(`[updater:err] ${msg}`),
-    debug: () => {},
-  }
-} catch (e) {
-  log(`electron-updater indisponivel: ${e.message}`)
-  autoUpdater = null
-}
-
-// Nosso update customizado já funciona via index.html (/api/aplicar-update)
-// que baixa server.py, index.html, versao.json do GitHub raw
-// sem precisar de releases ou tokens
+// Update via fetch direto — sem electron-updater (ver função verificarAtualizacao abaixo)
 
 // ── Constantes ───────────────────────────────────────────────────────────────
 const PORT     = 8000
@@ -898,135 +877,218 @@ app.whenReady().then(async () => {
   setInterval(() => _registrarMaquina(), 4 * 60 * 60 * 1000)
 
   // Verificar atualizações após 10s (não bloquear abertura)
-  if (autoUpdater && app.isPackaged) {
+  if (app.isPackaged) {
     setTimeout(() => verificarAtualizacao(), 10000)
     // Verificar a cada 30min
     setInterval(() => verificarAtualizacao(), 30 * 60 * 1000)
   }
 })
 
-// ── Auto-updater ──────────────────────────────────────────────────────────────
-function verificarAtualizacao() {
-  if (!autoUpdater) return
-  log('Verificando atualizacoes...')
-  autoUpdater.checkForUpdates().catch(err => log(`updater: ${err.message}`))
+// ════════════════════════════════════════════════════════
+// AUTO-UPDATE VIA FETCH DIRETO — sem electron-updater
+// Fluxo: versao.json → compara → baixa .exe → fecha app → instala
+// ════════════════════════════════════════════════════════
+
+const GITHUB_OWNER = 'XMLVariavel'
+const GITHUB_REPO  = 'nfse-validador'
+const VERSAO_URL   = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/versao.json`
+const RELEASE_BASE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download`
+
+let _updateDisponivel    = null
+let _downloadEmAndamento = false
+
+async function verificarAtualizacao() {
+  log('Verificando atualizacoes via versao.json...')
+  try {
+    const resp = await fetch(VERSAO_URL, {
+      headers: { 'Cache-Control': 'no-cache', 'User-Agent': `NFS-e-Validador/${app.getVersion()}` }
+    })
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+    const remote = await resp.json()
+
+    const versaoRemota = (remote.versao || '').trim()
+    const versaoLocal  = app.getVersion().trim()
+
+    // Normalizar para comparação — "3.8" == "3.8.0", "3.9" != "3.8.0"
+    const _normalizar = v => v.replace(/^v/, '').split('.').map(Number)
+    const _comparar   = (a, b) => {
+      const na = _normalizar(a), nb = _normalizar(b)
+      const len = Math.max(na.length, nb.length)
+      for (let i = 0; i < len; i++) {
+        const diff = (na[i] || 0) - (nb[i] || 0)
+        if (diff !== 0) return diff
+      }
+      return 0
+    }
+
+    log(`Versao local: ${versaoLocal} | Remota: ${versaoRemota}`)
+
+    if (!versaoRemota || _comparar(versaoRemota, versaoLocal) <= 0) {
+      log('Sem atualizacoes disponíveis.')
+      return
+    }
+
+    const exeName = `NFS-e-Validador-Setup-${versaoRemota}.exe`
+    const exeUrl  = `${RELEASE_BASE}/v${versaoRemota}/${exeName}`
+    _updateDisponivel = { versao: versaoRemota, data: remote.data || '', url: exeUrl, exeName }
+    log(`Atualizacao disponivel: v${versaoRemota}`)
+
+    _perguntarUpdate(_updateDisponivel)
+
+  } catch (err) {
+    log(`Erro ao verificar atualizacao: ${err.message}`)
+  }
 }
 
-// Nova versão encontrada — perguntar ao usuário
-autoUpdater?.on('update-available', (info) => {
-  log(`Atualizacao disponivel: v${info.version}`)
-
-  // Perguntar ao usuário via dialog nativo do Electron
-  dialog.showMessageBox(mainWindow, {
+function _perguntarUpdate({ versao, data }) {
+  const dataFmt = data ? ` · ${data}` : ''
+  if (mainWindow) {
+    mainWindow.webContents.executeJavaScript(
+      `typeof _mostrarUpdateNaAjuda === 'function' && _mostrarUpdateNaAjuda('${versao}', '${data}')`
+    ).catch(() => {})
+  }
+  dialog.showMessageBox(mainWindow || BrowserWindow.getFocusedWindow(), {
     type:      'info',
     title:     'Atualizacao disponivel',
-    message:   `NFS-e Validador v${info.version}`,
-    detail:    'Uma nova versao esta disponivel.\nDeseja baixar e instalar agora?\n(O app sera reiniciado automaticamente)',
+    message:   `NFS-e Validador v${versao}${dataFmt}`,
+    detail:    'Uma nova versao esta disponivel.\nDeseja baixar e instalar agora?\n\nO sistema sera fechado automaticamente para instalar.',
     buttons:   ['Baixar e instalar', 'Depois'],
     defaultId: 0,
     cancelId:  1,
     icon:      icon || undefined,
   }).then(result => {
-    // Sempre mostrar banner na aba Ajuda (independente de aceitar ou não)
-    if (mainWindow) {
-      mainWindow.webContents.executeJavaScript(
-        `typeof _mostrarUpdateNaAjuda === 'function' && _mostrarUpdateNaAjuda('${info.version}', '${info.releaseDate ? new Date(info.releaseDate).toLocaleDateString("pt-BR") : ""}')`
-      ).catch(() => {})
+    if (result.response === 0) _baixarEInstalar(_updateDisponivel)
+    else log('Usuario adiou o update.')
+  })
+}
+
+async function _baixarEInstalar({ versao, url, exeName }) {
+  if (_downloadEmAndamento) return
+  _downloadEmAndamento = true
+  const destPath = path.join(app.getPath('temp'), exeName)
+  log(`Baixando: ${url} -> ${destPath}`)
+  _updateBanner('Iniciando download...', 0)
+  try {
+    await _baixarArquivo(url, destPath, (pct, mbB, mbT) => {
+      _updateBanner(`${pct}% — ${mbB} MB de ${mbT} MB`, pct)
+    })
+    log('Download concluido: ' + destPath)
+    _updateBanner('Download concluido! Aguarde...', 100)
+
+    const { response } = await dialog.showMessageBox(mainWindow || BrowserWindow.getFocusedWindow(), {
+      type:      'info',
+      title:     'Pronto para instalar',
+      message:   `v${versao} baixada com sucesso!`,
+      detail:    'Clique em "Instalar agora" para fechar o NFS-e Validador e iniciar a instalacao.',
+      buttons:   ['Instalar agora', 'Instalar depois'],
+      defaultId: 0,
+      cancelId:  1,
+      icon:      icon || undefined,
+    })
+
+    if (response === 0) _executarInstalador(destPath)
+    else {
+      _updateDisponivel.exePath = destPath
+      log('Instalacao adiada: ' + destPath)
     }
+  } catch (err) {
+    log(`Erro no download: ${err.message}`)
+    _downloadEmAndamento = false
+    dialog.showErrorBox('Erro no download',
+      `Nao foi possivel baixar a atualizacao:\n\n${err.message}\n\nTente novamente mais tarde.`)
+  }
+}
 
-    if (result.response === 0) {
-      log('Usuario aceitou o download...')
+function _baixarArquivo(url, destPath, onProgress) {
+  return new Promise((resolve, reject) => {
+    const https_ = require('https')
+    const http_  = require('http')
+    const fs_    = require('fs')
+    const _fazer = (urlAtual) => {
+      const client = urlAtual.startsWith('https') ? https_ : http_
+      client.get(urlAtual, { headers: { 'User-Agent': `NFS-e-Validador/${app.getVersion()}` } }, res => {
+        if ([301, 302, 307, 308].includes(res.statusCode)) {
+          log(`Redirect -> ${res.headers.location}`)
+          _fazer(res.headers.location); return
+        }
+        if (res.statusCode !== 200) { reject(new Error(`HTTP ${res.statusCode}`)); return }
+        const total = parseInt(res.headers['content-length'] || '0')
+        let baixado = 0
+        const file = fs_.createWriteStream(destPath)
+        res.on('data', chunk => {
+          baixado += chunk.length
+          if (total > 0 && onProgress) {
+            onProgress(
+              Math.round(baixado * 100 / total),
+              (baixado / 1048576).toFixed(1),
+              (total   / 1048576).toFixed(1)
+            )
+          }
+        })
+        res.pipe(file)
+        file.on('finish', () => { file.close(); resolve() })
+        file.on('error',  e => { fs_.unlink(destPath, () => {}); reject(e) })
+        res.on('error',   e => { fs_.unlink(destPath, () => {}); reject(e) })
+      }).on('error', reject)
+    }
+    _fazer(url)
+  })
+}
 
-      // Mostrar progresso no banner via executeJavaScript
-      if (mainWindow) {
-        mainWindow.webContents.executeJavaScript(`
-          (function() {
-            document.getElementById('electron-update-banner')?.remove()
-            const b = document.createElement('div')
-            b.id = 'electron-update-banner'
-            b.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;' +
-              'background:#161b22;border:1px solid #4ade80;border-radius:10px;' +
-              'padding:14px 18px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.4)'
-            b.innerHTML = '<div style="display:flex;gap:10px;align-items:center">' +
-              '<div style="font-size:20px">⬇️</div>' +
-              '<div><div style="font-size:11px;font-weight:600;color:#4ade80">Baixando atualizacao...</div>' +
-              '<div id="update-progress-txt" style="font-size:10px;color:#8b949e;margin-top:2px">0%</div></div></div>'
-            document.body.appendChild(b)
-          })()
-        `).catch(() => {})
+function _executarInstalador(exePath) {
+  log('Executando instalador: ' + exePath)
+  try {
+    const { spawn: _sp } = require('child_process')
+    _sp(exePath, ['/SILENT', '/CLOSEAPPLICATIONS'], {
+      detached: true, windowsHide: false, stdio: 'ignore'
+    }).unref()
+    setTimeout(() => { app.isQuitting = true; app.quit() }, 1000)
+  } catch (err) {
+    log('Erro ao executar instalador: ' + err.message)
+    const { shell: _sh } = require('electron')
+    _sh.showItemInFolder(exePath)
+    dialog.showMessageBox({ type: 'info', title: 'Instalar manualmente',
+      message: 'Nao foi possivel executar o instalador automaticamente.',
+      detail: `O arquivo foi baixado em:\n${exePath}\n\nExecute-o manualmente.`
+    })
+  }
+}
+
+function _updateBanner(texto, pct) {
+  if (!mainWindow) return
+  mainWindow.webContents.executeJavaScript(`
+    (function(){
+      let b = document.getElementById('electron-update-banner')
+      if (!b) {
+        b = document.createElement('div'); b.id = 'electron-update-banner'
+        b.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#161b22;border:1px solid #4ade80;border-radius:10px;padding:14px 18px;min-width:280px;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.4)'
+        document.body.appendChild(b)
       }
+      b.innerHTML =
+        '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">' +
+          '<div style="font-size:18px">⬇️</div>' +
+          '<div><div style="font-size:11px;font-weight:600;color:#4ade80">Baixando atualizacao...</div>' +
+          '<div style="font-size:10px;color:#8b949e;margin-top:2px">${texto.replace(/\'/g, "\\'")}</div></div></div>' +
+        '<div style="height:4px;background:#21262d;border-radius:2px;overflow:hidden">' +
+          '<div style="height:100%;width:${pct}%;background:#4ade80;transition:width .3s;border-radius:2px"></div></div>'
+    })()
+  `).catch(() => {})
+}
 
-      autoUpdater.downloadUpdate()
-    } else {
-      log('Usuario adiou o update.')
-    }
-  })
-})
-
-// Progresso do download
-autoUpdater?.on('download-progress', (progress) => {
-  const pct = Math.round(progress.percent)
-  log(`Download: ${pct}%`)
-  if (mainWindow) {
-    mainWindow.webContents.executeJavaScript(`
-      (function() {
-        const el = document.getElementById('update-progress-txt')
-        if (el) el.textContent = '${pct}% baixado...'
-      })()
-    `).catch(() => {})
-  }
-})
-
-// Download concluído — notificar e instalar
-autoUpdater?.on('update-downloaded', (info) => {
-  log(`Download concluido: v${info.version} — pronto para instalar`)
-
-  // Remover banner de progresso
-  if (mainWindow) {
-    mainWindow.webContents.executeJavaScript(
-      "document.getElementById('electron-update-banner')?.remove()"
-    ).catch(() => {})
-  }
-
-  // Perguntar se quer reiniciar agora
-  dialog.showMessageBox(mainWindow, {
-    type:      'info',
-    title:     'Atualizacao pronta',
-    message:   `v${info.version} baixada com sucesso!`,
-    detail:    'O app sera reiniciado para concluir a instalacao.',
-    buttons:   ['Reiniciar agora', 'Reiniciar depois'],
-    defaultId: 0,
-    cancelId:  1,
-    icon:      icon || undefined,
-  }).then(result => {
-    if (result.response === 0) {
-      log('Reiniciando para instalar...')
-      autoUpdater.quitAndInstall()
-    } else {
-      log('Usuario adiou o reinicio — instala ao fechar.')
-    }
-  })
-})
-
-autoUpdater?.on('error', (err) => log(`Updater erro: ${err.message}`))
-
-// IPC para botões de update no renderer
 ipcMain.handle('check-update-now', () => {
   log('Verificacao manual solicitada...')
   verificarAtualizacao()
   return { ok: true }
 })
-
 ipcMain.handle('download-update', () => {
-  log('Iniciando download da atualizacao...')
-  autoUpdater?.downloadUpdate()
+  if (_updateDisponivel) _baixarEInstalar(_updateDisponivel)
+  else verificarAtualizacao()
 })
 ipcMain.handle('install-update', () => {
-  log('Instalando atualizacao...')
-  autoUpdater?.quitAndInstall()
+  if (_updateDisponivel?.exePath) _executarInstalador(_updateDisponivel.exePath)
 })
 
-// Recarregar janela após update dos arquivos Python/HTML
+// Recarregar// Recarregar janela após update dos arquivos Python/HTML
 ipcMain.handle('reload-app', () => {
   log('Recarregando app apos update...')
   if (mainWindow) {
