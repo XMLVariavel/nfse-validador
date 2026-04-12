@@ -909,8 +909,8 @@ async function verificarAtualizacao() {
     const versaoRemota = (remote.versao || '').trim()
     const versaoLocal  = app.getVersion().trim()
 
-    // Normalizar para comparação — "3.8" == "3.8.0", "3.9" != "3.8.0"
-    const _normalizar = v => v.replace(/^v/, '').split('.').map(Number)
+    // Normalizar para comparação — "3.8" == "3.8.0", "3.9" > "3.8.0"
+    const _normalizar = v => v.replace(/^v/, '').split('.').map(n => parseInt(n) || 0)
     const _comparar   = (a, b) => {
       const na = _normalizar(a), nb = _normalizar(b)
       const len = Math.max(na.length, nb.length)
@@ -922,7 +922,9 @@ async function verificarAtualizacao() {
     }
 
     log(`Versao local: ${versaoLocal} | Remota: ${versaoRemota}`)
+    log(`Comparacao normalizada: local=${JSON.stringify(_normalizar(versaoLocal))} remota=${JSON.stringify(_normalizar(versaoRemota))}`)
 
+    // Só atualizar se versao remota for ESTRITAMENTE maior que local
     if (!versaoRemota || _comparar(versaoRemota, versaoLocal) <= 0) {
       log('Sem atualizacoes disponíveis.')
       return
