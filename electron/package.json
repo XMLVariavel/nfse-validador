@@ -1,6 +1,6 @@
 {
   "name": "nfse-validador",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "NFS-e Validador Nacional",
   "main": "main.js",
   "author": "XMLVariavel",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "electron-store": "^8.1.0",
-    "electron-updater": "^6.1.7"
   },
   "devDependencies": {
     "electron": "^29.0.0",
@@ -24,7 +23,6 @@
     "productName": "NFS-e Validador",
     "copyright": "Uso interno XMLVariavel",
     "icon": "build/nfse.ico",
-    "artifactName": "NFS-e-Validador-Setup-${version}.${ext}",
     "publish": {
       "provider": "github",
       "owner": "XMLVariavel",
@@ -42,8 +40,7 @@
         }
       ],
       "icon": "build/nfse.ico",
-      "requestedExecutionLevel": "asInvoker",
-      "artifactName": "NFS-e-Validador-Setup-${version}.${ext}"
+      "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
       "oneClick": false,

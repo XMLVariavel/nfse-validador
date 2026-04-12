@@ -462,10 +462,10 @@ function criarTray() {
       }},
       { type: 'separator' },
       { label: 'Verificar documentos agora', click: () => {
-        _verificarDocsBackground()
+        _trayVerificarDocs()
       }},
       { label: 'Verificar schemas agora', click: () => {
-        _verificarSchemasBackground()
+        _trayVerificarSchemas()
       }},
       { type: 'separator' },
       { label: 'Encerrar completamente', click: () => {
@@ -678,6 +678,135 @@ function _enviarNotificacaoWindows(titulo, corpo, onClick, dedupeKey) {
 
   } catch (e) {
     log(`Notificação erro: ${e.message}`)
+  }
+}
+
+// ── Feedback visual no tray ao verificar manualmente ─────────────────────────
+function _trayFeedback(msg, resetMs) {
+  if (!tray) return
+  tray.setToolTip(`${APP_NAME}\n${msg}`)
+  if (resetMs) setTimeout(() => { if (tray) tray.setToolTip(APP_NAME) }, resetMs)
+}
+
+function _trayNotificar(titulo, corpo, onClick) {
+  // Notificação balloon nativa do Windows via tray
+  if (tray && process.platform === 'win32') {
+    tray.displayBalloon({
+      iconType: 'info',
+      title:    titulo,
+      content:  corpo,
+    })
+    if (onClick) tray.once('balloon-click', onClick)
+  }
+  // Também envia notificação normal
+  _enviarNotificacaoWindows(titulo, corpo, onClick, `tray-${titulo}`)
+}
+
+async function _trayVerificarDocs() {
+  if (!serverReady) {
+    _trayNotificar('NFS-e Validador', 'Servidor ainda inicializando. Tente em instantes.')
+    return
+  }
+  log('Tray: verificação manual de documentos iniciada')
+  _trayFeedback('🔍 Verificando documentos gov.br...')
+
+  try {
+    const r = await fetch(`http://localhost:${PORT}/api/monitorar-docs`)
+    const d = await r.json()
+    if (!d.ok) {
+      _trayFeedback('❌ Erro ao verificar documentos', 8000)
+      _trayNotificar('Erro', 'Não foi possível verificar documentos.')
+      return
+    }
+
+    // Contar regressivamente no tooltip
+    let seg = 45
+    const intervalo = setInterval(() => {
+      seg--
+      if (tray) tray.setToolTip(`${APP_NAME}\n⏳ Verificando documentos... ${seg}s`)
+      if (seg <= 0) clearInterval(intervalo)
+    }, 1000)
+
+    await new Promise(resolve => setTimeout(resolve, 45000))
+    clearInterval(intervalo)
+
+    const r2 = await fetch(`http://localhost:${PORT}/api/docs`)
+    const d2 = await r2.json()
+    const novas = d2.novas?.length || 0
+
+    if (novas > 0) {
+      const titulos = d2.novas.map(n => n.titulo || n.id).slice(0, 2).join(', ')
+      _trayFeedback(`✅ ${novas} novo(s) documento(s)!`, 15000)
+      _trayNotificar(
+        `📄 ${novas} novo(s) documento(s) no gov.br!`,
+        titulos + (novas > 2 ? ` e mais ${novas - 2}...` : ''),
+        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() }
+      )
+    } else {
+      _trayFeedback('✅ Documentos: nenhuma novidade', 8000)
+      _trayNotificar('Documentos gov.br', 'Verificação concluída — nenhuma novidade encontrada.')
+    }
+
+  } catch (e) {
+    log(`Tray docs erro: ${e.message}`)
+    _trayFeedback('❌ Erro na verificação', 8000)
+    _trayNotificar('Erro', `Falha ao verificar: ${e.message}`)
+  }
+}
+
+async function _trayVerificarSchemas() {
+  if (!serverReady) {
+    _trayNotificar('NFS-e Validador', 'Servidor ainda inicializando. Tente em instantes.')
+    return
+  }
+  log('Tray: verificação manual de schemas iniciada')
+  _trayFeedback('🔄 Verificando schemas XSD...')
+
+  try {
+    const rAntes = await fetch(`http://localhost:${PORT}/api/notificacoes`)
+    const dAntes = await rAntes.json()
+    const zipAntes = dAntes.schemas?.[0]?.arquivo || ''
+
+    const r = await fetch(`http://localhost:${PORT}/api/atualizar-schemas`)
+    const d = await r.json()
+    if (!d.ok) {
+      _trayFeedback('❌ Erro ao verificar schemas', 8000)
+      _trayNotificar('Erro', 'Não foi possível verificar schemas XSD.')
+      return
+    }
+
+    // Contar regressivamente
+    let seg = 30
+    const intervalo = setInterval(() => {
+      seg--
+      if (tray) tray.setToolTip(`${APP_NAME}\n⏳ Verificando schemas XSD... ${seg}s`)
+      if (seg <= 0) clearInterval(intervalo)
+    }, 1000)
+
+    await new Promise(resolve => setTimeout(resolve, 30000))
+    clearInterval(intervalo)
+
+    const rDepois = await fetch(`http://localhost:${PORT}/api/notificacoes`)
+    const dDepois = await rDepois.json()
+    const zipDepois = dDepois.schemas?.[0]?.arquivo || ''
+
+    if (zipDepois && zipDepois !== zipAntes) {
+      const schema = dDepois.schemas[0]
+      _trayFeedback(`✅ Schemas atualizados!`, 15000)
+      _trayNotificar(
+        '🔄 Schemas XSD atualizados!',
+        schema?.titulo || 'Nova versão instalada.',
+        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() }
+      )
+    } else {
+      _trayFeedback('✅ Schemas: já atualizados', 8000)
+      _trayNotificar('Schemas XSD', 'Verificação concluída — schemas já estão atualizados.')
+    }
+
+  } catch (e) {
+    log(`Tray schemas erro: ${e.message}`)
+    _trayFeedback('❌ Erro na verificação', 8000)
+    _trayNotificar('Erro', `Falha ao verificar schemas: ${e.message}`)
   }
 }
 
