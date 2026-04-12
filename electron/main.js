@@ -704,26 +704,37 @@ function _trayNotificar(titulo, corpo, onClick) {
 
 async function _trayVerificarDocs() {
   if (!serverReady) {
-    _trayNotificar('NFS-e Validador', 'Servidor ainda inicializando. Tente em instantes.')
+    dialog.showMessageBox({ type: 'info', title: 'NFS-e Validador',
+      message: 'Servidor ainda inicializando.', detail: 'Aguarde alguns segundos e tente novamente.', buttons: ['OK'] })
     return
   }
   log('Tray: verificação manual de documentos iniciada')
+
+  // Mostrar janela com progresso imediatamente
+  if (mainWindow) { mainWindow.show(); mainWindow.focus() }
+  else criarJanela()
+
   _trayFeedback('🔍 Verificando documentos gov.br...')
+  _updateBanner('🔍 Verificando documentos gov.br...', 10)
 
   try {
     const r = await fetch(`http://localhost:${PORT}/api/monitorar-docs`)
     const d = await r.json()
     if (!d.ok) {
+      _updateBanner('❌ Erro ao verificar documentos', 0)
       _trayFeedback('❌ Erro ao verificar documentos', 8000)
-      _trayNotificar('Erro', 'Não foi possível verificar documentos.')
+      dialog.showMessageBox({ type: 'error', title: 'Erro', message: 'Não foi possível verificar documentos.', buttons: ['OK'] })
       return
     }
 
-    // Contar regressivamente no tooltip
+    // Progresso visual no banner + tooltip
     let seg = 45
+    _updateBanner(`⏳ Verificando documentos... ${seg}s`, 20)
     const intervalo = setInterval(() => {
       seg--
+      const pct = Math.round((45 - seg) / 45 * 80) + 10
       if (tray) tray.setToolTip(`${APP_NAME}\n⏳ Verificando documentos... ${seg}s`)
+      _updateBanner(`⏳ Verificando documentos... ${seg}s`, pct)
       if (seg <= 0) clearInterval(intervalo)
     }, 1000)
 
@@ -736,31 +747,41 @@ async function _trayVerificarDocs() {
 
     if (novas > 0) {
       const titulos = d2.novas.map(n => n.titulo || n.id).slice(0, 2).join(', ')
+      _updateBanner(`✅ ${novas} novo(s) documento(s) encontrado(s)!`, 100)
       _trayFeedback(`✅ ${novas} novo(s) documento(s)!`, 15000)
-      _trayNotificar(
-        `📄 ${novas} novo(s) documento(s) no gov.br!`,
+      _trayNotificar(`📄 ${novas} novo(s) documento(s) no gov.br!`,
         titulos + (novas > 2 ? ` e mais ${novas - 2}...` : ''),
-        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() }
-      )
+        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() })
+      setTimeout(() => _removerBanner(), 8000)
     } else {
+      _updateBanner('✅ Documentos: nenhuma novidade encontrada', 100)
       _trayFeedback('✅ Documentos: nenhuma novidade', 8000)
       _trayNotificar('Documentos gov.br', 'Verificação concluída — nenhuma novidade encontrada.')
+      setTimeout(() => _removerBanner(), 5000)
     }
 
   } catch (e) {
     log(`Tray docs erro: ${e.message}`)
+    _updateBanner(`❌ Erro: ${e.message}`, 0)
     _trayFeedback('❌ Erro na verificação', 8000)
-    _trayNotificar('Erro', `Falha ao verificar: ${e.message}`)
+    setTimeout(() => _removerBanner(), 8000)
   }
 }
 
 async function _trayVerificarSchemas() {
   if (!serverReady) {
-    _trayNotificar('NFS-e Validador', 'Servidor ainda inicializando. Tente em instantes.')
+    dialog.showMessageBox({ type: 'info', title: 'NFS-e Validador',
+      message: 'Servidor ainda inicializando.', detail: 'Aguarde alguns segundos e tente novamente.', buttons: ['OK'] })
     return
   }
   log('Tray: verificação manual de schemas iniciada')
+
+  // Abrir janela e mostrar progresso imediatamente
+  if (mainWindow) { mainWindow.show(); mainWindow.focus() }
+  else criarJanela()
+
   _trayFeedback('🔄 Verificando schemas XSD...')
+  _updateBanner('🔄 Verificando schemas XSD...', 10)
 
   try {
     const rAntes = await fetch(`http://localhost:${PORT}/api/notificacoes`)
@@ -770,16 +791,21 @@ async function _trayVerificarSchemas() {
     const r = await fetch(`http://localhost:${PORT}/api/atualizar-schemas`)
     const d = await r.json()
     if (!d.ok) {
+      _updateBanner('❌ Erro ao verificar schemas', 0)
       _trayFeedback('❌ Erro ao verificar schemas', 8000)
-      _trayNotificar('Erro', 'Não foi possível verificar schemas XSD.')
+      dialog.showMessageBox({ type: 'error', title: 'Erro', message: 'Não foi possível verificar schemas XSD.', buttons: ['OK'] })
+      setTimeout(() => _removerBanner(), 5000)
       return
     }
 
-    // Contar regressivamente
+    // Progresso visual no banner + tooltip
     let seg = 30
+    _updateBanner(`⏳ Verificando schemas XSD... ${seg}s`, 15)
     const intervalo = setInterval(() => {
       seg--
+      const pct = Math.round((30 - seg) / 30 * 80) + 10
       if (tray) tray.setToolTip(`${APP_NAME}\n⏳ Verificando schemas XSD... ${seg}s`)
+      _updateBanner(`⏳ Verificando schemas XSD... ${seg}s`, pct)
       if (seg <= 0) clearInterval(intervalo)
     }, 1000)
 
@@ -792,21 +818,23 @@ async function _trayVerificarSchemas() {
 
     if (zipDepois && zipDepois !== zipAntes) {
       const schema = dDepois.schemas[0]
-      _trayFeedback(`✅ Schemas atualizados!`, 15000)
-      _trayNotificar(
-        '🔄 Schemas XSD atualizados!',
-        schema?.titulo || 'Nova versão instalada.',
-        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() }
-      )
+      _updateBanner('✅ Schemas XSD atualizados!', 100)
+      _trayFeedback('✅ Schemas atualizados!', 15000)
+      _trayNotificar('🔄 Schemas XSD atualizados!', schema?.titulo || 'Nova versão instalada.',
+        () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else criarJanela() })
+      setTimeout(() => _removerBanner(), 8000)
     } else {
+      _updateBanner('✅ Schemas já estão atualizados', 100)
       _trayFeedback('✅ Schemas: já atualizados', 8000)
       _trayNotificar('Schemas XSD', 'Verificação concluída — schemas já estão atualizados.')
+      setTimeout(() => _removerBanner(), 5000)
     }
 
   } catch (e) {
     log(`Tray schemas erro: ${e.message}`)
+    _updateBanner(`❌ Erro: ${e.message}`, 0)
     _trayFeedback('❌ Erro na verificação', 8000)
-    _trayNotificar('Erro', `Falha ao verificar schemas: ${e.message}`)
+    setTimeout(() => _removerBanner(), 8000)
   }
 }
 
