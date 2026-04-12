@@ -1264,6 +1264,27 @@ class Handler(BaseHTTPRequestHandler):
         else: self._send(404,b'{"erro":"nao encontrado"}')
     def do_POST(self):
         path=urlparse(self.path).path
+        if path=="/api/set-gemini-key":
+            try:
+                length=int(self.headers.get("Content-Length",0))
+                body=self.rfile.read(length)
+                data=json.loads(body)
+                key=data.get("key","").strip()
+                if key:
+                    global GEMINI_KEY
+                    GEMINI_KEY=key
+                    # Salvar no .env
+                    env_file=BASE/".env"
+                    lines=env_file.read_text(encoding="utf-8").splitlines() if env_file.exists() else []
+                    new_lines=[l for l in lines if not l.startswith("GEMINI_API_KEY=")]
+                    new_lines.append(f"GEMINI_API_KEY={key}")
+                    env_file.write_text("\n".join(new_lines)+("\n" if new_lines else ""),encoding="utf-8")
+                    self._send(200,b'{"ok":true}')
+                else:
+                    self._send(400,b'{"ok":false,"erro":"chave vazia"}')
+            except Exception as ex:
+                self._send(500,json.dumps({"ok":False,"erro":str(ex)}).encode())
+            return
         if path!="/api/validar": self._send(404,b'{"erro":"endpoint nao encontrado"}'); return
         ip=self._get_ip()
         if not _rate_ok(ip): self._send(429,json.dumps({"erro":f"Muitas requisições. Limite: {RATE_LIMIT} req/{RATE_WINDOW}s."}).encode()); return
@@ -1292,7 +1313,14 @@ if __name__=="__main__":
             pass
     HOST, PORT = "0.0.0.0", 8000
     try:
-        print(f"NFS-e Validador v3.6 | http://{HOST}:{PORT}", flush=True)
+        # Ler versão do versao.json em vez de hardcoded
+        try:
+            import json as _json
+            _vpath = BASE / "versao.json"
+            _ver = _json.loads(_vpath.read_text(encoding="utf-8")).get("versao", "?") if _vpath.exists() else "?"
+        except Exception:
+            _ver = "?"
+        print(f"NFS-e Validador v{_ver} | http://{HOST}:{PORT}", flush=True)
     except Exception:
         pass
     server = ThreadingHTTPServer((HOST, PORT), Handler)
