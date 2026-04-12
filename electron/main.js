@@ -1026,6 +1026,19 @@ const RELEASE_BASE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases
 let _updateDisponivel    = null
 let _downloadEmAndamento = false
 
+// ── Normalizar versão para comparação — "3.8" == "3.8.0", "3.10" > "3.9" ────
+const _normalizar = v => v.replace(/^v/, '').split('.').map(n => parseInt(n) || 0)
+const _comparar   = (a, b) => {
+  const na = _normalizar(a), nb = _normalizar(b)
+  const len = Math.max(na.length, nb.length)
+  for (let i = 0; i < len; i++) {
+    const diff = (na[i] || 0) - (nb[i] || 0)
+    if (diff !== 0) return diff
+  }
+  return 0
+}
+
+// ── Verificar nova versão ────────────────────────────────────────────────────
 async function verificarAtualizacao() {
   log('Verificando atualizacoes via versao.json...')
   try {
@@ -1038,31 +1051,32 @@ async function verificarAtualizacao() {
     const versaoRemota = (remote.versao || '').trim()
     const versaoLocal  = app.getVersion().trim()
 
-    // Normalizar para comparação — "3.8" == "3.8.0", "3.9" > "3.8.0"
-    const _normalizar = v => v.replace(/^v/, '').split('.').map(n => parseInt(n) || 0)
-    const _comparar   = (a, b) => {
-      const na = _normalizar(a), nb = _normalizar(b)
-      const len = Math.max(na.length, nb.length)
-      for (let i = 0; i < len; i++) {
-        const diff = (na[i] || 0) - (nb[i] || 0)
-        if (diff !== 0) return diff
-      }
-      return 0
-    }
-
     log(`Versao local: ${versaoLocal} | Remota: ${versaoRemota}`)
-    log(`Comparacao normalizada: local=${JSON.stringify(_normalizar(versaoLocal))} remota=${JSON.stringify(_normalizar(versaoRemota))}`)
 
-    // Só atualizar se versao remota for ESTRITAMENTE maior que local
     if (!versaoRemota || _comparar(versaoRemota, versaoLocal) <= 0) {
       log('Sem atualizacoes disponíveis.')
       return
     }
 
-    const exeName = `NFS-e-Validador-Setup-${versaoRemota}.exe`
-    const exeUrl  = `${RELEASE_BASE}/v${versaoRemota}/${exeName}`
-    _updateDisponivel = { versao: versaoRemota, data: remote.data || '', url: exeUrl, exeName }
-    log(`Atualizacao disponivel: v${versaoRemota}`)
+    // Montar informações do update — delta ZIP ou instalador completo
+    const zipName  = `update-${versaoRemota}.zip`
+    const zipUrl   = `${RELEASE_BASE}/v${versaoRemota}/${zipName}`
+    const exeName  = `NFS-e-Validador-Setup-${versaoRemota}.exe`
+    const exeUrl   = `${RELEASE_BASE}/v${versaoRemota}/${exeName}`
+
+    // Preferir update_zip do versao.json se informado, senão montar URL padrão
+    const updateZipUrl = remote.update_zip || zipUrl
+
+    _updateDisponivel = {
+      versao:       versaoRemota,
+      data:         remote.data || '',
+      zipUrl:       updateZipUrl,
+      zipName,
+      exeUrl,
+      exeName,
+      tipoUpdate:   'delta'  // começa tentando delta
+    }
+    log(`Atualizacao disponivel: v${versaoRemota} | ZIP: ${updateZipUrl}`)
 
     _perguntarUpdate(_updateDisponivel)
 
@@ -1071,6 +1085,7 @@ async function verificarAtualizacao() {
   }
 }
 
+// ── Dialog de confirmação ────────────────────────────────────────────────────
 function _perguntarUpdate({ versao, data }) {
   const dataFmt = data ? ` · ${data}` : ''
   if (mainWindow) {
@@ -1082,35 +1097,165 @@ function _perguntarUpdate({ versao, data }) {
     type:      'info',
     title:     'Atualizacao disponivel',
     message:   `NFS-e Validador v${versao}${dataFmt}`,
-    detail:    'Uma nova versao esta disponivel.\nDeseja baixar e instalar agora?\n\nO sistema sera fechado automaticamente para instalar.',
-    buttons:   ['Baixar e instalar', 'Depois'],
+    detail:    'Uma nova versao esta disponivel.\n\n' +
+               '✅ Atualizacao rapida — baixa apenas os arquivos alterados (~3MB)\n' +
+               '   O app reinicia automaticamente sem precisar reinstalar.',
+    buttons:   ['Atualizar agora', 'Depois'],
     defaultId: 0,
     cancelId:  1,
     icon:      icon || undefined,
   }).then(result => {
-    if (result.response === 0) _baixarEInstalar(_updateDisponivel)
+    if (result.response === 0) _baixarEAplicarDelta(_updateDisponivel)
     else log('Usuario adiou o update.')
   })
 }
 
-async function _baixarEInstalar({ versao, url, exeName }) {
+// ── Download do ZIP delta e aplicação ────────────────────────────────────────
+async function _baixarEAplicarDelta({ versao, zipUrl, zipName, exeUrl, exeName }) {
   if (_downloadEmAndamento) return
   _downloadEmAndamento = true
+
+  const fs_   = require('fs')
+  const path_ = require('path')
+  const zipPath = path_.join(app.getPath('temp'), zipName)
+
+  log(`Baixando delta ZIP: ${zipUrl} -> ${zipPath}`)
+  _updateBanner('Iniciando download da atualizacao...', 0)
+
+  try {
+    // 1. Baixar o ZIP delta
+    await _baixarArquivo(zipUrl, zipPath, (pct, mbB, mbT) => {
+      _updateBanner(`${pct}% — ${mbB} MB de ${mbT} MB`, pct)
+    })
+
+    log('ZIP delta baixado: ' + zipPath)
+    _updateBanner('Preparando instalacao...', 100)
+
+    // 2. Confirmar com usuário
+    const { response } = await dialog.showMessageBox(
+      mainWindow || BrowserWindow.getFocusedWindow(), {
+      type:      'info',
+      title:     'Pronto para atualizar',
+      message:   `v${versao} baixada com sucesso!`,
+      detail:    'O NFS-e Validador sera fechado, atualizado e reaberto automaticamente.\n\nIsso leva apenas alguns segundos.',
+      buttons:   ['Atualizar agora', 'Atualizar depois'],
+      defaultId: 0,
+      cancelId:  1,
+      icon:      icon || undefined,
+    })
+
+    if (response !== 0) {
+      _updateDisponivel.zipPath = zipPath
+      log('Atualizacao adiada. ZIP salvo em: ' + zipPath)
+      _downloadEmAndamento = false
+      return
+    }
+
+    // 3. Criar script .bat que aplica o ZIP e reinicia o app
+    await _aplicarDeltaViaScript(zipPath, versao)
+
+  } catch (err) {
+    log(`Erro no download delta: ${err.message}`)
+    _downloadEmAndamento = false
+
+    // Fallback: oferecer instalador completo
+    const { response } = await dialog.showMessageBox(
+      mainWindow || BrowserWindow.getFocusedWindow(), {
+      type:    'warning',
+      title:   'Erro na atualizacao rapida',
+      message: `Nao foi possivel baixar a atualizacao delta:\n${err.message}`,
+      detail:  'Deseja baixar o instalador completo como alternativa?',
+      buttons: ['Baixar instalador completo', 'Cancelar'],
+      defaultId: 0,
+      cancelId:  1,
+    })
+
+    if (response === 0) {
+      _downloadEmAndamento = false
+      _baixarEInstalarCompleto({ versao, url: exeUrl, exeName })
+    }
+  }
+}
+
+// ── Aplicar ZIP delta via script .bat externo ────────────────────────────────
+async function _aplicarDeltaViaScript(zipPath, versao) {
+  const fs_   = require('fs')
+  const path_ = require('path')
+
+  // Pasta de instalação atual
+  const installDir = path_.dirname(process.execPath)
+
+  // Caminho do script updater
+  const batPath = path_.join(app.getPath('temp'), 'nfse_updater.bat')
+
+  // Caminho do app para reiniciar
+  const appExe  = process.execPath
+
+  // Script .bat que:
+  // 1. Espera o app fechar (3s)
+  // 2. Extrai o ZIP sobre a pasta de instalação usando PowerShell
+  // 3. Reabre o app
+  const batScript = `@echo off
+echo NFS-e Validador - Aplicando atualizacao v${versao}...
+ping 127.0.0.1 -n 4 >nul
+
+echo Extraindo arquivos...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path '${zipPath.replace(/\\/g, '\\\\')}' -DestinationPath '${installDir.replace(/\\/g, '\\\\')}' -Force"
+
+if errorlevel 1 (
+    echo ERRO ao extrair ZIP
+    pause
+    exit /b 1
+)
+
+echo Atualizacao aplicada com sucesso!
+echo Reiniciando NFS-e Validador...
+ping 127.0.0.1 -n 2 >nul
+start "" "${appExe.replace(/\\/g, '\\\\')}"
+exit
+`
+
+  fs_.writeFileSync(batPath, batScript, { encoding: 'utf8' })
+  log(`Script updater criado: ${batPath}`)
+  log(`Diretorio de instalacao: ${installDir}`)
+
+  // Executar o script e fechar o app
+  const { spawn: _sp } = require('child_process')
+  _sp('cmd.exe', ['/c', batPath], {
+    detached:    true,
+    windowsHide: false,
+    stdio:       'ignore',
+  }).unref()
+
+  log('Updater iniciado — fechando app...')
+  setTimeout(() => {
+    app.isQuitting = true
+    app.quit()
+  }, 500)
+}
+
+// ── Fallback: instalar completo ───────────────────────────────────────────────
+async function _baixarEInstalarCompleto({ versao, url, exeName }) {
+  if (_downloadEmAndamento) return
+  _downloadEmAndamento = true
+
   const destPath = path.join(app.getPath('temp'), exeName)
-  log(`Baixando: ${url} -> ${destPath}`)
-  _updateBanner('Iniciando download...', 0)
+  log(`Baixando instalador completo: ${url} -> ${destPath}`)
+  _updateBanner('Baixando instalador completo...', 0)
+
   try {
     await _baixarArquivo(url, destPath, (pct, mbB, mbT) => {
       _updateBanner(`${pct}% — ${mbB} MB de ${mbT} MB`, pct)
     })
-    log('Download concluido: ' + destPath)
+    log('Instalador baixado: ' + destPath)
     _updateBanner('Download concluido! Aguarde...', 100)
 
-    const { response } = await dialog.showMessageBox(mainWindow || BrowserWindow.getFocusedWindow(), {
+    const { response } = await dialog.showMessageBox(
+      mainWindow || BrowserWindow.getFocusedWindow(), {
       type:      'info',
       title:     'Pronto para instalar',
       message:   `v${versao} baixada com sucesso!`,
-      detail:    'Clique em "Instalar agora" para fechar o NFS-e Validador e iniciar a instalacao.',
+      detail:    'O NFS-e Validador sera fechado e o instalador executado silenciosamente.',
       buttons:   ['Instalar agora', 'Instalar depois'],
       defaultId: 0,
       cancelId:  1,
@@ -1120,16 +1265,17 @@ async function _baixarEInstalar({ versao, url, exeName }) {
     if (response === 0) _executarInstalador(destPath)
     else {
       _updateDisponivel.exePath = destPath
-      log('Instalacao adiada: ' + destPath)
+      _downloadEmAndamento = false
     }
   } catch (err) {
-    log(`Erro no download: ${err.message}`)
+    log(`Erro no instalador completo: ${err.message}`)
     _downloadEmAndamento = false
     dialog.showErrorBox('Erro no download',
       `Nao foi possivel baixar a atualizacao:\n\n${err.message}\n\nTente novamente mais tarde.`)
   }
 }
 
+// ── Download com progresso e redirect ─────────────────────────────────────────
 function _baixarArquivo(url, destPath, onProgress) {
   return new Promise((resolve, reject) => {
     const https_ = require('https')
@@ -1166,25 +1312,30 @@ function _baixarArquivo(url, destPath, onProgress) {
   })
 }
 
+// ── Instalador completo (fallback) ─────────────────────────────────────────────
 function _executarInstalador(exePath) {
   log('Executando instalador: ' + exePath)
-  try {
-    const { spawn: _sp } = require('child_process')
-    _sp(exePath, ['/SILENT', '/CLOSEAPPLICATIONS'], {
-      detached: true, windowsHide: false, stdio: 'ignore'
-    }).unref()
-    setTimeout(() => { app.isQuitting = true; app.quit() }, 1000)
-  } catch (err) {
-    log('Erro ao executar instalador: ' + err.message)
-    const { shell: _sh } = require('electron')
-    _sh.showItemInFolder(exePath)
-    dialog.showMessageBox({ type: 'info', title: 'Instalar manualmente',
-      message: 'Nao foi possivel executar o instalador automaticamente.',
-      detail: `O arquivo foi baixado em:\n${exePath}\n\nExecute-o manualmente.`
-    })
-  }
+  _updateBanner('Aguardando verificacao de seguranca...', 99)
+  setTimeout(() => {
+    try {
+      const { spawn: _sp } = require('child_process')
+      _sp(exePath, ['/SILENT', '/CLOSEAPPLICATIONS', '/CURRENTUSER'], {
+        detached: true, windowsHide: false, stdio: 'ignore'
+      }).unref()
+      setTimeout(() => { app.isQuitting = true; app.quit() }, 1000)
+    } catch (err) {
+      log('Erro ao executar instalador: ' + err.message)
+      const { shell: _sh } = require('electron')
+      _sh.showItemInFolder(exePath)
+      dialog.showMessageBox({ type: 'info', title: 'Instalar manualmente',
+        message: 'Nao foi possivel executar o instalador automaticamente.',
+        detail: `O arquivo foi baixado em:\n${exePath}\n\nExecute-o manualmente.`
+      })
+    }
+  }, 5000)
 }
 
+// ── Banner de progresso no app ─────────────────────────────────────────────────
 function _updateBanner(texto, pct) {
   if (!mainWindow) return
   mainWindow.webContents.executeJavaScript(`
@@ -1198,7 +1349,7 @@ function _updateBanner(texto, pct) {
       b.innerHTML =
         '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">' +
           '<div style="font-size:18px">⬇️</div>' +
-          '<div><div style="font-size:11px;font-weight:600;color:#4ade80">Baixando atualizacao...</div>' +
+          '<div><div style="font-size:11px;font-weight:600;color:#4ade80">Atualizando NFS-e Validador...</div>' +
           '<div style="font-size:10px;color:#8b949e;margin-top:2px">${texto.replace(/\'/g, "\\'")}</div></div></div>' +
         '<div style="height:4px;background:#21262d;border-radius:2px;overflow:hidden">' +
           '<div style="height:100%;width:${pct}%;background:#4ade80;transition:width .3s;border-radius:2px"></div></div>'
@@ -1206,17 +1357,19 @@ function _updateBanner(texto, pct) {
   `).catch(() => {})
 }
 
+// ── IPC handlers ───────────────────────────────────────────────────────────────
 ipcMain.handle('check-update-now', () => {
   log('Verificacao manual solicitada...')
   verificarAtualizacao()
   return { ok: true }
 })
 ipcMain.handle('download-update', () => {
-  if (_updateDisponivel) _baixarEInstalar(_updateDisponivel)
+  if (_updateDisponivel) _baixarEAplicarDelta(_updateDisponivel)
   else verificarAtualizacao()
 })
 ipcMain.handle('install-update', () => {
-  if (_updateDisponivel?.exePath) _executarInstalador(_updateDisponivel.exePath)
+  if (_updateDisponivel?.zipPath) _aplicarDeltaViaScript(_updateDisponivel.zipPath, _updateDisponivel.versao)
+  else if (_updateDisponivel?.exePath) _executarInstalador(_updateDisponivel.exePath)
 })
 
 // Recarregar// Recarregar janela após update dos arquivos Python/HTML
