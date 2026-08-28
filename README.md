@@ -1,4 +1,4 @@
-# Validador NFS-e Nacional v2.0
+# Validador NFS-e Nacional v3.19.0 — Central Interna de Suporte DPS
 
 Interface web profissional para validação de **DPS**, **NFS-e**, **CNC** e **TecnoNFSeNacional (TX2)**.
 
@@ -20,8 +20,9 @@ python server.py
 
 ## Início rápido — Standalone (sem instalação)
 
-Abra `static/validador-nfse-standalone.html` diretamente no Chrome/Edge/Firefox.  
-Funciona 100% offline, sem servidor, sem instalação.
+A rotina principal é o backend local. A antiga modalidade standalone só deve ser anunciada quando o arquivo estiver presente e validado no build.
+
+O sistema é destinado aos **analistas de suporte**, para investigação de erros de DPS da NFS-e Nacional. Não transmite documentos ao SEFAZ e não é uma interface para clientes finais.
 
 ---
 
@@ -77,8 +78,12 @@ POST /api/validar      → body: XML bruto → JSON com ocorrências
 GET  /api/tabelas      → JSON com rejeições + serviços + indOp
 GET  /api/cidades      → JSON com 5571 municípios IBGE
 GET  /api/paises       → JSON com 189 países ISO
-GET  /api/health       → status do servidor
-GET  /standalone       → versão offline em HTML
+GET  /api/health       → status do servidor e schemas
+GET  /api/versao       → versão canônica do sistema
+GET  /api/casos        → busca de casos internos de suporte
+POST /api/casos        → cadastra caso interno de suporte
+GET  /api/reload-status→ status da recarga de schemas
+GET  /standalone       → somente se a versão offline estiver instalada
 ```
 
 Exemplo cURL:
@@ -116,6 +121,22 @@ sistema-nfse/
 ```
 
 ---
+
+## Central interna de Soluções DPS
+
+A aba **Soluções** permite pesquisar e registrar casos internos por E-code, campo, cenário, causa, solução, versão e referência técnica. Os casos não são publicados para clientes nem enviados ao fórum externo. O fórum aparece apenas como referência complementar na aba **Referências**.
+
+A base inicial fica em `tabelas/casos_suporte.json`. Em uma próxima etapa, ela deve ser substituída por armazenamento com autenticação, perfis, aprovação de soluções, histórico e auditoria.
+
+## Variáveis de execução
+
+| Variável | Padrão | Função |
+|---|---|---|
+| `NFSE_HOST` | `127.0.0.1` | Endereço de escuta local |
+| `NFSE_PORT` | `8000` | Porta do backend |
+| `NFSE_ALLOWED_ORIGIN` | `http://127.0.0.1:8000` | Origem permitida para CORS |
+
+Para uso em rede interna, configurar autenticação, TLS/reverse proxy e uma origem autorizada. Não expor o backend diretamente na internet.
 
 ## Notas técnicas
 
