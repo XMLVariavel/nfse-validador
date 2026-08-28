@@ -2863,6 +2863,7 @@ async function _renderDocsDynamic() {
         const v101 = xs.schemas_instalados?.v101?.length || 0;
         const dataXsd = xs.data_xsd || '—';
         const instEm  = xs.atualizado_em ? xs.atualizado_em.replace('T',' ').substring(0,16) : '—';
+        const pacoteXsd = xs.ultimo_zip || 'NFSe-ESQUEMAS_XSD-v1.01-20260209';
         const zipUrl  = xs.ultimo_zip
           ? `https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual`
           : null;
@@ -2872,7 +2873,8 @@ async function _renderDocsDynamic() {
             Schemas XSD instalados
           </div>
           <div style="padding:14px 16px;border-radius:var(--r2);border:0.5px solid var(--border);background:var(--bg2)">
-            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px">Schemas XSD atualizados — v1.01</div>
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px">${escH(pacoteXsd)}</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Schemas XSD atualizados — v1.01</div>
             <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Data do arquivo: ${escH(dataXsd)} · instalado em ${escH(instEm)}</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
               <span style="font-family:var(--mono);font-size:10px;background:rgba(96,165,250,.1);color:var(--blue);padding:2px 8px;border-radius:3px">v100: ${v100} arquivo(s)</span>
@@ -6309,11 +6311,14 @@ async function _verificarUpdateManual() {
     // Verificar via API do servidor
     fetch('/api/check-update')
       .then(r => r.json())
-      .then(d => {
+      .then(async d => {
         if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar atualização'; }
         if (d.tem_atualizacao) {
-          if (status) status.textContent = `v${d.versao_remota} disponível — aguarde o dialog do sistema`;
-          toast(`Nova versão v${d.versao_remota} disponível! O sistema irá notificá-lo automaticamente.`, 5000);
+          if (status) status.textContent = `v${d.versao_remota} disponível — abrindo confirmação...`;
+          toast(`Nova versão v${d.versao_remota} disponível!`, 5000);
+          if (window.electronAPI?.checkUpdateNow) {
+            await window.electronAPI.checkUpdateNow();
+          }
         } else if (d.erro) {
           if (status) status.textContent = 'Erro ao verificar — verifique sua conexão';
         } else {
@@ -6333,16 +6338,30 @@ async function _verificarUpdateManual() {
 }
 
 async function _verificarAtualizacao() {
+  const btn = document.getElementById('btn-check-update');
+  const status = document.getElementById('update-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Verificando...'; }
+  if (status) status.textContent = 'Consultando GitHub...';
   try {
-    const r = await fetch('/api/check-update');
-    if (!r.ok) return;
+    const r = await fetch('/api/check-update', { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
     if (d.tem_atualizacao) {
       _updateDisponivel = true;
       _updateInfo = d;
+      if (status) status.textContent = `v${d.versao_remota} disponível`;
       _mostrarBannerUpdate(d);
+    } else if (d.erro) {
+      if (status) status.textContent = `Erro ao verificar: ${d.erro}`;
+    } else {
+      if (status) status.textContent = `✔ Você já tem a versão mais recente (v${d.versao_local || '—'})`;
+      setTimeout(() => { if (status) status.textContent = ''; }, 6000);
     }
-  } catch { /* sem internet ou servidor ocupado */ }
+  } catch (err) {
+    if (status) status.textContent = `Erro ao verificar: ${err.message}`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar atualização'; }
+  }
 }
 
 function _mostrarBannerUpdate(info) {

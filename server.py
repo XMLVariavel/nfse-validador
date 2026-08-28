@@ -1012,11 +1012,15 @@ def _xsd_state_real() -> dict:
         files = sorted(p.name for p in directory.glob("*.xsd")) if directory.exists() else []
         installed[version] = files if files else installed.get(version, [])
     state["schemas_instalados"] = installed
-    if not state.get("data_xsd") or state.get("data_xsd") in ("?", "—"):
-        all_xsds = list((BASE / "schemas").glob("v100/*.xsd")) + list((BASE / "schemas").glob("v101/*.xsd")) + list((BASE / "schemas").glob("tecno/*.xsd"))
-        if all_xsds:
-            state["data_xsd"] = datetime.fromtimestamp(max(p.stat().st_mtime for p in all_xsds)).strftime("%Y-%m-%d")
+    all_xsds = list((BASE / "schemas").glob("v100/*.xsd")) + list((BASE / "schemas").glob("v101/*.xsd")) + list((BASE / "schemas").glob("tecno/*.xsd"))
+    if all_xsds:
+        latest_mtime = max(p.stat().st_mtime for p in all_xsds)
+        if not state.get("data_xsd") or state.get("data_xsd") in ("?", "—"):
+            state["data_xsd"] = datetime.fromtimestamp(latest_mtime).strftime("%Y-%m-%d")
+        if not state.get("atualizado_em") or state.get("atualizado_em") in ("?", "—"):
+            state["atualizado_em"] = datetime.fromtimestamp(latest_mtime).isoformat(timespec="seconds")
     state.setdefault("versao", "1.01")
+    state.setdefault("ultimo_zip", "NFSe-ESQUEMAS_XSD-v1.01-20260209")
     state.setdefault("fonte", "Arquivos XSD instalados localmente")
     return state
 
@@ -1291,7 +1295,9 @@ class Handler(BaseHTTPRequestHandler):
                 _local = _js.loads(_local_file.read_text(encoding="utf-8")) if _local_file.exists() else {}
                 _rv = _remote.get("versao","0")
                 _lv = _local.get("versao","0")
-                _has_update = _rv != _lv
+                def _versao_tuple(_v):
+                    return tuple(int(p) if p.isdigit() else 0 for p in str(_v).lstrip("v").split("."))
+                _has_update = _versao_tuple(_rv) > _versao_tuple(_lv)
                 self._send(200, _js.dumps({
                     "tem_atualizacao": _has_update,
                     "versao_local": _lv,
