@@ -4,6 +4,7 @@ Suporte: DPS Nacional, NFSe Nacional, CNC, TecnoNFSeNacional (TX2/XML)
 Novidades v3.0: XXE Protection · Rate Limiting · Cache de Schemas (pré-compilados no startup)
 """
 import json, re, time, threading, warnings, os, pathlib
+from datetime import datetime
 _START_TIME = time.time()
 _VALIDACOES_TOTAL = 0
 
@@ -1000,6 +1001,25 @@ def _load_json_safe(path: Path) -> dict:
     except Exception:
         return {}
 
+def _xsd_state_real() -> dict:
+    """Reconstrói o estado a partir dos XSDs realmente instalados no disco."""
+    state = _load_json_safe(_XSD_STATE)
+    installed = state.get("schemas_instalados", {}) if isinstance(state, dict) else {}
+    if not isinstance(installed, dict):
+        installed = {}
+    for version, folder in (("v100", "v100"), ("v101", "v101"), ("tecno", "tecno")):
+        directory = BASE / "schemas" / folder
+        files = sorted(p.name for p in directory.glob("*.xsd")) if directory.exists() else []
+        installed[version] = files if files else installed.get(version, [])
+    state["schemas_instalados"] = installed
+    if not state.get("data_xsd") or state.get("data_xsd") in ("?", "—"):
+        all_xsds = list((BASE / "schemas").glob("v100/*.xsd")) + list((BASE / "schemas").glob("v101/*.xsd")) + list((BASE / "schemas").glob("tecno/*.xsd"))
+        if all_xsds:
+            state["data_xsd"] = datetime.fromtimestamp(max(p.stat().st_mtime for p in all_xsds)).strftime("%Y-%m-%d")
+    state.setdefault("versao", "1.01")
+    state.setdefault("fonte", "Arquivos XSD instalados localmente")
+    return state
+
 def _get_notificacoes() -> dict:
     """
     Lê docs_state.json e xsd_update_state.json e retorna notificações não lidas.
@@ -1017,7 +1037,7 @@ def _get_notificacoes() -> dict:
         ids_lidos = set()
 
     docs_state = _load_json_safe(_DOCS_STATE)
-    xsd_state  = _load_json_safe(_XSD_STATE)
+    xsd_state  = _xsd_state_real()
 
     notifs_docs    = []
     notifs_schemas = []
@@ -1183,8 +1203,8 @@ class Handler(BaseHTTPRequestHandler):
                 "rate_limit":f"{RATE_LIMIT} req/{RATE_WINDOW}s por IP",
                 "xxe_protection":True,
                 "max_body_mb":MAX_BODY_BYTES//1024//1024,
+                "xsd_state": _xsd_state_real(),
                 "forum_cache_topics":len(_FORUM_CACHE.get("topics",[])),
-                "xsd_state": _load_json_safe(_XSD_STATE),
             },ensure_ascii=False).encode())
         elif path=="/api/nt-resumo":
             from urllib.parse import parse_qs as _pqs, urlparse as _up

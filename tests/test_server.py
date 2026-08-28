@@ -22,6 +22,12 @@ class ServerUnitTests(unittest.TestCase):
     def test_version_is_canonical(self):
         self.assertEqual(server._app_version(), "3.19.0")
 
+    def test_xsd_state_counts_files_on_disk(self):
+        state = server._xsd_state_real()
+        self.assertGreater(len(state["schemas_instalados"]["v100"]), 0)
+        self.assertGreater(len(state["schemas_instalados"]["v101"]), 0)
+        self.assertTrue(state.get("data_xsd"))
+
     def test_safe_parser_does_not_expand_external_entity(self):
         body = b'<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><DPS xmlns="http://www.sped.fazenda.gov.br/nfse" versao="1.01"><x>&xxe;</x></DPS>'
         root = server._safe_parse(body)
