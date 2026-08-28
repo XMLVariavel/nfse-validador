@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador NFS-e Nacional v3.10</title>
+<title>Validador NFS-e Nacional v3.19.0</title>
 
 <!-- CodeMirror 5 via CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -1122,7 +1122,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <span class="logo-name">NFS-e Validador</span>
-    <span class="logo-ver" id="logo-ver-badge">v3.10</span>
+    <span class="logo-ver" id="logo-ver-badge">v3.19.0</span>
   </div>
 
   <!-- Dropdown Modelo de XML -->
@@ -1282,9 +1282,13 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     Documentação
   </div>
+  <div class="doc-tab" id="tab-casos" onclick="abrirCasos()" title="Casos e soluções internas para analistas">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v13H4z"/><path d="M8 21h8M12 17v4M8 8h8M8 12h5"/></svg>
+    Soluções
+  </div>
   <div class="doc-tab" id="tab-forum" onclick="abrirForum()">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    Fórum
+    Referências
     <span id="forum-badge" style="display:none;min-width:16px;height:14px;background:var(--blue);color:#fff;border-radius:7px;font-size:9px;font-weight:700;line-height:14px;text-align:center;padding:0 4px;font-family:var(--mono);margin-left:2px"></span>
   </div>
    <!-- Aba Sobre o Sistema -->
@@ -1384,6 +1388,38 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 </div>
 <!-- divisória sidebar / workspace -->
 <div class="divider" id="loteDivider" style="display:none"></div>
+
+<!-- ── Central interna de Soluções DPS ── -->
+<div class="forum-panel" id="casosPanel" style="display:none;flex-direction:column">
+  <div class="panel-toolbar" style="flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span style="font-size:12px;font-weight:700;color:var(--text2)">Central de Soluções DPS</span>
+      <span style="font-size:9px;color:var(--accent);font-family:var(--mono);border:1px solid var(--accent);border-radius:4px;padding:2px 5px">INTERNO</span>
+    </div>
+    <div class="search-wrap" style="flex:1;min-width:220px;max-width:360px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="panel-search" id="casosSearch" placeholder="E-code, campo, causa ou solução…" oninput="casosPesquisar()">
+    </div>
+    <select id="casosStatusFiltro" onchange="casosPesquisar()" style="background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:5px;font-size:11px">
+      <option value="">Todos os status</option><option>Em análise</option><option>Solução confirmada</option><option>Solução provisória</option><option>Obsoleto</option>
+    </select>
+    <button class="btn btn-primary" onclick="casoAbrirFormulario()">+ Novo caso</button>
+  </div>
+  <div id="casosStatus" style="padding:6px 14px;font-size:10px;color:var(--muted2);font-family:var(--mono);background:var(--bg2);border-bottom:1px solid var(--border)">Base interna para diagnóstico e tratamento de erros de DPS.</div>
+  <div id="casosForm" style="display:none;padding:14px;background:var(--bg2);border-bottom:1px solid var(--border)">
+    <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:8px">
+      <input id="casoTitulo" placeholder="Título do caso *" class="panel-search" style="border:1px solid var(--border);padding:7px">
+      <input id="casoCodigo" placeholder="E-code (ex.: E0166)" class="panel-search" style="border:1px solid var(--border);padding:7px">
+      <input id="casoCampo" placeholder="Campo/XPath" class="panel-search" style="border:1px solid var(--border);padding:7px">
+      <textarea id="casoCenario" placeholder="Cenário reproduzido" style="grid-column:1/-1;min-height:45px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:7px;font:11px var(--sans)"></textarea>
+      <textarea id="casoCausa" placeholder="Causa identificada" style="min-height:55px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:7px;font:11px var(--sans)"></textarea>
+      <textarea id="casoSolucao" placeholder="Solução/procedimento" style="min-height:55px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:7px;font:11px var(--sans)"></textarea>
+      <input id="casoReferencia" placeholder="NT/schema/referência" class="panel-search" style="border:1px solid var(--border);padding:7px">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="casoFecharFormulario()">Cancelar</button><button class="btn btn-primary" onclick="casoSalvar()">Salvar caso</button></div>
+  </div>
+  <div id="casosLista" style="padding:14px;overflow:auto;flex:1"><div style="color:var(--muted2);font-size:12px">Carregando casos internos…</div></div>
+</div>
 
 <!-- ── Painel Fórum NFS-e ── -->
 <div class="forum-panel" id="forumPanel">
@@ -1642,7 +1678,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
       <div>
         <div style="font-size:15px;font-weight:600;color:var(--text)">NFS-e Validador Nacional</div>
-        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)" id="ajuda-versao-txt">v3.10 · Suporte Interno · XMLVariavel</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)" id="ajuda-versao-txt">v3.19.0 · Suporte Interno · XMLVariavel</div>
       </div>
       <div style="margin-left:auto;text-align:right">
         <div style="font-size:10px;color:var(--muted2)">Suporta</div>
@@ -1667,7 +1703,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
             🔖 Versão instalada
           </div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);
-            font-family:var(--mono)" id="ajudaVersaoAtual">v3.10</div>
+            font-family:var(--mono)" id="ajudaVersaoAtual">v3.19.0</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <button onclick="_verificarUpdateManual()" id="btn-check-update"
@@ -1748,7 +1784,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
       </div>
     </div>
     <div style="padding-top:16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.10 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.19.0 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2</span>
     </div>
   </div>
@@ -1764,7 +1800,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <h1>NFS-e Validador Nacional</h1>
-      <span class="sobre-ver" id="sobre-ver-badge">v3.10</span>
+      <span class="sobre-ver" id="sobre-ver-badge">v3.19.0</span>
       <p>
         Ferramenta profissional para validação de XML de documentos fiscais eletrônicos
         de serviço no padrão nacional (NFS-e). Valida estrutura, regras de negócio e
@@ -2182,7 +2218,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--bg4);border:1px soli
 
     <!-- Rodapé -->
     <div class="sobre-footer">
-      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.10 · XMLVariavel · 2026</span>
+      <span style="font-size:10px;color:var(--muted2);font-family:var(--mono)">NFS-e Validador v3.19.0 · XMLVariavel · 2026</span>
       <span style="font-size:10px;color:var(--muted2)">DPS v1.00/v1.01 · NFS-e · CNC · TX2 · IBS/CBS</span>
       <span style="font-size:10px;color:var(--muted2)">Backend: Python 3 + lxml (http.server nativo)</span>
     </div>
@@ -3519,7 +3555,7 @@ function _hrMostrarBadge(info) {
 // ════════════════════════════════════════════════════════
 // NOTIFICAÇÃO DE ATUALIZAÇÃO DO SISTEMA
 // ════════════════════════════════════════════════════════
-const _VERSAO_ATUAL = '3.8';
+const _VERSAO_ATUAL = '3.19.0';
 const _UPDATE_CHECK_INTERVAL = 6 * 3600 * 1000; // 6h
 // URL do arquivo de versão remoto (ajustar quando publicado)
 const _UPDATE_URL = 'https://raw.githubusercontent.com/XMLVariavel/nfse-validador/main/versao.json';
@@ -5136,6 +5172,9 @@ function _ocToggle(i) {
   const det = oc.mensagem && oc.mensagem !== oc.titulo
     ? `<div class="oc-expand-det">${escH(oc.mensagem)}</div>` : '';
 
+  const casosBtn = oc.codigo && oc.codigo !== 'INFO'
+    ? `<button class="oc-expand-btn" onclick="abrirCasosComBusca('${esc(String(oc.codigo))}','${esc(String(oc.campo || ''))}')">📚 Ver casos internos</button>` : '';
+
   const campoLeiaute = oc.campo && !['documento','schema','xmlns'].includes(oc.campo)
     ? `<button class="oc-leiaute-btn" onclick="irParaCampoLeiaute('${(oc.campo||'').replace(/'/g,"\'")}');event.stopPropagation()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
@@ -5165,7 +5204,7 @@ function _ocToggle(i) {
   expRow.id = expandId;
   expRow.innerHTML = `<td colspan="5" class="td-expand">
     ${det}${fix}
-    <div class="oc-expand-btns">${campoLeiaute}${rejBtn}${linhaBtn}${ntBadge}</div>
+    <div class="oc-expand-btns">${campoLeiaute}${rejBtn}${linhaBtn}${casosBtn}${ntBadge}</div>
   </td>`;
   tr.after(expRow);
 }
@@ -6569,6 +6608,63 @@ function _inicializar() {
   // Verificar hot-reload de schemas a cada 15s
   setTimeout(() => { _checarHotReload(); setInterval(_checarHotReload, 15000); }, 5000);
 }
+// ════════════════════════════════════════════════════════
+// CENTRAL INTERNA DE SOLUÇÕES DPS
+// ════════════════════════════════════════════════════════
+let _casosCache = [];
+function abrirCasosComBusca(codigo, campo) {
+  abrirCasos();
+  const q = document.getElementById('casosSearch');
+  if (q) { q.value = codigo || campo || ''; casosPesquisar(); }
+}
+function abrirCasos() {
+  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-casos')?.classList.add('active');
+  ['docPanel','layoutPanel','rejPanel','forumPanel','ajudaPanel','sobrePanel','configPanel'].forEach(id => document.getElementById(id)?.classList.remove('show'));
+  document.getElementById('workspace')?.style && (document.getElementById('workspace').style.display = 'none');
+  const p = document.getElementById('casosPanel');
+  if (p) { p.style.display = 'flex'; p.classList.add('show'); }
+  casosPesquisar();
+}
+function casoAbrirFormulario() { document.getElementById('casosForm').style.display = 'block'; document.getElementById('casoTitulo')?.focus(); }
+function casoFecharFormulario() { document.getElementById('casosForm').style.display = 'none'; }
+function _casoEsc(v) { return esc(String(v || '')); }
+function casosRender(casos) {
+  const el = document.getElementById('casosLista');
+  if (!el) return;
+  if (!casos.length) { el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--muted2);font-size:12px">Nenhum caso interno encontrado. Cadastre a primeira solução validada.</div>'; return; }
+  el.innerHTML = casos.map(c => `<article style="border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:9px;background:var(--bg2)">
+    <div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:12px;color:var(--text)">${_casoEsc(c.titulo)}</strong><span style="font-size:9px;color:var(--accent);font-family:var(--mono)">${_casoEsc(c.status)}</span></div>
+    <div style="display:flex;gap:12px;margin:7px 0;font:10px var(--mono);color:var(--muted2)"><span>${_casoEsc(c.id)}</span><span>${_casoEsc(c.codigo || 'sem E-code')}</span><span>${_casoEsc(c.campo || 'campo não informado')}</span><span>v${_casoEsc(c.versao || '—')}</span></div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.45"><b>Causa:</b> ${_casoEsc(c.causa || 'não registrada')}<br><b>Solução:</b> ${_casoEsc(c.solucao || 'não registrada')}</div>
+    <div style="margin-top:7px;font-size:10px;color:var(--muted2)">${_casoEsc(c.referencia || 'Sem referência')} · Atualizado em ${_casoEsc(c.atualizado_em || c.criado_em)}</div>
+    <div style="display:flex;gap:6px;margin-top:9px"><button class="btn" style="font-size:10px;padding:4px 7px" onclick="casoMudarStatus('${_casoEsc(c.id)}','Solução confirmada')">Confirmar solução</button><button class="btn" style="font-size:10px;padding:4px 7px" onclick="casoMudarStatus('${_casoEsc(c.id)}','Solução provisória')">Marcar provisória</button></div>
+  </article>`).join('');
+}
+async function casoMudarStatus(id, status) {
+  try {
+    const r = await fetch('/api/casos/' + encodeURIComponent(id), {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status})});
+    if (!r.ok) { toast('Não foi possível atualizar o status.'); return; }
+    toast('Status do caso atualizado.'); casosPesquisar();
+  } catch (e) { toast('Central de Soluções indisponível.'); }
+}
+async function casosPesquisar() {
+  const q = document.getElementById('casosSearch')?.value || '';
+  const status = document.getElementById('casosStatusFiltro')?.value || '';
+  const el = document.getElementById('casosStatus');
+  try { const r = await fetch('/api/casos?q=' + encodeURIComponent(q) + '&status=' + encodeURIComponent(status)); const d = await r.json(); _casosCache = d.casos || []; casosRender(_casosCache); if (el) el.textContent = `${d.total || 0} caso(s) interno(s) encontrado(s) · fonte da equipe de suporte`; }
+  catch (e) { if (el) el.textContent = 'Base interna indisponível; verifique o backend.'; }
+}
+async function casoSalvar() {
+  const payload = { titulo: document.getElementById('casoTitulo')?.value, codigo: document.getElementById('casoCodigo')?.value, campo: document.getElementById('casoCampo')?.value, cenario: document.getElementById('casoCenario')?.value, causa: document.getElementById('casoCausa')?.value, solucao: document.getElementById('casoSolucao')?.value, referencia: document.getElementById('casoReferencia')?.value, status: 'Em análise' };
+  if (!payload.titulo?.trim()) { toast('Informe o título do caso.'); return; }
+  const r = await fetch('/api/casos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  const d = await r.json();
+  if (!r.ok) { toast(d.erro || 'Não foi possível salvar o caso.'); return; }
+  ['casoTitulo','casoCodigo','casoCampo','casoCenario','casoCausa','casoSolucao','casoReferencia'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  casoFecharFormulario(); toast('Caso interno salvo.'); casosPesquisar();
+}
+document.querySelectorAll('.doc-tab').forEach(el => el.addEventListener('click', () => { if (el.id !== 'tab-casos') { const p=document.getElementById('casosPanel'); if(p){p.classList.remove('show');p.style.display='none';} } }));
 _inicializar();
 </script>
 </body>

@@ -38,9 +38,21 @@ from lxml import etree
 
 BASE   = Path(__file__).parent
 NS_NAC = "http://www.sped.fazenda.gov.br/nfse"
+VERSION_FILE = BASE / "versao.json"
 MAX_BODY_BYTES = 5 * 1024 * 1024
 RATE_LIMIT     = 60
 RATE_WINDOW    = 60
+HOST = os.environ.get("NFSE_HOST", "127.0.0.1")
+PORT = int(os.environ.get("NFSE_PORT", "8000"))
+ALLOWED_ORIGIN = os.environ.get("NFSE_ALLOWED_ORIGIN", "http://127.0.0.1:8000")
+_CASES_FILE = BASE / "tabelas" / "casos_suporte.json"
+_CASES_LOCK = threading.Lock()
+
+def _app_version():
+    try:
+        return json.loads(VERSION_FILE.read_text(encoding="utf-8")).get("versao", "?")
+    except Exception:
+        return "?"
 
 # ── Rate Limiting ──────────────────────────────────────────────────────────
 _rl_lock    = threading.Lock()
@@ -78,6 +90,13 @@ TAB_CIDADES= _load("cidades_ibge.json")
 TAB_PAISES = _load("paises_iso.json")
 TAB_INDOP  = _load("indop_ibs_cbs.json")
 TAB_TODAS  = _load("todas.json")
+# A tabela consolidada é a fonte de fallback quando os arquivos derivados não existem.
+if not TAB_SERV and isinstance(TAB_TODAS, dict):
+    TAB_SERV = TAB_TODAS.get("servicos", {}) or {}
+if not TAB_INDOP and isinstance(TAB_TODAS, dict):
+    TAB_INDOP = TAB_TODAS.get("indop", {}) or TAB_TODAS.get("cIndOp", {}) or {}
+if not TAB_REJ and isinstance(TAB_TODAS, dict):
+    TAB_REJ = TAB_TODAS.get("rejeicoes", {}) or {}
 
 # Dados completos para os menus do frontend (arrays com todos os campos)
 def _load_list(name):
@@ -265,6 +284,9 @@ def _iniciar_watchdog(intervalo: int = 10):
     return t
 
 def schema_nac(doc_tipo, ver):
+    # CNC possui somente schema v1.00 no pacote atual.
+    if doc_tipo == "CNC":
+        ver = "1.00"
     key = f"{doc_tipo}_{ver}"
     if key in _SCH: return _SCH[key]
     d  = "v101" if ver == "1.01" else "v100"
@@ -326,7 +348,10 @@ def _inf(campo,msg):            return _oc("INFO",campo,msg,"","info")
 def detectar(root):
     tag = etree.QName(root.tag).localname
     ns  = root.nsmap.get(None,"")
-    ver = root.get("versao","1.01") if root.get("versao") in ("1.00","1.01") else "1.01"
+    if tag == "CNC":
+        ver = "1.00"
+    else:
+        ver = root.get("versao","1.01") if root.get("versao") in ("1.00","1.01") else "1.01"
 
     # ── TX2: tag raiz é <rps> (formato Tecnospeed/RPS municipal) ──────────
     if tag.lower() == "rps":
@@ -797,29 +822,39 @@ def validar_tecnospeed(root, dps_node=None):
 
 # ── Processador principal ──────────────────────────────────────────────────
 def processar(body):
-    result={"formato":"?","tipo":"?","versao":"?","valido":False,"resumo":{"erros":0,"alertas":0,"info":0,"total":0},"ocorrencias":[]}
+    result={"formato":"?","tipo":"?","versao":"?","valido":False,"resumo":{"erros":0,"alertas":0,"info":0,"total":0},"ocorrencias":[],"etapas":{"xml_bem_formado":"pendente","identificacao":"pendente","namespace":"nao_aplicavel","schema_xsd":"pendente","regras_negocio":"pendente"},"metadados":{"versao_sistema":_app_version()}}
     try:
         root=_safe_parse(body)
     except etree.XMLSyntaxError as ex:
         oc=_err("E1235","documento",f"XML mal formado: {ex}","Verifique tags, encoding UTF-8 e caracteres especiais.")
         oc["linha"]=getattr(ex,"lineno",None)
+        result["etapas"]["xml_bem_formado"] = "erro"
         result["ocorrencias"]=[oc]; result["resumo"]={"erros":1,"alertas":0,"info":0,"total":1}
         return result
+    result["etapas"]["xml_bem_formado"] = "ok"
     det=detectar(root)
+    result["etapas"]["identificacao"] = "ok"
     result["formato"]=det["formato"]; result["tipo"]=det["tipo"]; result["versao"]=det["ver"]
     result["subtipo"]="TX2" if det["tipo"].startswith("TX2") else det["tipo"]
     if det["formato"]=="desconhecido":
+        result["etapas"]["schema_xsd"] = "nao_aplicavel"
+        result["etapas"]["regras_negocio"] = "nao_aplicavel"
         result["ocorrencias"].append(_err("E1242","documento","Formato não reconhecido. Esperado: DPS Nacional, NFSe Nacional, CNC ou TecnoNFSeNacional.","Verifique o elemento raiz e o namespace do XML."))
     elif det["formato"]=="nacional":
         ns=root.nsmap.get(None,"")
+        result["etapas"]["namespace"] = "ok" if NS_NAC in ns else "erro"
         if NS_NAC not in ns: result["ocorrencias"].append(_err("E1228","xmlns",f'Namespace "{ns}" incorreto. Esperado: {NS_NAC}',f'Adicione xmlns="{NS_NAC}" no elemento raiz.'))
         try:
             sch=schema_nac(det["tipo"],det["ver"]); sch.validate(root)
+            result["etapas"]["schema_xsd"] = "ok" if not sch.error_log else "erro"
+            result["metadados"]["schema"] = f"{det['tipo']}_v{det['ver']}"
             for e in sch.error_log:
                 oc2=_err("E1235",e.path or "schema",f"Linha {e.line}: {e.message}",f"Schema {det['tipo']}_v{det['ver']}.xsd"); oc2["linha"]=e.line; result["ocorrencias"].append(oc2)
         except Exception as ex:
+            result["etapas"]["schema_xsd"] = "erro"
             result["ocorrencias"].append(_err("E1235","schema",f"Erro ao carregar schema: {ex}"))
         result["ocorrencias"].extend(validar_nacional(root,det["tipo"],det["ver"],det["tipo"]))
+        result["etapas"]["regras_negocio"] = "erro" if any(o.get("tipo") == "erro" for o in result["ocorrencias"] if o.get("codigo") != "E1235") else "ok"
     elif det["formato"]=="tecnospeed":
         tag_raiz=etree.QName(root.tag).localname
         if tag_raiz=="TecnoNFSeNacional":
@@ -830,6 +865,8 @@ def processar(body):
             except Exception as ex:
                 result["ocorrencias"].append(_err("E1235","schema",f"Erro ao validar XSD Tecnospeed: {ex}"))
         result["ocorrencias"].extend(validar_tecnospeed(root,det.get("dps_node")))
+        result["etapas"]["schema_xsd"] = "ok" if not any(o.get("campo") == "schema" for o in result["ocorrencias"]) else "erro"
+        result["etapas"]["regras_negocio"] = "erro" if any(o.get("tipo") == "erro" for o in result["ocorrencias"] if o.get("campo") != "schema") else "ok"
     erros=sum(1 for o in result["ocorrencias"] if o["tipo"]=="erro")
     alertas=sum(1 for o in result["ocorrencias"] if o["tipo"]=="alerta")
     infos=sum(1 for o in result["ocorrencias"] if o["tipo"]=="info")
@@ -1056,12 +1093,39 @@ def _marcar_lidas():
     _NOTIF_LIDAS.parent.mkdir(exist_ok=True)
     _NOTIF_LIDAS.write_text(json.dumps(novo, ensure_ascii=False), encoding="utf-8")
 
+def _load_cases():
+    if not _CASES_FILE.exists():
+        return []
+    try:
+        data = json.loads(_CASES_FILE.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+def _save_cases(cases):
+    _CASES_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = _CASES_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(cases, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(_CASES_FILE)
+
+def _search_cases(query="", codigo="", campo="", status=""):
+    q = (query or "").strip().lower()
+    out = []
+    for case in _load_cases():
+        hay = " ".join(str(case.get(k, "")) for k in ("titulo", "codigo", "campo", "cenario", "causa", "solucao", "referencia")).lower()
+        if q and q not in hay: continue
+        if codigo and str(case.get("codigo", "")).lower() != codigo.lower(): continue
+        if campo and campo.lower() not in str(case.get("campo", "")).lower(): continue
+        if status and str(case.get("status", "")).lower() != status.lower(): continue
+        out.append(case)
+    return out
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self,fmt,*args): pass
     def _send(self,code,body,ct="application/json"):
         b=body.encode() if isinstance(body,str) else body
         self.send_response(code); self.send_header("Content-Type",ct); self.send_header("Content-Length",len(b))
-        self.send_header("Access-Control-Allow-Origin","*"); self.send_header("Access-Control-Allow-Methods","GET,POST,OPTIONS")
+        self.send_header("Access-Control-Allow-Origin", ALLOWED_ORIGIN); self.send_header("Access-Control-Allow-Methods","GET,POST,OPTIONS")
         self.send_header("Access-Control-Allow-Headers","Content-Type"); self.send_header("X-Content-Type-Options","nosniff")
         self.end_headers(); self.wfile.write(b)
     def do_OPTIONS(self): self._send(204,b"")
@@ -1080,6 +1144,13 @@ class Handler(BaseHTTPRequestHandler):
             f = BASE / "static" / fname
             if f.exists(): self._send(200,f.read_bytes(),"application/json; charset=utf-8")
             else: self._send(404,b'{"erro":"arquivo nao encontrado"}')
+        elif path=="/api/versao":
+            self._send(200, json.dumps({"versao": _app_version(), "arquivo": str(VERSION_FILE.name)}, ensure_ascii=False).encode())
+        elif path=="/api/casos":
+            from urllib.parse import parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            casos = _search_cases(qs.get("q", [""])[0], qs.get("codigo", [""])[0], qs.get("campo", [""])[0], qs.get("status", [""])[0])
+            self._send(200, json.dumps({"total": len(casos), "casos": casos}, ensure_ascii=False).encode())
         elif path=="/api/leiaute":
             self._send(200,json.dumps(TAB_LEIAUTE_FULL,ensure_ascii=False).encode())
         elif path=="/api/rejeicoes":
@@ -1088,7 +1159,7 @@ class Handler(BaseHTTPRequestHandler):
         elif path=="/api/cidades": self._send(200,json.dumps(TAB_CIDADES,ensure_ascii=False).encode())
         elif path=="/api/paises":  self._send(200,json.dumps(TAB_PAISES,ensure_ascii=False).encode())
         elif path=="/api/health":
-            self._send(200,json.dumps({"status":"ok","versao":"3.0","schemas":_SCH_STATUS,"tabelas":{"rejeicoes":len(TAB_REJ),"servicos":len(TAB_SERV),"cidades":len(TAB_CIDADES),"paises":len(TAB_PAISES)},"rate_limit":f"{RATE_LIMIT} req/{RATE_WINDOW}s por IP","xxe_protection":True,"max_body_mb":MAX_BODY_BYTES//1024//1024},ensure_ascii=False).encode())
+            self._send(200,json.dumps({"status":"ok","versao":_app_version(),"schemas":_SCH_STATUS,"tabelas":{"rejeicoes":len(TAB_REJ),"servicos":len(TAB_SERV),"cidades":len(TAB_CIDADES),"paises":len(TAB_PAISES)},"rate_limit":f"{RATE_LIMIT} req/{RATE_WINDOW}s por IP","xxe_protection":True,"max_body_mb":MAX_BODY_BYTES//1024//1024},ensure_ascii=False).encode())
         elif path=="/api/reload-status":
             self._send(200, json.dumps({
                 "em_andamento": _RELOAD_STATUS["em_andamento"],
@@ -1101,7 +1172,7 @@ class Handler(BaseHTTPRequestHandler):
             uptime_s = int(time.time() - _START_TIME)
             h,m,sec = uptime_s//3600,(uptime_s%3600)//60,uptime_s%60
             self._send(200,json.dumps({
-                "versao":"3.0",
+                "versao":_app_version(),
                 "status":"ok",
                 "uptime_segundos":uptime_s,
                 "uptime_fmt":f"{h}h {m}m {sec}s",
@@ -1262,8 +1333,74 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(200, b'{"ok":true,"msg":"Atualizacao de schemas iniciada em background"}')
 
         else: self._send(404,b'{"erro":"nao encontrado"}')
+    def do_PUT(self):
+        path = urlparse(self.path).path
+        if not path.startswith("/api/casos/"):
+            self._send(404, b'{"erro":"endpoint nao encontrado"}')
+            return
+        case_id = path.rsplit("/", 1)[-1]
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            if length > 256 * 1024:
+                self._send(413, b'{"ok":false,"erro":"Caso muito grande"}')
+                return
+            data = json.loads(self.rfile.read(length) or b"{}")
+            allowed = {"titulo", "codigo", "campo", "versao", "cenario", "causa", "solucao", "referencia", "status", "responsavel"}
+            now = time.strftime("%Y-%m-%dT%H:%M:%S")
+            with _CASES_LOCK:
+                cases = _load_cases()
+                case = next((c for c in cases if c.get("id") == case_id), None)
+                if not case:
+                    self._send(404, b'{"ok":false,"erro":"caso nao encontrado"}')
+                    return
+                for key in allowed:
+                    if key in data:
+                        case[key] = str(data[key]).strip()[:3000]
+                case["atualizado_em"] = now
+                _save_cases(cases)
+            self._send(200, json.dumps({"ok": True, "caso": case}, ensure_ascii=False).encode())
+        except json.JSONDecodeError:
+            self._send(400, b'{"ok":false,"erro":"JSON invalido"}')
+        except Exception as ex:
+            self._send(500, json.dumps({"ok": False, "erro": "falha ao atualizar caso", "detalhe": str(ex)}).encode())
+
     def do_POST(self):
         path=urlparse(self.path).path
+        if path=="/api/casos":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                if length > 256 * 1024:
+                    self._send(413, json.dumps({"ok": False, "erro": "Caso muito grande. Máximo: 256 KB."}).encode())
+                    return
+                data = json.loads(self.rfile.read(length) or b"{}")
+                titulo = str(data.get("titulo", "")).strip()
+                if not titulo:
+                    self._send(400, b'{"ok":false,"erro":"titulo obrigatorio"}')
+                    return
+                now = time.strftime("%Y-%m-%dT%H:%M:%S")
+                case = {
+                    "id": f"CASO-{int(time.time() * 1000)}",
+                    "titulo": titulo[:200],
+                    "codigo": str(data.get("codigo", "")).strip()[:30],
+                    "campo": str(data.get("campo", "")).strip()[:200],
+                    "versao": str(data.get("versao", "")).strip()[:20],
+                    "cenario": str(data.get("cenario", "")).strip()[:1000],
+                    "causa": str(data.get("causa", "")).strip()[:2000],
+                    "solucao": str(data.get("solucao", "")).strip()[:3000],
+                    "referencia": str(data.get("referencia", "")).strip()[:500],
+                    "status": str(data.get("status", "Em análise")).strip()[:40],
+                    "responsavel": str(data.get("responsavel", "")).strip()[:120],
+                    "criado_em": now,
+                    "atualizado_em": now,
+                }
+                with _CASES_LOCK:
+                    cases = _load_cases(); cases.append(case); _save_cases(cases)
+                self._send(201, json.dumps({"ok": True, "caso": case}, ensure_ascii=False).encode())
+            except json.JSONDecodeError:
+                self._send(400, b'{"ok":false,"erro":"JSON invalido"}')
+            except Exception as ex:
+                self._send(500, json.dumps({"ok": False, "erro": "falha ao salvar caso", "detalhe": str(ex)}).encode())
+            return
         if path=="/api/set-gemini-key":
             try:
                 length=int(self.headers.get("Content-Length",0))
@@ -1298,8 +1435,13 @@ class Handler(BaseHTTPRequestHandler):
             result=processar(body); code=200
             global _VALIDACOES_TOTAL; _VALIDACOES_TOTAL += 1
             self._send(code,json.dumps(result,ensure_ascii=False).encode())
+        except (etree.XMLSyntaxError, ValueError, TypeError) as ex:
+            self._send(422, json.dumps({"valido": False, "erro": "XML ou valor inválido", "detalhe": str(ex), "ocorrencias": []}, ensure_ascii=False).encode())
         except Exception as ex:
-            self._send(500,json.dumps({"erro":str(ex)}).encode())
+            import uuid
+            error_id = str(uuid.uuid4())
+            print(f"[erro interno {error_id}] {ex}")
+            self._send(500,json.dumps({"valido": False, "erro":"falha interna de validação", "id_erro":error_id}, ensure_ascii=False).encode())
 
 if __name__=="__main__":
     import os as _os, sys as _sys, io as _io
@@ -1311,7 +1453,8 @@ if __name__=="__main__":
             _sys.stderr = _io.TextIOWrapper(_sys.stderr.buffer, encoding='utf-8', errors='replace')
         except Exception:
             pass
-    HOST, PORT = "0.0.0.0", 8000
+    HOST = os.environ.get("NFSE_HOST", "127.0.0.1")
+    PORT = int(os.environ.get("NFSE_PORT", "8000"))
     try:
         # Ler versão do versao.json em vez de hardcoded
         try:
@@ -1323,5 +1466,8 @@ if __name__=="__main__":
         print(f"NFS-e Validador v{_ver} | http://{HOST}:{PORT}", flush=True)
     except Exception:
         pass
+    print("Pré-carregando schemas XSD...", flush=True)
+    _preload_schemas()
+    _iniciar_watchdog()
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.serve_forever()
